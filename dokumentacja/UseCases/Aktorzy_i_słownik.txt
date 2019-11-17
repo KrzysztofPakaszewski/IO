@@ -1,0 +1,36 @@
+Aktorzy:
+Dowolny użytkownik - każdy użytkownik systemu. Zarówno użytkownik jak i administrator.
+Użytkownik - używa aplikacji do wymiany przedmiotów z innymi użytkonikami. Może dodawać przedmioty, wyrażać zainteresowanie przedmiotami innych użytkowników, 
+korzystać z czatu oraz wystawiać opinię innym użytkownikom.
+Inni użytkownicy - inni użytkownicy systemu pełniący rolę aktorów drugoplanoych.
+Administrator - jest odpoiedzialny za moderacje systemu. Posiada specjalne uprawnienia do usuwania ogłoszeń, użytkoników i opinii. Może kontaktować się z 
+użytkonikami za pomocą czatu. Nie posiada uprawnień użytkownika.
+
+Słownik:
+Bezpieczne hasło - posiada co najmniej 8 znaków, w tym co najmniej jedną wielką literę, co najmniej dwie cyfry oraz co najmniej jeden znak specjalny.
+Cykliczne zainteresowania - sytuacja, w której użytkownik 1 insteresuje się przedmiotem użytkownika 2, użytkownik 2 - przedmiotem użytkownika 3, a użytkownik N - przedmiotem użytkonika 1.
+Dopasowanie - informacja o dopasowaniu zostaje zapisana w systemie, gdy dwóch lub więcej użytkownków intersuje się swoimi przedmiotami. 
+Domyślna strona główna - Ekran szybkiej wymiany oraz pasek zakładek po lewej stronie ekranu dla użytkownika lub panel administratora dla administratora.
+Ekran czatu - patrz: Jak posugiwać się aplikacją?::Czat
+Ekran dodawania nowego przedmiotu - patrz: Jak posugiwać się aplikacją?::Dodawanie nowego przedmiotu
+Ekran dodawania opinii - patrz Jak posugiwać się aplikacją?::Dodawanie opinii
+Ekran dostępnych czatów - patrz: Jak posugiwać się aplikacją?::Czat
+Ekran logowania - patrz: Jak posugiwać się aplikacją?::Logowanie
+Ekran modyfikacji istniejącego przedmiotu - patrz: Jak posugiwać się aplikacją?::Modyfikacja istniejącego przedmiotu
+Ekran ogłoszeń innych użytkowników - patrz: Jak posugiwać się aplikacją?::Znajdź coś dla siebie
+Ekran przedmiotu - patrz: Jak posugiwać się aplikacją?::Po kliknięciu w przedmiot
+Ekran rejestracji - patrz: Jak posugiwać się aplikacją?::Rejestracja
+Ekran szybkiej wymiany - patrz: Jak posugiwać się aplikacją?::Szybka wymiana
+Ekran twoje przedmioty - patrz: Jak posugiwać się aplikacją?::Toje przedmioty
+Formularz usuwania ogłoszenia - Zawiera napis "Podaj id ogłoszenie, którego chcesz usunąć" oraz pole na wprowadzenie id ogłoszenia.
+Formularz usuwania opinii - Zawiera napis "Podaj id ogłoszenie, którego chcesz usunąć" oraz pole na wprowadzenie id opinii.
+Formularz usuwania użytkonika - Zawiera napis "Podaj id ogłoszenie, którego chcesz usunąć" oraz pole na wprowadzenie emailu użytkonika.
+Id ogłoszenia - Unikalny 11 cyfrowy numer zaczynający się od 0,1,2,3 lub 4.
+Id opinii - Unikalny 11 cyfrowy numer zaczynający się od 5,6,7,8 lub 9.
+Maksymalny dozwolonony rozmiar wiadomości - 50MB
+Mechanizm przesunięć - Przesunięcie w lewo akceptuje wymianę, w prawo odrzuca, a dół przenosi na koniec listy przedmiotów.
+Panel administratora - Posiada opcję usuwania ogłoszenia, usuwania opinii lub usuwania użytkownika.
+Pasek zakładek - patrz: Jak posugiwać się aplikacją?::Po zalogowaniu
+Prawidłowy adres email - Zawiera kolejno nazwę użytkownika, znak @, nazwę serwera.
+Profil użytkownika/właściciela przedmiotu - patrz: Jak posugiwać się aplikacją?::Po przekierowaniu na profil właściciela przedmiotu
+Wiadomość - Tekst i/lub pliki przesyłane przez czat.
