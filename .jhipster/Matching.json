@@ -1,0 +1,39 @@
+{
+    "name": "Matching",
+    "fields": [
+        {
+            "fieldName": "stateOfExchange",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "chat",
+            "fieldType": "String"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "otherEntityName": "item",
+            "otherEntityRelationshipName": "matching",
+            "relationshipName": "itemOffered",
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "otherEntityName": "item",
+            "otherEntityRelationshipName": "matching",
+            "relationshipName": "itemAsked",
+            "otherEntityField": "id"
+        }
+    ],
+    "changelogDate": "20191120203744",
+    "entityTableName": "matching",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "readOnly": false,
+    "clientRootFolder": "",
+    "applications": "*"
+}
