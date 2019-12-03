@@ -9,6 +9,7 @@ import { IRootState } from 'app/shared/reducers';
 import { getEntity } from './review.reducer';
 import { IReview } from 'app/shared/model/review.model';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import {ReviewComp} from './review-component';
 
 export interface IReviewDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
@@ -20,24 +21,12 @@ export class ReviewDetail extends React.Component<IReviewDetailProps> {
   render() {
     const { reviewEntity } = this.props;
     return (
-      <Row>
-        <Col md="8">
+      <div>
           <h2>
             Review [<b>{reviewEntity.id}</b>]
           </h2>
           <dl className="jh-entity-details">
-            <dt>
-              <span id="score">Score</span>
-            </dt>
-            <dd>{reviewEntity.score}</dd>
-            <dt>
-              <span id="review">Review</span>
-            </dt>
-            <dd>{reviewEntity.review}</dd>
-            <dt>Reviewer</dt>
-            <dd>{reviewEntity.reviewer ? reviewEntity.reviewer.id : ''}</dd>
-            <dt>User</dt>
-            <dd>{reviewEntity.user ? reviewEntity.user.id : ''}</dd>
+            {ReviewComp(reviewEntity)}
           </dl>
           <Button tag={Link} to="/review" replace color="info">
             <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
@@ -46,8 +35,7 @@ export class ReviewDetail extends React.Component<IReviewDetailProps> {
           <Button tag={Link} to={`/review/${reviewEntity.id}/edit`} replace color="primary">
             <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
           </Button>
-        </Col>
-      </Row>
+      </div>
     );
   }
 }
