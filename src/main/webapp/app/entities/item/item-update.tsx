@@ -84,7 +84,7 @@ export class ItemUpdate extends React.Component<IItemUpdateProps, IItemUpdateSta
       <div>
         <Row className="justify-content-center">
           <Col md="8">
-            <h2 id="culexApp.item.home.createOrEditLabel">Create or edit a Item</h2>
+            <h2 id="culexApp.item.home.createOrEditLabel"><b><i>{itemEntity.title}</i></b> </h2>
           </Col>
         </Row>
         <Row className="justify-content-center">
@@ -93,23 +93,37 @@ export class ItemUpdate extends React.Component<IItemUpdateProps, IItemUpdateSta
               <p>Loading...</p>
             ) : (
               <AvForm model={isNew ? {} : itemEntity} onSubmit={this.saveEntity}>
-                {!isNew ? (
+                <AvGroup>
                   <AvGroup>
-                    <Label for="item-id">ID</Label>
-                    <AvInput id="item-id" type="text" className="form-control" name="id" required readOnly />
+                    <Label id="imageLabel" for="image">
+                    </Label>
+                    <br />
+                    {image ? (
+                      <div>
+                        <a onClick={openFile(imageContentType, image)}>
+                          <img src={`data:${imageContentType};base64,${image}`} style={{ maxHeight: '100px' }} />
+                        </a>
+                        <br />
+                        <Row>
+                          <Col md="11">
+                          </Col>
+                          <Col md="1">
+                            <Button color="danger" onClick={this.clearBlob('image')}>
+                              <FontAwesomeIcon icon="times-circle" />
+                            </Button>
+                          </Col>
+                        </Row>
+                      </div>
+                    ) : null}
+                    <input id="file_image" type="file" onChange={this.onBlobChange(true, 'image')} accept="image/*" />
+                    <AvInput type="hidden" name="image" value={image} />
                   </AvGroup>
-                ) : null}
+                </AvGroup>
                 <AvGroup>
                   <Label id="titleLabel" for="item-title">
                     Title
                   </Label>
                   <AvField id="item-title" type="text" name="title" />
-                </AvGroup>
-                <AvGroup>
-                  <Label id="stateLabel" for="item-state">
-                    State
-                  </Label>
-                  <AvField id="item-state" type="text" name="state" />
                 </AvGroup>
                 <AvGroup>
                   <Label id="categoryLabel" for="item-category">
@@ -128,46 +142,10 @@ export class ItemUpdate extends React.Component<IItemUpdateProps, IItemUpdateSta
                   </AvInput>
                 </AvGroup>
                 <AvGroup>
-                  <AvGroup>
-                    <Label id="imageLabel" for="image">
-                      Image
-                    </Label>
-                    <br />
-                    {image ? (
-                      <div>
-                        <a onClick={openFile(imageContentType, image)}>
-                          <img src={`data:${imageContentType};base64,${image}`} style={{ maxHeight: '100px' }} />
-                        </a>
-                        <br />
-                        <Row>
-                          <Col md="11">
-                            <span>
-                              {imageContentType}, {byteSize(image)}
-                            </span>
-                          </Col>
-                          <Col md="1">
-                            <Button color="danger" onClick={this.clearBlob('image')}>
-                              <FontAwesomeIcon icon="times-circle" />
-                            </Button>
-                          </Col>
-                        </Row>
-                      </div>
-                    ) : null}
-                    <input id="file_image" type="file" onChange={this.onBlobChange(true, 'image')} accept="image/*" />
-                    <AvInput type="hidden" name="image" value={image} />
-                  </AvGroup>
-                </AvGroup>
-                <AvGroup>
-                  <Label id="hashLabel" for="item-hash">
-                    Hash
+                  <Label id="stateLabel" for="item-state">
+                    State
                   </Label>
-                  <AvField id="item-hash" type="text" name="hash" />
-                </AvGroup>
-                <AvGroup>
-                  <Label id="preferencesLabel" for="item-preferences">
-                    Preferences
-                  </Label>
-                  <AvField id="item-preferences" type="text" name="preferences" />
+                  <AvField id="item-state" type="text" name="state" />
                 </AvGroup>
                 <AvGroup>
                   <Label id="preferedDeliveryLabel" for="item-preferedDelivery">
@@ -186,19 +164,18 @@ export class ItemUpdate extends React.Component<IItemUpdateProps, IItemUpdateSta
                   </AvInput>
                 </AvGroup>
                 <AvGroup>
-                  <Label for="item-owner">Owner</Label>
-                  <AvInput id="item-owner" type="select" className="form-control" name="owner.id">
-                    <option value="" key="0" />
-                    {users
-                      ? users.map(otherEntity => (
-                          <option value={otherEntity.id} key={otherEntity.id}>
-                            {otherEntity.id}
-                          </option>
-                        ))
-                      : null}
-                  </AvInput>
+                  <Label id="preferencesLabel" for="item-preferences">
+                    Preferences
+                  </Label>
+                  <AvField id="item-preferences" type="text" name="preferences" />
                 </AvGroup>
-                <Button tag={Link} id="cancel-save" to="/item" replace color="info">
+                <AvGroup>
+                  <Label id="hashLabel" for="item-hash">
+                    Hash
+                  </Label>
+                  <AvField id="item-hash" type="text" name="hash" />
+                </AvGroup>
+                <Button tag={Link} id="cancel-save" to={`/item/${itemEntity.id}`} replace color="info">
                   <FontAwesomeIcon icon="arrow-left" />
                   &nbsp;
                   <span className="d-none d-md-inline">Back</span>

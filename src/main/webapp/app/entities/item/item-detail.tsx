@@ -20,53 +20,45 @@ export class ItemDetail extends React.Component<IItemDetailProps> {
   render() {
     const { itemEntity } = this.props;
     return (
-      <Row>
-        <Col md="8">
+      <Row className="justify-content-md-center">
+        <Col md="20">
           <h2>
-            Item [<b>{itemEntity.id}</b>]
+            Item <b><i>{itemEntity.title}</i></b> of User <b><i>{itemEntity.owner}</i></b>
           </h2>
           <dl className="jh-entity-details">
+            <dd>
+              {itemEntity.image ? (
+                <div>
+                  <a onClick={openFile(itemEntity.imageContentType, itemEntity.image)}>
+                    <img src={`data:${itemEntity.imageContentType};base64,${itemEntity.image}`} style={{ maxHeight: '30px' }}/>
+                  </a>
+                </div>
+              ) : null}
+            </dd>
             <dt>
               <span id="title">Title</span>
             </dt>
             <dd>{itemEntity.title}</dd>
             <dt>
-              <span id="state">State</span>
-            </dt>
-            <dd>{itemEntity.state}</dd>
-            <dt>
               <span id="category">Category</span>
             </dt>
             <dd>{itemEntity.category}</dd>
             <dt>
-              <span id="image">Image</span>
+              <span id="state">State</span>
             </dt>
-            <dd>
-              {itemEntity.image ? (
-                <div>
-                  <a onClick={openFile(itemEntity.imageContentType, itemEntity.image)}>
-                    <img src={`data:${itemEntity.imageContentType};base64,${itemEntity.image}`} style={{ maxHeight: '30px' }} />
-                  </a>
-                  <span>
-                    {itemEntity.imageContentType}, {byteSize(itemEntity.image)}
-                  </span>
-                </div>
-              ) : null}
-            </dd>
+            <dd>{itemEntity.state}</dd>
             <dt>
-              <span id="hash">Hash</span>
+              <span id="preferedDelivery">Prefered Delivery</span>
             </dt>
-            <dd>{itemEntity.hash}</dd>
+            <dd>{itemEntity.preferedDelivery}</dd>
             <dt>
               <span id="preferences">Preferences</span>
             </dt>
             <dd>{itemEntity.preferences}</dd>
             <dt>
-              <span id="preferedDelivery">Prefered Delivery</span>
+              <span id="hash">Hashtags</span>
             </dt>
-            <dd>{itemEntity.preferedDelivery}</dd>
-            <dt>Owner</dt>
-            <dd>{itemEntity.owner ? itemEntity.owner.id : ''}</dd>
+            <dd>{itemEntity.hash}</dd>
           </dl>
           <Button tag={Link} to="/item" replace color="info">
             <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
@@ -74,6 +66,10 @@ export class ItemDetail extends React.Component<IItemDetailProps> {
           &nbsp;
           <Button tag={Link} to={`/item/${itemEntity.id}/edit`} replace color="primary">
             <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
+          </Button>
+          &nbsp;
+          <Button tag={Link} to={`/item/${itemEntity.id}/delete`} replace color="primary">
+            <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Delete</span>
           </Button>
         </Col>
       </Row>
