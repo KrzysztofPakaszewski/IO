@@ -175,7 +175,7 @@ export class ItemUpdate extends React.Component<IItemUpdateProps, IItemUpdateSta
                   </Label>
                   <AvField id="item-hash" type="text" name="hash" />
                 </AvGroup>
-                <Button tag={Link} id="cancel-save" to={`/item/${itemEntity.id}`} replace color="info">
+                <Button tag={Link} id="cancel-save" to={`/item/`} replace color="info">
                   <FontAwesomeIcon icon="arrow-left" />
                   &nbsp;
                   <span className="d-none d-md-inline">Back</span>
