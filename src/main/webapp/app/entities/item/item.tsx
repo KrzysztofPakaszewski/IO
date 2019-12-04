@@ -51,10 +51,10 @@ export class Item extends React.Component<IItemProps, IItemState> {
     return (
       <div>
         <h2 id="item-heading">
-          Items
+          Your items
           <Link to={`${match.url}/new`} className="btn btn-primary float-right jh-create-entity" id="jh-create-entity">
             <FontAwesomeIcon icon="plus" />
-            &nbsp; Create a new Item
+            &nbsp; Create new item
           </Link>
         </h2>
         <div className="table-responsive">
@@ -65,29 +65,26 @@ export class Item extends React.Component<IItemProps, IItemState> {
                   <th className="hand" onClick={this.sort('id')}>
                     ID <FontAwesomeIcon icon="sort" />
                   </th>
+                  <th className="hand" onClick={this.sort('image')}>
+                    Image <FontAwesomeIcon icon="sort" />
+                  </th>
                   <th className="hand" onClick={this.sort('title')}>
                     Title <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={this.sort('state')}>
-                    State <FontAwesomeIcon icon="sort" />
                   </th>
                   <th className="hand" onClick={this.sort('category')}>
                     Category <FontAwesomeIcon icon="sort" />
                   </th>
-                  <th className="hand" onClick={this.sort('image')}>
-                    Image <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={this.sort('hash')}>
-                    Hash <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={this.sort('preferences')}>
-                    Preferences <FontAwesomeIcon icon="sort" />
+                  <th className="hand" onClick={this.sort('state')}>
+                    State <FontAwesomeIcon icon="sort" />
                   </th>
                   <th className="hand" onClick={this.sort('preferedDelivery')}>
                     Prefered Delivery <FontAwesomeIcon icon="sort" />
                   </th>
-                  <th>
-                    Owner <FontAwesomeIcon icon="sort" />
+                  <th className="hand" onClick={this.sort('preferences')}>
+                    Preferences <FontAwesomeIcon icon="sort" />
+                  </th>
+                  <th className="hand" onClick={this.sort('hash')}>
+                    Hash <FontAwesomeIcon icon="sort" />
                   </th>
                   <th />
                 </tr>
@@ -100,9 +97,6 @@ export class Item extends React.Component<IItemProps, IItemState> {
                         {item.id}
                       </Button>
                     </td>
-                    <td>{item.title}</td>
-                    <td>{item.state}</td>
-                    <td>{item.category}</td>
                     <td>
                       {item.image ? (
                         <div>
@@ -111,15 +105,16 @@ export class Item extends React.Component<IItemProps, IItemState> {
                             &nbsp;
                           </a>
                           <span>
-                            {item.imageContentType}, {byteSize(item.image)}
                           </span>
                         </div>
                       ) : null}
                     </td>
-                    <td>{item.hash}</td>
-                    <td>{item.preferences}</td>
+                    <td>{item.title}</td>
+                    <td>{item.category}</td>
+                    <td>{item.state}</td>
                     <td>{item.preferedDelivery}</td>
-                    <td>{item.owner ? item.owner.id : ''}</td>
+                    <td>{item.preferences}</td>
+                    <td>{item.hash}</td>
                     <td className="text-right">
                       <div className="btn-group flex-btn-group-container">
                         <Button tag={Link} to={`${match.url}/${item.id}`} color="info" size="sm">
