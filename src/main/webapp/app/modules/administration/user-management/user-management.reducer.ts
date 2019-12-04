@@ -128,6 +128,13 @@ export const getUser: ICrudGetAction<IUser> = id => {
     payload: axios.get<IUser>(requestUrl)
   };
 };
+export const getCurrentlyLoggedUser = () => {
+  const requestUrl = `${apiUrl}/logged`;
+  return {
+    type: ACTION_TYPES.FETCH_USER,
+    payload: axios.get<IUser>(requestUrl)
+  };
+};
 
 export const createUser: ICrudPutAction<IUser> = user => async dispatch => {
   const result = await dispatch({
