@@ -7,7 +7,7 @@ import { Button} from 'reactstrap';
 import { Link } from 'react-router-dom';
 
 
-// props: {score:Integer(0-10), login:String, review:String}
+// props: {score:Integer(0-5), login:String, review:String}
 export const ReviewComp = (props) =>{
 
   return (
@@ -19,8 +19,7 @@ export const ReviewComp = (props) =>{
             </Button>    */}
           <h4>Login</h4>
           <Rating
-           value = {props.score / 2}
-           precision = {0.5}
+           value = {props.score}
            readOnly
            />
         </div>
