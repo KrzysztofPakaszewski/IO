@@ -2,6 +2,7 @@ import React from 'react';
 import Rating from '@material-ui/lab/Rating';
 import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
 import { Button} from 'reactstrap';
 import { Link } from 'react-router-dom';
 
