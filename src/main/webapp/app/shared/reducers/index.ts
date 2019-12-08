@@ -20,6 +20,10 @@ import item, {
   ItemState
 } from 'app/entities/item/item.reducer';
 // prettier-ignore
+import user, {
+  UserState
+} from 'app/entities/user/user.reducer';
+// prettier-ignore
 import matching, {
   MatchingState
 } from 'app/entities/matching/matching.reducer';
@@ -36,6 +40,7 @@ export interface IRootState {
   readonly password: PasswordState;
   readonly settings: SettingsState;
   readonly review: ReviewState;
+  readonly user: UserState;
   readonly item: ItemState;
   readonly matching: MatchingState;
   /* jhipster-needle-add-reducer-type - JHipster will add reducer type here */
@@ -55,6 +60,7 @@ const rootReducer = combineReducers<IRootState>({
   review,
   item,
   matching,
+  user,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
   loadingBar
 });

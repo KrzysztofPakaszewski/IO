@@ -5,6 +5,8 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IItem, defaultValue } from 'app/shared/model/item.model';
+import { getCurrentlyLoggedUser } from 'app/modules/administration/user-management/user-management.reducer';
+import Item from './item';
 
 export const ACTION_TYPES = {
   FETCH_ITEM_LIST: 'item/FETCH_ITEM_LIST',
