@@ -1,11 +1,17 @@
 package io.web.rest;
 
+import com.sun.xml.internal.ws.developer.Serialization;
 import io.domain.Matching;
+import io.domain.User;
+import io.domain.chat.Chat;
 import io.repository.MatchingRepository;
+import io.service.ChatService;
+import io.service.UserService;
 import io.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import io.web.rest.vm.ChatMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional; 
 import org.springframework.web.bind.annotation.*;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -35,9 +42,13 @@ public class MatchingResource {
     private String applicationName;
 
     private final MatchingRepository matchingRepository;
+    private final ChatService chatService;
+    private final UserService userService;
 
-    public MatchingResource(MatchingRepository matchingRepository) {
+    public MatchingResource(MatchingRepository matchingRepository, ChatService chatService, UserService userService) {
         this.matchingRepository = matchingRepository;
+        this.chatService = chatService;
+        this.userService = userService;
     }
 
     /**
@@ -57,6 +68,21 @@ public class MatchingResource {
         return ResponseEntity.created(new URI("/api/matchings/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);
+    }
+
+    // TODO coś zwrócić
+    /**
+     * {@code POST  /matchings/chat} : Create a new chat message.
+     *
+     * @param chatMessage the matching to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new matching, or with status {@code 400 (Bad Request)} if the matching has already an ID.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PostMapping("/matchings/chat")
+    public void createChatMessage(@RequestBody ChatMessage chatMessage) throws URISyntaxException {
+        log.debug("REST request to add message : {}", chatMessage);
+        User user = userService.getUserWithAuthorities().get();
+        chatService.addMessage(chatMessage.getId(), user ,chatMessage.getMessage());
     }
 
     /**
@@ -105,6 +131,22 @@ public class MatchingResource {
         return ResponseUtil.wrapOrNotFound(matching);
     }
 
+    // TODO opakować w ResponseEntity
+    /**
+     * {@code GET  /matchings/chat/:id} : get the "id" chat.
+     *
+     * @param id the id of the chat to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the chat, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/matchings/chat/{id}")
+    public Chat getMatchingChat(@PathVariable Long id) {
+        log.debug("REST request to get Matching : {}", id);
+        Optional<User> user = this.userService.getUserWithAuthorities();
+        Chat chat = chatService.getChat(id, user.get().getId());
+        return chat;
+    }
+
+
     /**
      * {@code DELETE  /matchings/:id} : delete the "id" matching.
      *
@@ -117,4 +159,6 @@ public class MatchingResource {
         matchingRepository.deleteById(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
     }
+
+
 }

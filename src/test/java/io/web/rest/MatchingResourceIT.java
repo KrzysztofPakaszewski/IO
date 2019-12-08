@@ -3,6 +3,8 @@ package io.web.rest;
 import io.CulexApp;
 import io.domain.Matching;
 import io.repository.MatchingRepository;
+import io.service.ChatService;
+import io.service.UserService;
 import io.web.rest.errors.ExceptionTranslator;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -43,6 +45,12 @@ public class MatchingResourceIT {
     private MatchingRepository matchingRepository;
 
     @Autowired
+    private ChatService chatService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -64,7 +72,7 @@ public class MatchingResourceIT {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final MatchingResource matchingResource = new MatchingResource(matchingRepository);
+        final MatchingResource matchingResource = new MatchingResource(matchingRepository, chatService,userService);
         this.restMatchingMockMvc = MockMvcBuilders.standaloneSetup(matchingResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

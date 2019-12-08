@@ -58,6 +58,9 @@ export class Matching extends React.Component<IMatchingProps> {
                         <Button tag={Link} to={`${match.url}/${matching.id}`} color="info" size="sm">
                           <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
                         </Button>
+                        <Button tag={Link} to={`${match.url}/${matching.id}/chat`} color="warning" size="sm">
+                          <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">Chat</span>
+                        </Button>
                         <Button tag={Link} to={`${match.url}/${matching.id}/edit`} color="primary" size="sm">
                           <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
                         </Button>
