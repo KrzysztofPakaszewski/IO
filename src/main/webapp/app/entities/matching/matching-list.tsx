@@ -24,7 +24,7 @@ export class MatchingList extends React.Component<IMatchingListProps, IMatchingL
   constructor(props){
     super(props);
     this.state= {
-        activeIndex: 0
+      activeIndex: 0
     }
     this.previous = this.previous.bind(this);
     this.next = this.next.bind(this);
@@ -34,48 +34,48 @@ export class MatchingList extends React.Component<IMatchingListProps, IMatchingL
   }
 
   next (){
-      this.setState({
-          activeIndex: (this.state.activeIndex + 1)% this.props.list.length
-      });
+    this.setState({
+      activeIndex: (this.state.activeIndex + 1)% this.props.list.length
+    });
   };
 
   previous(){
-      this.setState({
-          activeIndex: (this.state.activeIndex - 1)% this.props.list.length
-      });
+    this.setState({
+      activeIndex: (this.state.activeIndex - 1)% this.props.list.length
+    });
   };
 
 
   goToIndex = newIndex =>{
-      this.setState({
-          activeIndex: newIndex
-      });
+    this.setState({
+      activeIndex: newIndex
+    });
   };
 
   render() {
     const { list } = this.props;
     const {activeIndex} = this.state;
     return (
-        <Box>
-            <Carousel
-              activeIndex = {activeIndex}
-              next = {this.next}
-              previous= {this.previous}
+      <Box>
+        <Carousel
+          activeIndex = {activeIndex}
+          next = {this.next}
+          previous= {this.previous}
+        >
+          <CarouselIndicators items ={list} activeIndex={activeIndex} onClickHandler={this.goToIndex}/>
+          {list.map((item)=>{
+            return(
+              <CarouselItem
+                key = {item.id}
               >
-              <CarouselIndicators items ={list} activeIndex={activeIndex} onClickHandler={this.goToIndex}/>
-                {list.map((item)=>{
-                    return(
-                        <CarouselItem
-                             key = {item.id}
-                        >
-                          {MatchingComponent(item)}
-                        </CarouselItem>
-                    );
-                })}
-                <CarouselControl direction= 'next' directionText='Next' onClickHandler = {this.next}/>
-                <CarouselControl direction= 'prev' directionText='Previous' onClickHandler = {this.previous}/>
-            </Carousel>
-        </Box>
+                {MatchingComponent(item)}
+              </CarouselItem>
+            );
+          })}
+          <CarouselControl direction= 'next' directionText='Next' onClickHandler = {this.next}/>
+          <CarouselControl direction= 'prev' directionText='Previous' onClickHandler = {this.previous}/>
+        </Carousel>
+      </Box>
     );
   }
 }

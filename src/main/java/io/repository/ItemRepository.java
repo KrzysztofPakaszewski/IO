@@ -20,7 +20,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     List<Item> findByOwnerIsCurrentUser();
 
     @Query(value = "select item from Item item join fetch item.owner",
-            countQuery = "select count(item) from Item item join item.owner")
+        countQuery = "select count(item) from Item item join item.owner")
     Page<Item> findAll(Pageable pageable);
 
     @Query("select item from Item item join fetch item.owner where item.id = ?1")

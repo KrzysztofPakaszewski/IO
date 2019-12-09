@@ -4,58 +4,56 @@ import { ICrudGetAction, ICrudGetAllAction, ICrudPutAction, ICrudDeleteAction } 
 import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
-import { IItem, defaultValue } from 'app/shared/model/item.model';
-import { getCurrentlyLoggedUser } from 'app/modules/administration/user-management/user-management.reducer';
-import Item from './item';
+import { IUser, defaultValue } from 'app/shared/model/user.model';
 
 export const ACTION_TYPES = {
-  FETCH_ITEM_LIST: 'item/FETCH_ITEM_LIST',
-  FETCH_ITEM: 'item/FETCH_ITEM',
-  CREATE_ITEM: 'item/CREATE_ITEM',
-  UPDATE_ITEM: 'item/UPDATE_ITEM',
-  DELETE_ITEM: 'item/DELETE_ITEM',
-  SET_BLOB: 'item/SET_BLOB',
-  RESET: 'item/RESET'
+  FETCH_USER_LIST: 'user/FETCH_USER_LIST',
+  FETCH_USER: 'user/FETCH_USER',
+  CREATE_USER: 'user/CREATE_USER',
+  UPDATE_USER: 'user/UPDATE_USER',
+  DELETE_USER: 'user/DELETE_USER',
+  SET_BLOB: 'user/SET_BLOB',
+  RESET: 'user/RESET'
 };
 
 const initialState = {
   loading: false,
   errorMessage: null,
-  entities: [] as ReadonlyArray<IItem>,
+  entities: [] as ReadonlyArray<IUser>,
   entity: defaultValue,
   updating: false,
   totalItems: 0,
   updateSuccess: false
 };
 
-export type ItemState = Readonly<typeof initialState>;
+export type UserState = Readonly<typeof initialState>;
 
 // Reducer
 
-export default (state: ItemState = initialState, action): ItemState => {
+export default (state: UserState = initialState, action): UserState => {
   switch (action.type) {
-    case REQUEST(ACTION_TYPES.FETCH_ITEM_LIST):
-    case REQUEST(ACTION_TYPES.FETCH_ITEM):
+    case REQUEST(ACTION_TYPES.FETCH_USER_LIST):
+    case REQUEST(ACTION_TYPES.FETCH_USER):
       return {
         ...state,
         errorMessage: null,
         updateSuccess: false,
         loading: true
       };
-    case REQUEST(ACTION_TYPES.CREATE_ITEM):
-    case REQUEST(ACTION_TYPES.UPDATE_ITEM):
-    case REQUEST(ACTION_TYPES.DELETE_ITEM):
+    case REQUEST(ACTION_TYPES.CREATE_USER):
+    case REQUEST(ACTION_TYPES.UPDATE_USER):
+    case REQUEST(ACTION_TYPES.DELETE_USER):
       return {
         ...state,
         errorMessage: null,
         updateSuccess: false,
         updating: true
       };
-    case FAILURE(ACTION_TYPES.FETCH_ITEM_LIST):
-    case FAILURE(ACTION_TYPES.FETCH_ITEM):
-    case FAILURE(ACTION_TYPES.CREATE_ITEM):
-    case FAILURE(ACTION_TYPES.UPDATE_ITEM):
-    case FAILURE(ACTION_TYPES.DELETE_ITEM):
+    case FAILURE(ACTION_TYPES.FETCH_USER_LIST):
+    case FAILURE(ACTION_TYPES.FETCH_USER):
+    case FAILURE(ACTION_TYPES.CREATE_USER):
+    case FAILURE(ACTION_TYPES.UPDATE_USER):
+    case FAILURE(ACTION_TYPES.DELETE_USER):
       return {
         ...state,
         loading: false,
@@ -63,28 +61,28 @@ export default (state: ItemState = initialState, action): ItemState => {
         updateSuccess: false,
         errorMessage: action.payload
       };
-    case SUCCESS(ACTION_TYPES.FETCH_ITEM_LIST):
+    case SUCCESS(ACTION_TYPES.FETCH_USER_LIST):
       return {
         ...state,
         loading: false,
         entities: action.payload.data,
         totalItems: parseInt(action.payload.headers['x-total-count'], 10)
       };
-    case SUCCESS(ACTION_TYPES.FETCH_ITEM):
+    case SUCCESS(ACTION_TYPES.FETCH_USER):
       return {
         ...state,
         loading: false,
         entity: action.payload.data
       };
-    case SUCCESS(ACTION_TYPES.CREATE_ITEM):
-    case SUCCESS(ACTION_TYPES.UPDATE_ITEM):
+    case SUCCESS(ACTION_TYPES.CREATE_USER):
+    case SUCCESS(ACTION_TYPES.UPDATE_USER):
       return {
         ...state,
         updating: false,
         updateSuccess: true,
         entity: action.payload.data
       };
-    case SUCCESS(ACTION_TYPES.DELETE_ITEM):
+    case SUCCESS(ACTION_TYPES.DELETE_USER):
       return {
         ...state,
         updating: false,
@@ -111,48 +109,48 @@ export default (state: ItemState = initialState, action): ItemState => {
   }
 };
 
-const apiUrl = 'api/items';
+const apiUrl = 'api/users';
 
 // Actions
 
-export const getEntities: ICrudGetAllAction<IItem> = (page, size, sort) => {
+export const getEntities: ICrudGetAllAction<IUser> = (page, size, sort) => {
   const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
   return {
-    type: ACTION_TYPES.FETCH_ITEM_LIST,
-    payload: axios.get<IItem>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
+    type: ACTION_TYPES.FETCH_USER_LIST,
+    payload: axios.get<IUser>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
   };
 };
 
-export const getEntity: ICrudGetAction<IItem> = id => {
+export const getEntity: ICrudGetAction<IUser> = id => {
   const requestUrl = `${apiUrl}/${id}`;
   return {
-    type: ACTION_TYPES.FETCH_ITEM,
-    payload: axios.get<IItem>(requestUrl)
+    type: ACTION_TYPES.FETCH_USER,
+    payload: axios.get<IUser>(requestUrl)
   };
 };
 
-export const createEntity: ICrudPutAction<IItem> = entity => async dispatch => {
+export const createEntity: ICrudPutAction<IUser> = entity => async dispatch => {
   const result = await dispatch({
-    type: ACTION_TYPES.CREATE_ITEM,
+    type: ACTION_TYPES.CREATE_USER,
     payload: axios.post(apiUrl, cleanEntity(entity))
   });
   dispatch(getEntities());
   return result;
 };
 
-export const updateEntity: ICrudPutAction<IItem> = entity => async dispatch => {
+export const updateEntity: ICrudPutAction<IUser> = entity => async dispatch => {
   const result = await dispatch({
-    type: ACTION_TYPES.UPDATE_ITEM,
+    type: ACTION_TYPES.UPDATE_USER,
     payload: axios.put(apiUrl, cleanEntity(entity))
   });
   dispatch(getEntities());
   return result;
 };
 
-export const deleteEntity: ICrudDeleteAction<IItem> = id => async dispatch => {
+export const deleteEntity: ICrudDeleteAction<IUser> = id => async dispatch => {
   const requestUrl = `${apiUrl}/${id}`;
   const result = await dispatch({
-    type: ACTION_TYPES.DELETE_ITEM,
+    type: ACTION_TYPES.DELETE_USER,
     payload: axios.delete(requestUrl)
   });
   dispatch(getEntities());
