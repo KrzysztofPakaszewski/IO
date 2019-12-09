@@ -6,7 +6,7 @@ import { ICrudGetAction, openFile, byteSize } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
-import { getEntity } from './item.reducer';
+import { getEntity } from './search.reducer';
 import { IItem } from 'app/shared/model/item.model';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 
@@ -60,16 +60,8 @@ export class ItemDetail extends React.Component<IItemDetailProps> {
             </dt>
             <dd>{itemEntity.hash}</dd>
           </dl>
-          <Button tag={Link} to="/item" replace color="info">
+          <Button tag={Link} to="/search" replace color="info">
             <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
-          </Button>
-          &nbsp;
-          <Button tag={Link} to={`/item/${itemEntity.id}/edit`} replace color="primary">
-            <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
-          </Button>
-          &nbsp;
-          <Button tag={Link} to={`/item/${itemEntity.id}/delete`} replace color="primary">
-            <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Delete</span>
           </Button>
         </Col>
       </Row>

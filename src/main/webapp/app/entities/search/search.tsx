@@ -2,12 +2,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Col, Row, Table } from 'reactstrap';
+import { AvForm, AvField } from 'availity-reactstrap-validation';
 import { openFile, byteSize, ICrudGetAllAction, getSortState, IPaginationBaseState, JhiPagination, JhiItemCount } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
-import { getEntities } from './item.reducer';
-import { IItem } from 'app/shared/model/item.model';
+import { getEntities, handleSearch } from './search.reducer';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
 
@@ -41,6 +41,11 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
 
   handlePagination = activePage => this.setState({ activePage }, () => this.sortEntities());
 
+  handleSearch = (event, values) => {
+    const { activePage, itemsPerPage, sort, order } = this.state;
+    this.props.handleSearch(activePage - 1, itemsPerPage, `${sort},${order}`, values.searchBox);
+  };
+
   getEntities = () => {
     const { activePage, itemsPerPage, sort, order } = this.state;
     this.props.getEntities(activePage - 1, itemsPerPage, `${sort},${order}`);
@@ -50,9 +55,26 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
     const { itemList, match, totalItems } = this.props;
     return (
       <div>
-        <h2 id="item-heading">
+        <h2 id="search-heading">
           Find something for yourself
         </h2>
+        <div>
+          <AvForm id="search-form" onValidSubmit={this.handleSearch}>
+            <AvField
+              name="searchBox"
+              placeholder={'Im looking for...'}
+              validate={{
+                required: { value: true, errorMessage: 'Your input must be at least 1 character.' },
+                pattern: { value: '^[_.@A-Za-z0-9-]*$', errorMessage: 'Your username can only contain letters and digits.' },
+                minLength: { value: 1, errorMessage: 'Your username is required to be at least 1 character.' },
+                maxLength: { value: 50, errorMessage: 'Your username cannot be longer than 50 characters.' }
+              }}
+            />
+            <Button id="search-submit" color="primary" type="submit">
+              Search <FontAwesomeIcon icon="search" />
+            </Button>
+          </AvForm>
+        </div>
         <div className="table-responsive">
           {itemList && itemList.length > 0 ? (
             <Table responsive aria-describedby="item-heading">
@@ -61,8 +83,8 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
                   <th className="hand" onClick={this.sort('id')}>
                     ID <FontAwesomeIcon icon="sort" />
                   </th>
-                  <th className="hand" onClick={this.sort('image')}>
-                    Image <FontAwesomeIcon icon="sort" />
+                  <th>
+                    Image
                   </th>
                   <th className="hand" onClick={this.sort('title')}>
                     Title <FontAwesomeIcon icon="sort" />
@@ -116,12 +138,6 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
                         <Button tag={Link} to={`${match.url}/${item.id}`} color="info" size="sm">
                           <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
                         </Button>
-                        <Button tag={Link} to={`${match.url}/${item.id}/edit`} color="primary" size="sm">
-                          <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
-                        </Button>
-                        <Button tag={Link} to={`${match.url}/${item.id}/delete`} color="danger" size="sm">
-                          <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Delete</span>
-                        </Button>
                       </div>
                     </td>
                   </tr>
@@ -157,7 +173,8 @@ const mapStateToProps = ({ item }: IRootState) => ({
 });
 
 const mapDispatchToProps = {
-  getEntities
+  getEntities,
+  handleSearch
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

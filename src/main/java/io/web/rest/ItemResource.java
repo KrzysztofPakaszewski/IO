@@ -103,11 +103,29 @@ public class ItemResource {
     }
 
     /**
+     * {@code GET  /items} : get all the items.
+     *
+
+     * @param pageable the pagination information.
+
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of items in body.
+     */
+
+    @GetMapping("/itemsAll")
+    public ResponseEntity<List<Item>> getAllItemsForSearch(Pageable pageable) {
+        log.debug("REST request to get a page of Items");
+        Page<Item> page = itemRepository.findAllForSearch(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
      * {@code GET  /items/:id} : get the "id" item.
      *
      * @param id the id of the item to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the item, or with status {@code 404 (Not Found)}.
      */
+
     @GetMapping("/items/{id}")
     public ResponseEntity<Item> getItem(@PathVariable Long id) {
         log.debug("REST request to get Item : {}", id);

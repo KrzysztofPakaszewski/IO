@@ -23,6 +23,10 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             countQuery = "select count(item) from Item item join item.owner")
     Page<Item> findAll(Pageable pageable);
 
+    @Query(value = "select item from Item item",
+        countQuery = "select count(item) from Item item")
+    Page<Item> findAllForSearch(Pageable pageable);
+
     @Query("select item from Item item join fetch item.owner where item.id = ?1")
     Optional<Item> findById( Long id);
 }
