@@ -18,6 +18,10 @@ export const UserComp = (userEntity) =>{
       </h2>
       <dl className="jh-entity-details">
         <dt>
+          <span id="title"></span>
+        </dt>
+        <dd>{userEntity.image}</dd>
+        <dt>
           <span id="title">First name</span>
         </dt>
         <dd>{userEntity.firstName}</dd>
