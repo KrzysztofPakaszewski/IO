@@ -50,7 +50,7 @@ export class ItemDetail extends React.Component<IItemDetailProps> {
             <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Delete</span>
           </Button>
           &nbsp;
-          <Button tag={Link} /*to={`${match.url}/${item.id}/delete`}*/ color="primary"  /*disabled = {getUser(item.owner.id) == getCurrentlyLoggedUser()}*/>
+          <Button tag={Link} /* to={`${match.url}/${item.id}/delete`}*/ color="primary"  /* disabled = {getUser(item.owner.id) == getCurrentlyLoggedUser()}*/>
             <FontAwesomeIcon icon = "plus" /> <span className="d-none d-md-inline">Interested</span>
           </Button>
         </Col>
@@ -59,9 +59,9 @@ export class ItemDetail extends React.Component<IItemDetailProps> {
   }
 }
 
-const mapStateToProps = ({ item }: IRootState) => ({
-  itemEntity: item.entity,
-  user: item.entity.owner,
+const mapStateToProps = (storeState : IRootState) => ({
+  itemEntity: storeState.item.entity,
+  user: storeState.userManagement.user
 });
 
 const mapDispatchToProps = { getEntity, getUsers};
