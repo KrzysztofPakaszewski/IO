@@ -24,9 +24,9 @@ export interface ISearchState extends IPaginationBaseState{
 export class Search extends React.Component<ISearchProps, ISearchState> {
   constructor(props) {
     super(props);
-    let categories = this.getUrlParameter('category');
+    const categories = this.getUrlParameter('category');
     this.state = {
-      itemsPerPage: 5,
+      itemsPerPage: getSortState(this.props.location, ITEMS_PER_PAGE).itemsPerPage,
       sort: getSortState(this.props.location, ITEMS_PER_PAGE).sort,
       order: getSortState(this.props.location, ITEMS_PER_PAGE).order,
       activePage: getSortState(this.props.location, ITEMS_PER_PAGE).activePage,
@@ -41,8 +41,8 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
 
   getUrlParameter = (name) => {
     name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-    let regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-    let results = regex.exec(window.location.search);
+    const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    const results = regex.exec(window.location.search);
     return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
   };
 
@@ -126,7 +126,6 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
       () => this.checkboxFilter()
     );
 
-
   handleGamesCheckboxChange = event =>
     this.setState({ checkedGames: event.target.checked },
       () => this.checkboxFilter());
@@ -136,9 +135,40 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
       () => this.checkboxFilter());
 
   checkboxFilter() {
+    let       currentList = this.props.itemList;
+    let newList1 = null;
+    let newList2 = null;
+    let newList3 = null;
+
+    if (this.state.checkedBooks !== false) {
+      newList1 = currentList.filter(item => {
+        const lc = item.category.toLowerCase();
+        return lc.includes("books");
+      });
+    }
+    if (this.state.checkedGames !== false){
+      newList2 = currentList.filter(item => {
+        const lc = item.category.toLowerCase();
+        return lc.includes("games");
+      });
+    }
+    if(this.state.checkedMovies !== false) {
+      newList3 = currentList.filter(item => {
+        const lc = item.category.toLowerCase();
+        return lc.includes("movies");
+      });
+    }
+    let newList = [...newList1||[], ...newList2||[], ...newList3||[]];
+    if(newList === []){
+      newList = this.props.itemList;
+    }
+
+    this.setState({
+      filteredItems: newList
+    });
+
     this.pushHistory();
   }
-
 
   render() {
     const { match } = this.props;
