@@ -111,7 +111,7 @@ public class ItemResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of items in body.
      */
 
-    @GetMapping("/itemsAll")
+    @GetMapping("/search")
     public ResponseEntity<List<Item>> getAllItemsForSearch(Pageable pageable) {
         log.debug("REST request to get a page of Items");
         Page<Item> page = itemRepository.findAllForSearch(pageable);

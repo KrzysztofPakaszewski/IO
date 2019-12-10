@@ -10,8 +10,7 @@ export const ACTION_TYPES = {
   FETCH_ITEM_LIST: 'item/FETCH_ITEM_LIST',
   FETCH_ITEM: 'item/FETCH_ITEM',
   SET_BLOB: 'item/SET_BLOB',
-  RESET: 'item/RESET',
-  HANDLE_SEARCH: 'item/HANDLE_SEARCH'
+  RESET: 'item/RESET'
 };
 
 const initialState = {
@@ -23,11 +22,11 @@ const initialState = {
   totalItems: 0
 };
 
-export type ItemState = Readonly<typeof initialState>;
+export type SearchState = Readonly<typeof initialState>;
 
 // Reducer
 
-export default (state: ItemState = initialState, action): ItemState => {
+export default (state: SearchState = initialState, action): SearchState => {
   switch (action.type) {
     case REQUEST(ACTION_TYPES.FETCH_ITEM_LIST):
       return {
@@ -41,15 +40,8 @@ export default (state: ItemState = initialState, action): ItemState => {
         errorMessage: null,
         loading: true
       };
-    case REQUEST(ACTION_TYPES.HANDLE_SEARCH):
-      return {
-        ...state,
-        errorMessage: null,
-        loading: true
-      };
     case FAILURE(ACTION_TYPES.FETCH_ITEM_LIST):
     case FAILURE(ACTION_TYPES.FETCH_ITEM):
-    case FAILURE(ACTION_TYPES.HANDLE_SEARCH):
     case SUCCESS(ACTION_TYPES.FETCH_ITEM_LIST):
       return {
         ...state,
@@ -62,13 +54,6 @@ export default (state: ItemState = initialState, action): ItemState => {
         ...state,
         loading: false,
         entity: action.payload.data
-      };
-    case SUCCESS(ACTION_TYPES.HANDLE_SEARCH):
-      return {
-        ...state,
-        loading: false,
-        entities: action.payload.data,
-        totalItems: parseInt(action.payload.headers['x-total-count'], 10)
       };
     case ACTION_TYPES.SET_BLOB: {
       const { name, data, contentType } = action.payload;
@@ -91,7 +76,7 @@ export default (state: ItemState = initialState, action): ItemState => {
 };
 
 const apiUrl = 'api/items';
-const apiUrl2 = 'api/itemsAll';
+const apiUrl2 = 'api/search';
 // Actions
 
 export const getEntities: ICrudGetAllAction<IItem> = (page, size, sort) => {
@@ -107,14 +92,6 @@ export const getEntity: ICrudGetAction<IItem> = id => {
   return {
     type: ACTION_TYPES.FETCH_ITEM,
     payload: axios.get<IItem>(requestUrl)
-  };
-};
-
-export const handleSearch = (page, size, sort, searchInput) => {
-  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}$searchInput=${searchInput}` : ''}`;
-  return {
-    type: ACTION_TYPES.HANDLE_SEARCH,
-    payload: axios.get<IItem>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
   };
 };
 

@@ -7,21 +7,35 @@ import { openFile, byteSize, ICrudGetAllAction, getSortState, IPaginationBaseSta
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
-import { getEntities, handleSearch } from './search.reducer';
+import { getEntities } from './search.reducer';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
 
 export interface ISearchProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
 
-export type ISearchState = IPaginationBaseState;
+export interface ISearchState extends IPaginationBaseState{
+  filteredItems: any;
+  search: string;
+}
 
 export class Search extends React.Component<ISearchProps, ISearchState> {
-  state: ISearchState = {
-    ...getSortState(this.props.location, ITEMS_PER_PAGE)
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      itemsPerPage: getSortState(this.props.location, ITEMS_PER_PAGE).itemsPerPage,
+      sort: getSortState(this.props.location, ITEMS_PER_PAGE).sort,
+      order: getSortState(this.props.location, ITEMS_PER_PAGE).order,
+      activePage: getSortState(this.props.location, ITEMS_PER_PAGE).activePage,
+      filteredItems: this.props.itemList,
+      search: ""
+      };
+  }
 
-  componentDidMount() {
+  componentDidMount(){
     this.getEntities();
+    this.setState({
+      filteredItems: this.props.itemList
+    });
   }
 
   sort = prop => () => {
@@ -42,9 +56,34 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
   handlePagination = activePage => this.setState({ activePage }, () => this.sortEntities());
 
   handleSearch = (event, values) => {
-    const { activePage, itemsPerPage, sort, order } = this.state;
-    this.props.handleSearch(activePage - 1, itemsPerPage, `${sort},${order}`, values.searchBox);
+  event.preventDefault();
+    this.setState(
+      {
+        search: values.searchValue
+      },
+      () => this.handleSearch2()
+    );
   };
+
+  handleSearch2(){
+    let currentList = null;
+    let newList = null;
+
+    if (this.state.search !== "") {
+      currentList = this.props.itemList;
+      newList = currentList.filter(item => {
+        const lc = item.title.toLowerCase();
+        const filter = this.state.search.toLowerCase();
+        return lc.includes(filter);
+      });
+    } else {
+        newList = this.props.itemList;
+    }
+    this.setState({
+      filteredItems: newList
+    });
+    this.props.history.push(`${this.props.location.pathname}?search=${this.state.search}&page=${this.state.activePage}&sort=${this.state.sort},${this.state.order}`);
+  }
 
   getEntities = () => {
     const { activePage, itemsPerPage, sort, order } = this.state;
@@ -52,7 +91,8 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
   };
 
   render() {
-    const { itemList, match, totalItems } = this.props;
+    const { match, totalItems } = this.props;
+    const { filteredItems } = this.state.filteredItems;
     return (
       <div>
         <h2 id="search-heading">
@@ -61,13 +101,11 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
         <div>
           <AvForm id="search-form" onValidSubmit={this.handleSearch}>
             <AvField
-              name="searchBox"
+              name="searchValue"
               placeholder={'Im looking for...'}
               validate={{
                 required: { value: true, errorMessage: 'Your input must be at least 1 character.' },
                 pattern: { value: '^[_.@A-Za-z0-9-]*$', errorMessage: 'Your username can only contain letters and digits.' },
-                minLength: { value: 1, errorMessage: 'Your username is required to be at least 1 character.' },
-                maxLength: { value: 50, errorMessage: 'Your username cannot be longer than 50 characters.' }
               }}
             />
             <Button id="search-submit" color="primary" type="submit">
@@ -76,7 +114,7 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
           </AvForm>
         </div>
         <div className="table-responsive">
-          {itemList && itemList.length > 0 ? (
+          {filteredItems && filteredItems.length > 0 ? (
             <Table responsive aria-describedby="item-heading">
               <thead>
                 <tr>
@@ -108,7 +146,7 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
                 </tr>
               </thead>
               <tbody>
-                {itemList.map((item, i) => (
+                {filteredItems.map((item, i) => (
                   <tr key={`entity-${i}`}>
                     <td>
                       <Button tag={Link} to={`${match.url}/${item.id}`} color="link" size="sm">
@@ -148,7 +186,7 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
             <div className="alert alert-warning">No Items found</div>
           )}
         </div>
-        <div className={itemList && itemList.length > 0 ? '' : 'd-none'}>
+        <div className={filteredItems&& filteredItems.length > 0 ? '' : 'd-none'}>
           <Row className="justify-content-center">
             <JhiItemCount page={this.state.activePage} total={totalItems} itemsPerPage={this.state.itemsPerPage} />
           </Row>
@@ -169,12 +207,11 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
 
 const mapStateToProps = ({ item }: IRootState) => ({
   itemList: item.entities,
-  totalItems: item.totalItems
+  totalItems: item.totalItems,
 });
 
 const mapDispatchToProps = {
-  getEntities,
-  handleSearch
+  getEntities
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
