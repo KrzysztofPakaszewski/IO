@@ -29,6 +29,7 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
       filteredItems: this.props.itemList,
       search: ""
       };
+    this.getEntities();
   }
 
   componentDidMount(){
@@ -36,6 +37,16 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
     this.setState({
       filteredItems: this.props.itemList
     });
+  }
+
+  componentDidUpdate(prevProps) {
+    // Typical usage (don't forget to compare props):
+    if (this.props.itemList !== prevProps.itemList ) {
+      this.setState(
+        {
+          filteredItems: this.props.itemList
+        });
+    }
   }
 
   sort = prop => () => {
@@ -50,7 +61,7 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
 
   sortEntities() {
     this.getEntities();
-    this.props.history.push(`${this.props.location.pathname}?page=${this.state.activePage}&sort=${this.state.sort},${this.state.order}`);
+    this.props.history.push(`${this.props.location.pathname}?search=${this.state.search}&page=${this.state.activePage}&sort=${this.state.sort},${this.state.order}`);
   }
 
   handlePagination = activePage => this.setState({ activePage }, () => this.sortEntities());
@@ -91,8 +102,7 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
   };
 
   render() {
-    const { match, totalItems } = this.props;
-    const { filteredItems } = this.state.filteredItems;
+    const { match } = this.props;
     return (
       <div>
         <h2 id="search-heading">
@@ -114,13 +124,10 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
           </AvForm>
         </div>
         <div className="table-responsive">
-          {filteredItems && filteredItems.length > 0 ? (
+          {this.state.filteredItems && this.state.filteredItems.length > 0 ? (
             <Table responsive aria-describedby="item-heading">
               <thead>
                 <tr>
-                  <th className="hand" onClick={this.sort('id')}>
-                    ID <FontAwesomeIcon icon="sort" />
-                  </th>
                   <th>
                     Image
                   </th>
@@ -140,19 +147,14 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
                     Preferences <FontAwesomeIcon icon="sort" />
                   </th>
                   <th className="hand" onClick={this.sort('hash')}>
-                    Hash <FontAwesomeIcon icon="sort" />
+                    Hashtags <FontAwesomeIcon icon="sort" />
                   </th>
                   <th />
                 </tr>
               </thead>
               <tbody>
-                {filteredItems.map((item, i) => (
+                {this.state.filteredItems.map((item, i) => (
                   <tr key={`entity-${i}`}>
-                    <td>
-                      <Button tag={Link} to={`${match.url}/${item.id}`} color="link" size="sm">
-                        {item.id}
-                      </Button>
-                    </td>
                     <td>
                       {item.image ? (
                         <div>
@@ -186,9 +188,9 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
             <div className="alert alert-warning">No Items found</div>
           )}
         </div>
-        <div className={filteredItems&& filteredItems.length > 0 ? '' : 'd-none'}>
+        <div className={this.state.filteredItems && this.state.filteredItems.length > 0 ? '' : 'd-none'}>
           <Row className="justify-content-center">
-            <JhiItemCount page={this.state.activePage} total={totalItems} itemsPerPage={this.state.itemsPerPage} />
+            <JhiItemCount page={this.state.activePage} total={this.state.filteredItems.length} itemsPerPage={this.state.itemsPerPage} />
           </Row>
           <Row className="justify-content-center">
             <JhiPagination
@@ -196,7 +198,7 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
               onSelect={this.handlePagination}
               maxButtons={5}
               itemsPerPage={this.state.itemsPerPage}
-              totalItems={this.props.totalItems}
+              totalItems={this.state.filteredItems.length}
             />
           </Row>
         </div>
@@ -206,8 +208,7 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
 }
 
 const mapStateToProps = ({ item }: IRootState) => ({
-  itemList: item.entities,
-  totalItems: item.totalItems,
+  itemList: item.entities
 });
 
 const mapDispatchToProps = {
