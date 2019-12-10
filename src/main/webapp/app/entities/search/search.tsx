@@ -16,31 +16,41 @@ export interface ISearchProps extends StateProps, DispatchProps, RouteComponentP
 export interface ISearchState extends IPaginationBaseState{
   filteredItems: any;
   search: string;
+  checkedBooks: boolean;
+  checkedGames: boolean;
+  checkedMovies: boolean;
 }
 
 export class Search extends React.Component<ISearchProps, ISearchState> {
   constructor(props) {
     super(props);
+    let categories = this.getUrlParameter('category');
     this.state = {
-      itemsPerPage: getSortState(this.props.location, ITEMS_PER_PAGE).itemsPerPage,
+      itemsPerPage: 5,
       sort: getSortState(this.props.location, ITEMS_PER_PAGE).sort,
       order: getSortState(this.props.location, ITEMS_PER_PAGE).order,
       activePage: getSortState(this.props.location, ITEMS_PER_PAGE).activePage,
       filteredItems: this.props.itemList,
-      search: ""
+      search: this.getUrlParameter('search'),
+      checkedBooks: categories.includes("books"),
+      checkedGames: categories.includes("games"),
+      checkedMovies: categories.includes("movies")
       };
-    this.getEntities();
+    this.searchFilter()
   }
+
+  getUrlParameter = (name) => {
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    let regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    let results = regex.exec(window.location.search);
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+  };
 
   componentDidMount(){
     this.getEntities();
-    this.setState({
-      filteredItems: this.props.itemList
-    });
   }
 
   componentDidUpdate(prevProps) {
-    // Typical usage (don't forget to compare props):
     if (this.props.itemList !== prevProps.itemList ) {
       this.setState(
         {
@@ -61,22 +71,21 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
 
   sortEntities() {
     this.getEntities();
-    this.props.history.push(`${this.props.location.pathname}?search=${this.state.search}&page=${this.state.activePage}&sort=${this.state.sort},${this.state.order}`);
+    this.pushHistory();
   }
 
   handlePagination = activePage => this.setState({ activePage }, () => this.sortEntities());
 
-  handleSearch = (event, values) => {
-  event.preventDefault();
+  handleSearch = (e, values) => {
     this.setState(
       {
         search: values.searchValue
       },
-      () => this.handleSearch2()
+      () => this.searchFilter()
     );
   };
 
-  handleSearch2(){
+  searchFilter(){
     let currentList = null;
     let newList = null;
 
@@ -90,16 +99,46 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
     } else {
         newList = this.props.itemList;
     }
+
     this.setState({
       filteredItems: newList
     });
-    this.props.history.push(`${this.props.location.pathname}?search=${this.state.search}&page=${this.state.activePage}&sort=${this.state.sort},${this.state.order}`);
+
+    this.pushHistory();
+  }
+
+  pushHistory(){
+    this.props.history.push(`${this.props.location.pathname}?search=${this.state.search}&page=${this.state.activePage}&sort=${this.state.sort},${this.state.order}&category=${this.state.checkedBooks ? "books," : ""}
+${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies," : ""}`);
   }
 
   getEntities = () => {
     const { activePage, itemsPerPage, sort, order } = this.state;
     this.props.getEntities(activePage - 1, itemsPerPage, `${sort},${order}`);
   };
+
+  handleClick = (item) => {
+    this.props.history.push(`${this.props.location.pathname}/${item.id}`);
+  };
+
+  handleBooksCheckboxChange = event =>
+    this.setState({checkedBooks: event.target.checked},
+      () => this.checkboxFilter()
+    );
+
+
+  handleGamesCheckboxChange = event =>
+    this.setState({ checkedGames: event.target.checked },
+      () => this.checkboxFilter());
+
+  handleMoviesCheckboxChange = event =>
+    this.setState({ checkedMovies: event.target.checked },
+      () => this.checkboxFilter());
+
+  checkboxFilter() {
+    this.pushHistory();
+  }
+
 
   render() {
     const { match } = this.props;
@@ -122,6 +161,29 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
               Search <FontAwesomeIcon icon="search" />
             </Button>
           </AvForm>
+        </div>
+        <div>
+          <label>
+            <Checkbox
+              checked={this.state.checkedBooks}
+              onChange={this.handleBooksCheckboxChange}
+            />
+            <span>Books</span>
+          </label>
+          <label>
+            <Checkbox
+              checked={this.state.checkedGames}
+              onChange={this.handleGamesCheckboxChange}
+            />
+            <span>Games</span>
+          </label>
+          <label>
+            <Checkbox
+              checked={this.state.checkedMovies}
+              onChange={this.handleMoviesCheckboxChange}
+            />
+            <span>Movies</span>
+          </label>
         </div>
         <div className="table-responsive">
           {this.state.filteredItems && this.state.filteredItems.length > 0 ? (
@@ -154,7 +216,7 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
               </thead>
               <tbody>
                 {this.state.filteredItems.map((item, i) => (
-                  <tr key={`entity-${i}`}>
+                  <tr id="clickableRow" key={`entity-${i}`} onClick={() => this.handleClick(item)} role="button">
                     <td>
                       {item.image ? (
                         <div>
@@ -174,13 +236,11 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
                     <td>{item.preferences}</td>
                     <td>{item.hash}</td>
                     <td className="text-right">
-                      <div className="btn-group flex-btn-group-container">
                         <Button tag={Link} to={`${match.url}/${item.id}`} color="info" size="sm">
                           <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
                         </Button>
-                      </div>
-                    </td>
-                  </tr>
+                      </td>
+                    </tr>
                 ))}
               </tbody>
             </Table>
@@ -214,6 +274,10 @@ const mapStateToProps = ({ item }: IRootState) => ({
 const mapDispatchToProps = {
   getEntities
 };
+
+const Checkbox = props => (
+  <input type="checkbox" {...props} />
+)
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

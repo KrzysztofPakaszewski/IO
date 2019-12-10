@@ -55,17 +55,6 @@ export default (state: SearchState = initialState, action): SearchState => {
         loading: false,
         entity: action.payload.data
       };
-    case ACTION_TYPES.SET_BLOB: {
-      const { name, data, contentType } = action.payload;
-      return {
-        ...state,
-        entity: {
-          ...state.entity,
-          [name]: data,
-          [name + 'ContentType']: contentType
-        }
-      };
-    }
     case ACTION_TYPES.RESET:
       return {
         ...initialState
@@ -94,15 +83,6 @@ export const getEntity: ICrudGetAction<IItem> = id => {
     payload: axios.get<IItem>(requestUrl)
   };
 };
-
-export const setBlob = (name, data, contentType?) => ({
-  type: ACTION_TYPES.SET_BLOB,
-  payload: {
-    name,
-    data,
-    contentType
-  }
-});
 
 export const reset = () => ({
   type: ACTION_TYPES.RESET
