@@ -36,7 +36,6 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
       checkedGames: categories.includes("games"),
       checkedMovies: categories.includes("movies")
       };
-    this.searchFilter()
   }
 
   getUrlParameter = (name) => {
@@ -54,8 +53,10 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
     if (this.props.itemList !== prevProps.itemList ) {
       this.setState(
         {
-          filteredItems: this.props.itemList
-        });
+          filteredItems: this.props.itemList,
+        },
+        () => this.searchFilter()
+      );
     }
   }
 
@@ -85,28 +86,6 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
     );
   };
 
-  searchFilter(){
-    let currentList = null;
-    let newList = null;
-
-    if (this.state.search !== "") {
-      currentList = this.props.itemList;
-      newList = currentList.filter(item => {
-        const lc = item.title.toLowerCase();
-        const filter = this.state.search.toLowerCase();
-        return lc.includes(filter);
-      });
-    } else {
-        newList = this.props.itemList;
-    }
-
-    this.setState({
-      filteredItems: newList
-    });
-
-    this.pushHistory();
-  }
-
   pushHistory(){
     this.props.history.push(`${this.props.location.pathname}?search=${this.state.search}&page=${this.state.activePage}&sort=${this.state.sort},${this.state.order}&category=${this.state.checkedBooks ? "books," : ""}
 ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies," : ""}`);
@@ -123,48 +102,61 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
 
   handleBooksCheckboxChange = event =>
     this.setState({checkedBooks: event.target.checked},
-      () => this.checkboxFilter()
-    );
+      () => this.searchFilter());
 
   handleGamesCheckboxChange = event =>
     this.setState({ checkedGames: event.target.checked },
-      () => this.checkboxFilter());
+      () => this.searchFilter());
 
   handleMoviesCheckboxChange = event =>
     this.setState({ checkedMovies: event.target.checked },
-      () => this.checkboxFilter());
+      () => this.searchFilter());
 
-  checkboxFilter() {
-    let       currentList = this.props.itemList;
+  searchFilter() {
+    let currentList = null;
+    let newList = null;
+
+    if (this.state.search !== "") {
+      currentList = this.props.itemList;
+      newList = currentList.filter(item => {
+        const lc = item.title.toLowerCase();
+        const filter = this.state.search.toLowerCase();
+        return lc.includes(filter);
+      });
+    } else {
+      newList = this.props.itemList;
+    }
+
+    const currentList2 = newList;
     let newList1 = null;
     let newList2 = null;
     let newList3 = null;
 
     if (this.state.checkedBooks !== false) {
-      newList1 = currentList.filter(item => {
+      newList1 = currentList2.filter(item => {
         const lc = item.category.toLowerCase();
         return lc.includes("books");
       });
     }
     if (this.state.checkedGames !== false){
-      newList2 = currentList.filter(item => {
+      newList2 = currentList2.filter(item => {
         const lc = item.category.toLowerCase();
         return lc.includes("games");
       });
     }
     if(this.state.checkedMovies !== false) {
-      newList3 = currentList.filter(item => {
+      newList3 = currentList2.filter(item => {
         const lc = item.category.toLowerCase();
         return lc.includes("movies");
       });
     }
-    let newList = [...newList1||[], ...newList2||[], ...newList3||[]];
-    if(newList === []){
-      newList = this.props.itemList;
+    let newListEnd = [...newList1||[], ...newList2||[], ...newList3||[]];
+    if(newListEnd.length == 0){
+      newListEnd = currentList2;
     }
 
     this.setState({
-      filteredItems: newList
+      filteredItems: newListEnd
     });
 
     this.pushHistory();
