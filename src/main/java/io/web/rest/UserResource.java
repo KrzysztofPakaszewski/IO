@@ -175,17 +175,35 @@ public class UserResource {
     }
 
     /**
-     * {@code GET /users/:login} : get the "login" user.
+     * {@code GET /users/:login} : get logged user.
      *
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the "login" user, or with status {@code 404 (Not Found)}.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the logged user, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/users/logged")
     public ResponseEntity<UserDTO> getCurrentlyLoggedUser() {
-        log.debug("REST request to get User : {}", "");
+        log.debug("REST request to get currently logged User : {}", "");
         return ResponseUtil.wrapOrNotFound(
             userService.getUserWithAuthorities()
                 .map(UserDTO::new));
     }
+
+    /**
+     * {@code GET /users/:login} : get logged user and user by login.
+     *
+     * @param login the login of the user to find.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the "login" user and logged user, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/users/logged/{login:" + Constants.LOGIN_REGEX + "}")
+    public ResponseEntity<List<UserDTO>> getCurrentlyLoggedUserAndUserByLogin(@PathVariable String login) {
+        log.debug("REST request to get currently logged User and User : {}", login);
+        List<UserDTO> result = Arrays.asList(userService.getUserWithAuthorities().map(UserDTO::new).get(),
+                    userService.getUserWithAuthoritiesByLogin(login).map(UserDTO::new).get());
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+
+
 
 
 
