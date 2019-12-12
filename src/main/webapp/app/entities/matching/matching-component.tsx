@@ -5,6 +5,7 @@ import Box from '@material-ui/core/Box';
 import { Button} from 'reactstrap';
 import { Link } from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {ItemCompMinimized} from '../item/item-component-minimized';
 
 
 
@@ -15,9 +16,9 @@ export const MatchingComponent= (props) =>{
             <Paper>
                 <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center',padding:'3em'}}>
                     {/* here will be your item minimized*/}
-                    <h1>Your Item</h1>
+                    {props.itemOffered ? ItemCompMinimized(props.itemOffered) : ''}
                     <h5>FOR</h5>
-                    <h1>This Item</h1>
+                    {props.itemAsked ? ItemCompMinimized(props.itemAsked) : ''}
                     {/* here will be other item minimized*/}
                 </div>
                 <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between',padding:'2em'}}>
