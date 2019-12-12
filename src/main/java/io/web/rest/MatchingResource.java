@@ -105,7 +105,7 @@ public class MatchingResource {
         log.debug("REST request to get currently logged user matchings");
         Optional<String> userLogin = SecurityUtils.getCurrentUserLogin();
         if ( ! userLogin.isPresent()){
-            throw new BadRequestAlertException("Something went wrong ", "" ,"");
+            throw new BadRequestAlertException("Could not get currently logged user ", "" ,"");
         }
         return matchingRepository.findAllMatchingsOfUser(userLogin.get());
     }
