@@ -1,8 +1,10 @@
 package io.web.rest;
 
+import io.config.Constants;
 import io.domain.Item;
 import io.repository.ItemRepository;
 import io.web.rest.errors.BadRequestAlertException;
+import io.security.SecurityUtils;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
@@ -98,6 +100,33 @@ public class ItemResource {
         Page<Item> page = itemRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /items} : get all items of logged user.
+     *
+     * @return the {@link List<Item>} with status {@code 200 (OK)} and the list of items in body.
+     */
+    @GetMapping("/items/logged")
+    public List<Item> getItemsOfLoggedUser() {
+        log.debug("REST request to get items of logged User");
+        Optional<String> userLogin = SecurityUtils.getCurrentUserLogin();
+        if(!userLogin.isPresent()){
+            throw new BadRequestAlertException("Could not get currently logged user","","");
+        }
+        return itemRepository.findItemsOfUser(userLogin.get());
+    }
+
+    /**
+     * {@code GET  /items} : get all items of user.
+     *
+     * @param login the login of the user.
+     * @return the {@link List<Item>} with status {@code 200 (OK)} and the list of items in body.
+     */
+    @GetMapping("/items/user/{login:" + Constants.LOGIN_REGEX + "}")
+    public List<Item> getItemsOfUser(@PathVariable String login) {
+        log.debug("REST request to get items of User");
+        return itemRepository.findItemsOfUser(login);
     }
 
     /**

@@ -25,4 +25,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     @Query("select item from Item item join fetch item.owner where item.id = ?1")
     Optional<Item> findById( Long id);
+
+    @Query("select item from Item item where item.owner.login = ?1")
+    List<Item> findItemsOfUser(String login);
 }

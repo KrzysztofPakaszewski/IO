@@ -123,6 +123,21 @@ export const getEntities: ICrudGetAllAction<IItem> = (page, size, sort) => {
   };
 };
 
+export const getLoggedUserItems = () => {
+  const requestUrl = `${apiUrl}/logged`;
+  return {
+    type: ACTION_TYPES.FETCH_ITEM_LIST,
+    payload: axios.get<IItem>(requestUrl)
+  };
+};
+
+export const getUserItems = login => {
+  const requestUrl = `${apiUrl}/user/${login}`;
+  return {
+    type: ACTION_TYPES.FETCH_ITEM_LIST,
+    payload: axios.get<IItem>(requestUrl)
+  };
+};
 export const getEntity: ICrudGetAction<IItem> = id => {
   const requestUrl = `${apiUrl}/${id}`;
   return {

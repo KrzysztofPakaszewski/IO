@@ -100,7 +100,7 @@ public class ReviewResource {
     @GetMapping("/reviews/{id}")
     public ResponseEntity<Review> getReview(@PathVariable Long id) {
         log.debug("REST request to get Review : {}", id);
-        Optional<Review> review = reviewRepository.findById(id);
+        Optional<Review> review = reviewRepository.findByIdFetch(id);
         return ResponseUtil.wrapOrNotFound(review);
     }
 

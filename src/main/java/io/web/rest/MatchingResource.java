@@ -3,6 +3,7 @@ package io.web.rest;
 import io.domain.Matching;
 import io.repository.MatchingRepository;
 import io.web.rest.errors.BadRequestAlertException;
+import io.security.SecurityUtils;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -10,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional; 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -90,6 +91,23 @@ public class MatchingResource {
     public List<Matching> getAllMatchings() {
         log.debug("REST request to get all Matchings");
         return matchingRepository.findAll();
+    }
+
+
+    /**
+     * {@code GET  /matchings} : get matchings for logged user.
+     *
+
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of matchings in body.
+     */
+    @GetMapping("/matchings/loggedUser")
+    public List<Matching> getLoggedUserMatchings() {
+        log.debug("REST request to get currently logged user matchings");
+        Optional<String> userLogin = SecurityUtils.getCurrentUserLogin();
+        if ( ! userLogin.isPresent()){
+            throw new BadRequestAlertException("Could not get currently logged user ", "" ,"");
+        }
+        return matchingRepository.findAllMatchingsOfUser(userLogin.get());
     }
 
     /**

@@ -104,6 +104,14 @@ export const getEntities: ICrudGetAllAction<IMatching> = (page, size, sort) => (
   payload: axios.get<IMatching>(`${apiUrl}?cacheBuster=${new Date().getTime()}`)
 });
 
+export const getLoggedUserMatches = () => {
+  const requestUrl = `${apiUrl}/loggedUser`;
+  return {
+    type: ACTION_TYPES.FETCH_MATCHING_LIST,
+    payload: axios.get<IMatching>(requestUrl)
+  };
+};
+
 export const getEntity: ICrudGetAction<IMatching> = id => {
   const requestUrl = `${apiUrl}/${id}`;
   return {

@@ -5,19 +5,17 @@ import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import { Button} from 'reactstrap';
 import { Link } from 'react-router-dom';
+import {UserCompMinimized} from '../user/user-component-minimized';
 
 
-// props: {score:Integer(0-5), login:String, review:String}
+// props: {IReview}
 export const ReviewComp = (props) =>{
 
   return (
    <Box maxWidth={600}>
       <Paper>
         <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between'}}>
-        {/*  <Button tag={Link} to={'link to user'} color="link" size="sm">
-                {props.login}
-            </Button>    */}
-          <h4>Login</h4>
+        {props.reviewer ? UserCompMinimized(props.reviewer) : ''}
           <Rating
            value = {props.score}
            readOnly

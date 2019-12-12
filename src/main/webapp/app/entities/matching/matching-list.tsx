@@ -4,7 +4,7 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { ICrudGetAllAction } from 'react-jhipster';
 
 import { IRootState } from 'app/shared/reducers';
-import { getEntities } from './matching.reducer';
+import { getLoggedUserMatches } from './matching.reducer';
 import { IMatching } from 'app/shared/model/matching.model';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import {MatchingComponent} from './matching-component';
@@ -30,7 +30,7 @@ export class MatchingList extends React.Component<IMatchingListProps, IMatchingL
     this.next = this.next.bind(this);
   }
   componentDidMount() {
-    this.props.getEntities();
+    this.props.getLoggedUserMatches();
   }
 
   next (){
@@ -85,7 +85,7 @@ const mapStateToProps = ({ matching }: IRootState) => ({
 });
 
 const mapDispatchToProps = {
-  getEntities
+  getLoggedUserMatches
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

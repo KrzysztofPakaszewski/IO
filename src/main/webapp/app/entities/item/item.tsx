@@ -109,7 +109,7 @@ export class Item extends React.Component<IItemProps, IItemState> {
                     ) : null}
                   </td>
                   <td>
-                    <Button tag={Link} to={`${match.url}/${item.id}`} color="link" size="sm">
+                    <Button tag={Link} to={`${match.url}/${item.id}/detail`} color="link" size="sm">
                       {item.title}
                     </Button>
                   </td>
@@ -125,7 +125,7 @@ export class Item extends React.Component<IItemProps, IItemState> {
                   </td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`${match.url}/${item.id}`} color="info" size="sm" >
+                      <Button tag={Link} to={`${match.url}/${item.id}/detail`} color="info" size="sm" >
                         <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
                       </Button>
                       <Button tag={Link} to={`${match.url}/${item.id}/edit`} color="primary" size="sm" >
@@ -134,7 +134,7 @@ export class Item extends React.Component<IItemProps, IItemState> {
                       <Button tag={Link} to={`${match.url}/${item.id}/delete`} color="danger" size="sm" >
                         <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Delete</span>
                       </Button>
-                      <Button tag={Link} /*to={`${match.url}/${item.id}/delete`}*/ color="primary" size="sm" >
+                      <Button tag={Link} /* to={`${match.url}/${item.id}/delete`}*/ color="primary" size="sm" >
                         <FontAwesomeIcon icon = "plus" /> <span className="d-none d-md-inline">Interested</span>
                       </Button>
                     </div>
