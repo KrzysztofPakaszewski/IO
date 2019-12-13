@@ -54,16 +54,20 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
         order: this.state.order === 'asc' ? 'desc' : 'asc',
         sort: prop
       },
-      () => this.sortEntities()
+      () => this.searchFilter()
     );
   };
 
-  sortEntities() {
-    this.getEntities();
-    this.pushHistory();
+
+  handlePagination = activePage => {
+    this.setState(
+      {
+        activePage : activePage
+      },
+      () => this.searchFilter()
+    );
   }
 
-  handlePagination = activePage => this.setState({ activePage }, () => this.sortEntities());
 
   handleSearch = (e, values) => {
     this.setState(
@@ -106,7 +110,7 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
   }
 
   render() {
-    const { match, itemList } = this.props;
+    const { match, itemList, totalItems } = this.props;
     return (
       <div>
         <h2 id="search-heading">
@@ -119,7 +123,7 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
               placeholder={'Im looking for...'}
               validate={{
                 required: { value: true, errorMessage: 'Your input must be at least 1 character.' },
-                pattern: { value: '^[_.@A-Za-z0-9-]*$', errorMessage: 'Your username can only contain letters and digits.' },
+                pattern: { value: '^[_.@A-Za-z0-9-]*$', errorMessage: 'Your search can only contain letters and digits.' },
               }}
             />
             <Button id="search-submit" color="primary" type="submit">
@@ -215,7 +219,7 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
         </div>
         <div className={itemList && itemList.length > 0 ? '' : 'd-none'}>
           <Row className="justify-content-center">
-            <JhiItemCount page={this.state.activePage} total={itemList.length} itemsPerPage={this.state.itemsPerPage} />
+            <JhiItemCount page={this.state.activePage} total={totalItems} itemsPerPage={this.state.itemsPerPage} />
           </Row>
           <Row className="justify-content-center">
             <JhiPagination
@@ -223,17 +227,19 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
               onSelect={this.handlePagination}
               maxButtons={5}
               itemsPerPage={this.state.itemsPerPage}
-              totalItems={itemList.length}
+              totalItems={this.props.totalItems}
             />
           </Row>
         </div>
       </div>
     );
   }
+
 }
 
 const mapStateToProps = ({ item }: IRootState) => ({
-  itemList: item.entities
+  itemList: item.entities,
+  totalItems: item.totalItems
 });
 
 const mapDispatchToProps = {
