@@ -4,7 +4,7 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { ICrudGetAllAction } from 'react-jhipster';
 
 import { IRootState } from 'app/shared/reducers';
-import { getEntities } from './matching.reducer';
+import { getLoggedUserMatches } from './matching.reducer';
 import { IMatching } from 'app/shared/model/matching.model';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import {MatchingComponent} from './matching-component';
@@ -24,58 +24,58 @@ export class MatchingList extends React.Component<IMatchingListProps, IMatchingL
   constructor(props){
     super(props);
     this.state= {
-        activeIndex: 0
+      activeIndex: 0
     }
     this.previous = this.previous.bind(this);
     this.next = this.next.bind(this);
   }
   componentDidMount() {
-    this.props.getEntities();
+    this.props.getLoggedUserMatches();
   }
 
   next (){
-      this.setState({
-          activeIndex: (this.state.activeIndex + 1)% this.props.list.length
-      });
+    this.setState({
+      activeIndex: (this.state.activeIndex + 1)% this.props.list.length
+    });
   };
 
   previous(){
-      this.setState({
-          activeIndex: (this.state.activeIndex - 1)% this.props.list.length
-      });
+    this.setState({
+      activeIndex: (this.state.activeIndex - 1)% this.props.list.length
+    });
   };
 
 
   goToIndex = newIndex =>{
-      this.setState({
-          activeIndex: newIndex
-      });
+    this.setState({
+      activeIndex: newIndex
+    });
   };
 
   render() {
     const { list } = this.props;
     const {activeIndex} = this.state;
     return (
-        <Box>
-            <Carousel
-              activeIndex = {activeIndex}
-              next = {this.next}
-              previous= {this.previous}
+      <Box>
+        <Carousel
+          activeIndex = {activeIndex}
+          next = {this.next}
+          previous= {this.previous}
+        >
+          <CarouselIndicators items ={list} activeIndex={activeIndex} onClickHandler={this.goToIndex}/>
+          {list.map((item)=>{
+            return(
+              <CarouselItem
+                key = {item.id}
               >
-              <CarouselIndicators items ={list} activeIndex={activeIndex} onClickHandler={this.goToIndex}/>
-                {list.map((item)=>{
-                    return(
-                        <CarouselItem
-                             key = {item.id}
-                        >
-                          {MatchingComponent(item)}
-                        </CarouselItem>
-                    );
-                })}
-                <CarouselControl direction= 'next' directionText='Next' onClickHandler = {this.next}/>
-                <CarouselControl direction= 'prev' directionText='Previous' onClickHandler = {this.previous}/>
-            </Carousel>
-        </Box>
+                {MatchingComponent(item)}
+              </CarouselItem>
+            );
+          })}
+          <CarouselControl direction= 'next' directionText='Next' onClickHandler = {this.next}/>
+          <CarouselControl direction= 'prev' directionText='Previous' onClickHandler = {this.previous}/>
+        </Carousel>
+      </Box>
     );
   }
 }
@@ -85,7 +85,7 @@ const mapStateToProps = ({ matching }: IRootState) => ({
 });
 
 const mapDispatchToProps = {
-  getEntities
+  getLoggedUserMatches
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

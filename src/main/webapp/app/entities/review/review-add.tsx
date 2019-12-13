@@ -6,7 +6,7 @@ import { Button} from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IUser } from 'app/shared/model/user.model';
-import { getCurrentlyLoggedUser, getUser} from 'app/modules/administration/user-management/user-management.reducer';
+import { getCurrentUserAndUserById} from 'app/modules/administration/user-management/user-management.reducer';
 import { createEntity,reset} from './review.reducer';
 import { IReview } from 'app/shared/model/review.model';
 import {Rating} from '@material-ui/lab';
@@ -28,17 +28,18 @@ export class ReviewAdd extends React.Component<IReviewAddProps, IReviewAddState>
       review: '',
       score: 0
     };
+    this.handleSave = this.handleSave.bind(this);
   }
   componentDidMount(){
-    this.props.getCurrentlyLoggedUser();
-    this.props.getUser(this.props.match.params.login);
+      this.props.getCurrentUserAndUserById(this.props.match.params.login);
   }
 
-  handleSave = (values) => {
+  handleSave(event) {
+        event.preventDefault();
         const entity = {
             ...this.state,
-            reviewer:  this.props.reviewer,
-            user: this.props.user
+            reviewer:  this.props.users[0],
+            user: this.props.users[1]
         };
         this.props.createEntity(entity);
         this.handleClose();
@@ -75,7 +76,7 @@ export class ReviewAdd extends React.Component<IReviewAddProps, IReviewAddState>
             }}
             required={true}
         />
-        <Button color="primary" id="save-entity" type="submit" >
+        <Button color="primary" id="save-entity" type="submit">
              <FontAwesomeIcon icon="save" />
                   &nbsp; Save
               </Button>
@@ -87,15 +88,13 @@ export class ReviewAdd extends React.Component<IReviewAddProps, IReviewAddState>
 }
 
 const mapStateToProps = (storeState: IRootState) => ({
-  reviewer: storeState.userManagement.user,
-  user: storeState.userManagement.user,
+  users: storeState.userManagement.users,
   updating: storeState.review.updating,
   updateSuccess: storeState.review.updateSuccess
 });
 
 const mapDispatchToProps = {
-  getCurrentlyLoggedUser,
-  getUser,
+  getCurrentUserAndUserById,
   createEntity,
   reset
 };

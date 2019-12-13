@@ -5,11 +5,13 @@ import { Button, Col, Row, Table } from 'reactstrap';
 import { openFile, byteSize, ICrudGetAllAction, getSortState, IPaginationBaseState, JhiPagination, JhiItemCount } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import {Checkbox} from "@material-ui/core";
 import { IRootState } from 'app/shared/reducers';
-import { getEntities } from './item.reducer';
+import { getEntities, getEntity } from './item.reducer';
 import { IItem } from 'app/shared/model/item.model';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
+import {getCurrentlyLoggedUser, getUser} from "app/modules/administration/user-management/user-management.reducer";
 
 export interface IItemProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
 
@@ -34,7 +36,7 @@ export class Item extends React.Component<IItemProps, IItemState> {
     );
   };
 
-  sortEntities() {
+    sortEntities() {
     this.getEntities();
     this.props.history.push(`${this.props.location.pathname}?page=${this.state.activePage}&sort=${this.state.sort},${this.state.order}`);
   }
@@ -51,85 +53,94 @@ export class Item extends React.Component<IItemProps, IItemState> {
     return (
       <div>
         <h2 id="item-heading">
-          Your items
+          All items
           <Link to={`${match.url}/new`} className="btn btn-primary float-right jh-create-entity" id="jh-create-entity">
             <FontAwesomeIcon icon="plus" />
             &nbsp; Create new item
           </Link>
         </h2>
+        <Checkbox value = "yourItems" checked /> Your items
+        <Checkbox value = "otherItems" checked/> Other items
         <div className="table-responsive">
           {itemList && itemList.length > 0 ? (
             <Table responsive aria-describedby="item-heading">
               <thead>
-                <tr>
-                  <th className="hand" onClick={this.sort('id')}>
-                    ID <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={this.sort('image')}>
-                    Image <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={this.sort('title')}>
-                    Title <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={this.sort('category')}>
-                    Category <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={this.sort('state')}>
-                    State <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={this.sort('preferedDelivery')}>
-                    Prefered Delivery <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={this.sort('preferences')}>
-                    Preferences <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={this.sort('hash')}>
-                    Hash <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th />
-                </tr>
+              <tr>
+                <th className="hand" onClick={this.sort('image')}>
+                  Image <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={this.sort('title')}>
+                  Title <FontAwesomeIcon icon="sort" />
+                </th>
+                <th  className="hand" onClick={this.sort('category')}>
+                  Category <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={this.sort('state')}>
+                  State <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={this.sort('preferedDelivery')}>
+                  Prefered Delivery <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={this.sort('preferences')}>
+                  Preferences <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={this.sort('hash')}>
+                  Hashtags <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={this.sort('owner')}>
+                  Owner <FontAwesomeIcon icon="sort" />
+                </th>
+                <th />
+              </tr>
               </thead>
               <tbody>
-                {itemList.map((item, i) => (
-                  <tr key={`entity-${i}`}>
-                    <td>
-                      <Button tag={Link} to={`${match.url}/${item.id}`} color="link" size="sm">
-                        {item.id}
-                      </Button>
-                    </td>
-                    <td>
-                      {item.image ? (
-                        <div>
-                          <a onClick={openFile(item.imageContentType, item.image)}>
-                            <img src={`data:${item.imageContentType};base64,${item.image}`} style={{ maxHeight: '30px' }} />
-                            &nbsp;
-                          </a>
-                          <span>
+              {itemList.map((item, i) => (
+                <tr key={`entity-${i}`}>
+                  <td>
+                    {item.image ? (
+                      <div>
+                        <a onClick={openFile(item.imageContentType, item.image)}>
+                          <img src={`data:${item.imageContentType};base64,${item.image}`} style={{ maxHeight: '30px' }} />
+                          &nbsp;
+                        </a>
+                        <span>
                           </span>
-                        </div>
-                      ) : null}
-                    </td>
-                    <td>{item.title}</td>
-                    <td>{item.category}</td>
-                    <td>{item.state}</td>
-                    <td>{item.preferedDelivery}</td>
-                    <td>{item.preferences}</td>
-                    <td>{item.hash}</td>
-                    <td className="text-right">
-                      <div className="btn-group flex-btn-group-container">
-                        <Button tag={Link} to={`${match.url}/${item.id}`} color="info" size="sm">
-                          <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
-                        </Button>
-                        <Button tag={Link} to={`${match.url}/${item.id}/edit`} color="primary" size="sm">
-                          <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
-                        </Button>
-                        <Button tag={Link} to={`${match.url}/${item.id}/delete`} color="danger" size="sm">
-                          <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Delete</span>
-                        </Button>
                       </div>
-                    </td>
-                  </tr>
-                ))}
+                    ) : null}
+                  </td>
+                  <td>
+                    <Button tag={Link} to={`${match.url}/${item.id}/detail`} color="link" size="sm">
+                      {item.title}
+                    </Button>
+                  </td>
+                  <td>{item.category}</td>
+                  <td>{item.state}</td>
+                  <td>{item.preferedDelivery}</td>
+                  <td>{item.preferences}</td>
+                  <td>{item.hash}</td>
+                  <td>
+                    <Button tag={Link} to={`user/${item.owner.login}`} color="link" size="sm">
+                      {item.owner.login}
+                    </Button>
+                  </td>
+                  <td className="text-right">
+                    <div className="btn-group flex-btn-group-container">
+                      <Button tag={Link} to={`${match.url}/${item.id}/detail`} color="info" size="sm" >
+                        <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
+                      </Button>
+                      <Button tag={Link} to={`${match.url}/${item.id}/edit`} color="primary" size="sm" >
+                        <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
+                      </Button>
+                      <Button tag={Link} to={`${match.url}/${item.id}/delete`} color="danger" size="sm" >
+                        <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Delete</span>
+                      </Button>
+                      <Button tag={Link} /* to={`${match.url}/${item.id}/delete`}*/ color="primary" size="sm" >
+                        <FontAwesomeIcon icon = "plus" /> <span className="d-none d-md-inline">Interested</span>
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
               </tbody>
             </Table>
           ) : (
@@ -155,13 +166,17 @@ export class Item extends React.Component<IItemProps, IItemState> {
   }
 }
 
-const mapStateToProps = ({ item }: IRootState) => ({
-  itemList: item.entities,
-  totalItems: item.totalItems
+const mapStateToProps = (storeState: IRootState) => ({
+  itemList: storeState.item.entities,
+  totalItems: storeState.item.totalItems,
+  item: storeState.item.entity,
+  loggedUser: storeState.userManagement.user
 });
 
 const mapDispatchToProps = {
-  getEntities
+  getEntities,
+  getCurrentlyLoggedUser,
+  getEntity
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

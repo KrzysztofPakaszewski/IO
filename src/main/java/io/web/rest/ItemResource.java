@@ -1,9 +1,11 @@
 package io.web.rest;
 
+import io.config.Constants;
 import io.domain.Item;
 import io.domain.enumeration.Category;
 import io.repository.ItemRepository;
 import io.web.rest.errors.BadRequestAlertException;
+import io.security.SecurityUtils;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
@@ -90,9 +92,7 @@ public class ItemResource {
     /**
      * {@code GET  /items} : get all the items.
      *
-
      * @param pageable the pagination information.
-
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of items in body.
      */
     @GetMapping("/items")
@@ -119,13 +119,40 @@ public class ItemResource {
                                                            @RequestParam(value = "category3", required = false) Category category3) {
         log.debug("REST request to get a page of Items");
         Page<Item> page;
-        if(search.contains("#")) {
+        if (search.contains("#")) {
             page = itemRepository.findAllForHashtagSearch(pageable, search.substring(1), category1, category2, category3);
-        } else{
+        } else {
             page = itemRepository.findAllForSearch(pageable, search, category1, category2, category3);
         }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+        /**
+     * {@code GET  /items} : get all items of logged user.
+     *
+     * @return the {@link List<Item>} with status {@code 200 (OK)} and the list of items in body.
+     */
+
+    @GetMapping("/items/logged")
+    public List<Item> getItemsOfLoggedUser() {
+        log.debug("REST request to get items of logged User");
+        Optional<String> userLogin = SecurityUtils.getCurrentUserLogin();
+        if(!userLogin.isPresent()){
+            throw new BadRequestAlertException("Could not get currently logged user","","");
+        }
+        return itemRepository.findItemsOfUser(userLogin.get());
+    }
+
+    /**
+     * {@code GET  /items} : get all items of user.
+     *
+     * @param login the login of the user.
+     * @return the {@link List<Item>} with status {@code 200 (OK)} and the list of items in body.
+     */
+    @GetMapping("/items/user/{login:" + Constants.LOGIN_REGEX + "}")
+    public List<Item> getItemsOfUser(@PathVariable String login) {
+        log.debug("REST request to get items of User");
+        return itemRepository.findItemsOfUser(login);
     }
 
     /**
