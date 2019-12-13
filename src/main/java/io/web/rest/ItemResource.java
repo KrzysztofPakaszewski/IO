@@ -1,6 +1,7 @@
 package io.web.rest;
 
 import io.domain.Item;
+import io.domain.enumeration.Category;
 import io.repository.ItemRepository;
 import io.web.rest.errors.BadRequestAlertException;
 
@@ -112,9 +113,12 @@ public class ItemResource {
      */
 
     @GetMapping("/search")
-    public ResponseEntity<List<Item>> getAllItemsForSearch(Pageable pageable) {
+    public ResponseEntity<List<Item>> getAllItemsForSearch(Pageable pageable, @RequestParam(value = "search", required = false) String search,
+                                                           @RequestParam(value = "category1", required = false) Category category1,
+                                                           @RequestParam(value = "category2", required = false) Category category2,
+                                                           @RequestParam(value = "category3", required = false) Category category3) {
         log.debug("REST request to get a page of Items");
-        Page<Item> page = itemRepository.findAllForSearch(pageable);
+        Page<Item> page = itemRepository.findAllForSearch(pageable, search, category1, category2, category3);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

@@ -10,11 +10,11 @@ import { IRootState } from 'app/shared/reducers';
 import { getEntities } from './search.reducer';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
+import {Category} from "app/shared/model/enumerations/category.model";
 
 export interface ISearchProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
 
 export interface ISearchState extends IPaginationBaseState{
-  filteredItems: any;
   search: string;
   checkedBooks: boolean;
   checkedGames: boolean;
@@ -30,7 +30,6 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
       sort: getSortState(this.props.location, ITEMS_PER_PAGE).sort,
       order: getSortState(this.props.location, ITEMS_PER_PAGE).order,
       activePage: getSortState(this.props.location, ITEMS_PER_PAGE).activePage,
-      filteredItems: this.props.itemList,
       search: this.getUrlParameter('search'),
       checkedBooks: categories.includes("books"),
       checkedGames: categories.includes("games"),
@@ -47,17 +46,6 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
 
   componentDidMount(){
     this.getEntities();
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.itemList !== prevProps.itemList ) {
-      this.setState(
-        {
-          filteredItems: this.props.itemList,
-        },
-        () => this.searchFilter()
-      );
-    }
   }
 
   sort = prop => () => {
@@ -92,8 +80,8 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
   }
 
   getEntities = () => {
-    const { activePage, itemsPerPage, sort, order } = this.state;
-    this.props.getEntities(activePage - 1, itemsPerPage, `${sort},${order}`);
+    const { search, activePage, itemsPerPage, sort, order, checkedBooks, checkedGames, checkedMovies} = this.state;
+    this.props.getEntities(search, activePage - 1, itemsPerPage, `${sort},${order}`, checkedBooks ? "Books" : "", checkedGames ? "Games" : "", checkedMovies ? "Movies" : "");
   };
 
   handleClick = (item) => {
@@ -113,57 +101,12 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
       () => this.searchFilter());
 
   searchFilter() {
-    let currentList = null;
-    let newList = null;
-
-    if (this.state.search !== "") {
-      currentList = this.props.itemList;
-      newList = currentList.filter(item => {
-        const lc = item.title.toLowerCase();
-        const filter = this.state.search.toLowerCase();
-        return lc.includes(filter);
-      });
-    } else {
-      newList = this.props.itemList;
-    }
-
-    const currentList2 = newList;
-    let newList1 = null;
-    let newList2 = null;
-    let newList3 = null;
-
-    if (this.state.checkedBooks !== false) {
-      newList1 = currentList2.filter(item => {
-        const lc = item.category.toLowerCase();
-        return lc.includes("books");
-      });
-    }
-    if (this.state.checkedGames !== false){
-      newList2 = currentList2.filter(item => {
-        const lc = item.category.toLowerCase();
-        return lc.includes("games");
-      });
-    }
-    if(this.state.checkedMovies !== false) {
-      newList3 = currentList2.filter(item => {
-        const lc = item.category.toLowerCase();
-        return lc.includes("movies");
-      });
-    }
-    let newListEnd = [...newList1||[], ...newList2||[], ...newList3||[]];
-    if(newListEnd.length == 0){
-      newListEnd = currentList2;
-    }
-
-    this.setState({
-      filteredItems: newListEnd
-    });
-
+    this.getEntities();
     this.pushHistory();
   }
 
   render() {
-    const { match } = this.props;
+    const { match, itemList } = this.props;
     return (
       <div>
         <h2 id="search-heading">
@@ -208,7 +151,7 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
           </label>
         </div>
         <div className="table-responsive">
-          {this.state.filteredItems && this.state.filteredItems.length > 0 ? (
+          {itemList && itemList.length > 0 ? (
             <Table responsive aria-describedby="item-heading">
               <thead>
                 <tr>
@@ -237,7 +180,7 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
                 </tr>
               </thead>
               <tbody>
-                {this.state.filteredItems.map((item, i) => (
+                {itemList.map((item, i) => (
                   <tr id="clickableRow" key={`entity-${i}`} onClick={() => this.handleClick(item)} role="button">
                     <td>
                       {item.image ? (
@@ -270,9 +213,9 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
             <div className="alert alert-warning">No Items found</div>
           )}
         </div>
-        <div className={this.state.filteredItems && this.state.filteredItems.length > 0 ? '' : 'd-none'}>
+        <div className={itemList && itemList.length > 0 ? '' : 'd-none'}>
           <Row className="justify-content-center">
-            <JhiItemCount page={this.state.activePage} total={this.state.filteredItems.length} itemsPerPage={this.state.itemsPerPage} />
+            <JhiItemCount page={this.state.activePage} total={itemList.length} itemsPerPage={this.state.itemsPerPage} />
           </Row>
           <Row className="justify-content-center">
             <JhiPagination
@@ -280,7 +223,7 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
               onSelect={this.handlePagination}
               maxButtons={5}
               itemsPerPage={this.state.itemsPerPage}
-              totalItems={this.state.filteredItems.length}
+              totalItems={itemList.length}
             />
           </Row>
         </div>

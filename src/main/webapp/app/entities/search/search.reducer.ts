@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ICrudGetAction, ICrudGetAllAction, ICrudPutAction } from 'react-jhipster';
+import { ICrudGetAction, ICrudGetSearchFilterAction, ICrudPutAction } from 'react-jhipster';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
@@ -68,8 +68,17 @@ const apiUrl = 'api/items';
 const apiUrl2 = 'api/search';
 // Actions
 
-export const getEntities: ICrudGetAllAction<IItem> = (page, size, sort) => {
-  const requestUrl = `${apiUrl2}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
+export const getEntities: ICrudGetSearchFilterAction<IItem> = (search, page, size, sort, checkedBooks, checkedGames, checkedMovies) => {
+  if (checkedBooks === '' && checkedGames === '' && checkedMovies === '') {
+    checkedBooks = 'Books';
+    checkedGames = 'Games';
+    checkedMovies = 'Movies';
+  }
+  const requestUrl = `${apiUrl2}${
+    sort
+      ? `?page=${page}&size=${size}&sort=${sort}&search=${search}&category1=${checkedBooks}&category2=${checkedGames}&category3=${checkedMovies}`
+      : ''
+  }`;
   return {
     type: ACTION_TYPES.FETCH_ITEM_LIST,
     payload: axios.get<IItem>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
