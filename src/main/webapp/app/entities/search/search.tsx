@@ -11,6 +11,7 @@ import { getEntities } from './search.reducer';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
 import {Category} from "app/shared/model/enumerations/category.model";
+import {getUrlParameter} from "app/shared/util/url-utils";
 
 export interface ISearchProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
 
@@ -24,25 +25,18 @@ export interface ISearchState extends IPaginationBaseState{
 export class Search extends React.Component<ISearchProps, ISearchState> {
   constructor(props) {
     super(props);
-    const categories = this.getUrlParameter('category');
+    const categories = getUrlParameter('category');
     this.state = {
       itemsPerPage: getSortState(this.props.location, ITEMS_PER_PAGE).itemsPerPage,
       sort: getSortState(this.props.location, ITEMS_PER_PAGE).sort,
       order: getSortState(this.props.location, ITEMS_PER_PAGE).order,
       activePage: getSortState(this.props.location, ITEMS_PER_PAGE).activePage,
-      search: this.getUrlParameter('search'),
+      search: getUrlParameter('search'),
       checkedBooks: categories.includes("books"),
       checkedGames: categories.includes("games"),
       checkedMovies: categories.includes("movies")
       };
   }
-
-  getUrlParameter = (name) => {
-    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-    const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-    const results = regex.exec(window.location.search);
-    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-  };
 
   componentDidMount(){
     this.getEntities();
@@ -66,7 +60,7 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
       },
       () => this.searchFilter()
     );
-  }
+  };
 
 
   handleSearch = (e, values) => {
@@ -76,16 +70,6 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
       },
       () => this.searchFilter()
     );
-  };
-
-  pushHistory(){
-    this.props.history.push(`${this.props.location.pathname}?search=${this.state.search}&page=${this.state.activePage}&sort=${this.state.sort},${this.state.order}&category=${this.state.checkedBooks ? "books," : ""}
-${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies," : ""}`);
-  }
-
-  getEntities = () => {
-    const { search, activePage, itemsPerPage, sort, order, checkedBooks, checkedGames, checkedMovies} = this.state;
-    this.props.getEntities(search, activePage - 1, itemsPerPage, `${sort},${order}`, checkedBooks ? "Books" : "", checkedGames ? "Games" : "", checkedMovies ? "Movies" : "");
   };
 
   handleClick = (item) => {
@@ -109,6 +93,17 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
     this.pushHistory();
   }
 
+  pushHistory(){
+    this.props.history.push(`${this.props.location.pathname}?search=${this.state.search}&page=${this.state.activePage}&sort=${this.state.sort},${this.state.order}&category=${this.state.checkedBooks ? "books," : ""}
+${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies," : ""}`);
+  }
+
+  getEntities = () => {
+    const { search, activePage, itemsPerPage, sort, order, checkedBooks, checkedGames, checkedMovies} = this.state;
+    this.props.getEntities(search, activePage - 1, itemsPerPage, `${sort},${order}`, checkedBooks ? "Books" : "", checkedGames ? "Games" : "", checkedMovies ? "Movies" : "");
+  };
+
+
   render() {
     const { match, itemList, totalItems } = this.props;
     return (
@@ -123,7 +118,7 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
               placeholder={'Im looking for...'}
               validate={{
                 required: { value: true, errorMessage: 'Your input must be at least 1 character.' },
-                pattern: { value: '^[_.@A-Za-z0-9-]*$', errorMessage: 'Your search can only contain letters and digits.' },
+                pattern: { value: '^(?!.+#.*).*$', errorMessage: '# is a special sign and can be used only to look for hashtags' },
               }}
             />
             <Button id="search-submit" color="primary" type="submit">
@@ -248,7 +243,7 @@ const mapDispatchToProps = {
 
 const Checkbox = props => (
   <input type="checkbox" {...props} />
-)
+);
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

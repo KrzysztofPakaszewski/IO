@@ -76,8 +76,10 @@ export const getEntities: ICrudGetSearchFilterAction<IItem> = (search, page, siz
   }
   const requestUrl = `${apiUrl2}${
     sort
-      ? `?page=${page}&size=${size}&sort=${sort}&search=${search}&category1=${checkedBooks}&category2=${checkedGames}&category3=${checkedMovies}`
-      : ''
+      ? `?page=${page}&size=${size}&sort=${sort}&search=${search
+          .toLowerCase()
+          .replace('#', '%23')}&category1=${checkedBooks}&category2=${checkedGames}&category3=${checkedMovies}`
+      : `?search=${search.toLowerCase().replace('#', '%23')}&category1=${checkedBooks}&category2=${checkedGames}&category3=${checkedMovies}`
   }`;
   return {
     type: ACTION_TYPES.FETCH_ITEM_LIST,

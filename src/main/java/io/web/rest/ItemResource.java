@@ -118,7 +118,12 @@ public class ItemResource {
                                                            @RequestParam(value = "category2", required = false) Category category2,
                                                            @RequestParam(value = "category3", required = false) Category category3) {
         log.debug("REST request to get a page of Items");
-        Page<Item> page = itemRepository.findAllForSearch(pageable, search, category1, category2, category3);
+        Page<Item> page;
+        if(search.contains("#")) {
+            page = itemRepository.findAllForHashtagSearch(pageable, search.substring(1), category1, category2, category3);
+        } else{
+            page = itemRepository.findAllForSearch(pageable, search, category1, category2, category3);
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

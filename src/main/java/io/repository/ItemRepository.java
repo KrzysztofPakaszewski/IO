@@ -25,9 +25,13 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             countQuery = "select count(item) from Item item join item.owner")
     Page<Item> findAll(Pageable pageable);
 
-    @Query(value = "select item from Item item where item.title like %:search% and (item.category =:category1 or item.category =:category2 or item.category =:category3)",
-        countQuery = "select count(item) from Item item  where item.title like %:search% and (item.category =:category1 or item.category =:category2 or item.category =:category3)")
+    @Query(value = "select item from Item item where lower(item.title) like %:search% and (item.category =:category1 or item.category =:category2 or item.category =:category3)",
+        countQuery = "select count(item) from Item item  where lower(item.title) like %:search% and (item.category =:category1 or item.category =:category2 or item.category =:category3)")
     Page<Item> findAllForSearch(Pageable pageable, @Param("search") String search, @Param("category1") Category category1, @Param("category2") Category category2, @Param("category3") Category category3);
+
+    @Query(value = "select item from Item item where lower(item.hash)=:search and (item.category =:category1 or item.category =:category2 or item.category =:category3)",
+        countQuery = "select count(item) from Item item  where lower(item.hash)=:search and (item.category =:category1 or item.category =:category2 or item.category =:category3)")
+    Page<Item> findAllForHashtagSearch(Pageable pageable, @Param("search") String search, @Param("category1") Category category1, @Param("category2") Category category2, @Param("category3") Category category3);
 
     @Query("select item from Item item join fetch item.owner where item.id = ?1")
     Optional<Item> findById( Long id);
