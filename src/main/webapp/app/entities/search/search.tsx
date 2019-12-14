@@ -112,6 +112,11 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
           Find something for yourself
         </h2>
         <div>
+          <Button tag={Link} to={`${match.url}/interested`} color="info" size="lg">
+            <FontAwesomeIcon icon="eye" /> <span>Items I'm interested in...</span>
+          </Button>
+        </div>
+        <div>
           <AvForm id="search-form" onValidSubmit={this.handleSearch}>
             <AvField
               name="searchValue"

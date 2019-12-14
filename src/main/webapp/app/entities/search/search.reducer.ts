@@ -87,6 +87,25 @@ export const getEntities = (search, page, size, sort, checkedBooks, checkedGames
   };
 };
 
+export const getLikedEntities = (search, page, size, sort, checkedBooks, checkedGames, checkedMovies) => {
+  if (checkedBooks === '' && checkedGames === '' && checkedMovies === '') {
+    checkedBooks = 'Books';
+    checkedGames = 'Games';
+    checkedMovies = 'Movies';
+  }
+  const requestUrl = `${apiUrl}/interested${
+    sort
+      ? `?page=${page}&size=${size}&sort=${sort}&search=${search
+          .toLowerCase()
+          .replace('#', '%23')}&category1=${checkedBooks}&category2=${checkedGames}&category3=${checkedMovies}`
+      : `?search=${search.toLowerCase().replace('#', '%23')}&category1=${checkedBooks}&category2=${checkedGames}&category3=${checkedMovies}`
+  }`;
+  return {
+    type: ACTION_TYPES.FETCH_ITEM_LIST,
+    payload: axios.get<IItem>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
+  };
+};
+
 export const getEntity: ICrudGetAction<IItem> = id => {
   const requestUrl = `${apiUrl}/${id}`;
   return {

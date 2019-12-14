@@ -94,11 +94,11 @@ public class ItemResource {
     @PutMapping("/search")
     public ResponseEntity<String> addInterested(@RequestBody Item item) throws URISyntaxException {
         log.debug("REST request to save Item : {}", item);
-        long id = CustomUserIdUtil.getCurrentUserId();
-        itemRepository.addInterested(item.getId(), id);
+        long userId = CustomUserIdUtil.getCurrentUserId();
+        itemRepository.addInterested(item.getId(), userId );
         return ResponseEntity.created(new URI("/api/items/" ))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, ""))
-            .body("Success");
+            .body("Success add to liked itemes item.id="+item.getId()+",user.id="+userId );
     }
 
     /**
@@ -114,6 +114,26 @@ public class ItemResource {
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
+
+    @GetMapping("/search/interested")
+    public ResponseEntity<List<Item>> getLikedItemsOfLoggedUser(Pageable pageable, @RequestParam(value = "search", required = false) String search,
+                                                @RequestParam(value = "category1", required = false) Category category1,
+                                                @RequestParam(value = "category2", required = false) Category category2,
+                                                @RequestParam(value = "category3", required = false) Category category3) {
+        log.debug("REST request to get items of logged User");
+        log.debug("REST request to get a page of Items");
+        long userId = CustomUserIdUtil.getCurrentUserId();
+        Page<Item> page;
+        if (search.contains("#")) {
+            // substring to remove #
+            page = itemRepository.findAllLikedHashtag(pageable, search.substring(1), category1, category2, category3, userId);
+        } else {
+            page = itemRepository.findAllLiked(pageable, search, category1, category2, category3, userId);
+        }
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
 
     /**
      * {@code GET  /items} : get all the items.
@@ -132,6 +152,7 @@ public class ItemResource {
         log.debug("REST request to get a page of Items");
         Page<Item> page;
         if (search.contains("#")) {
+            // substring to remove #
             page = itemRepository.findAllForHashtagSearch(pageable, search.substring(1), category1, category2, category3);
         } else {
             page = itemRepository.findAllForSearch(pageable, search, category1, category2, category3);
@@ -144,6 +165,8 @@ public class ItemResource {
      *
      * @return the {@link List<Item>} with status {@code 200 (OK)} and the list of items in body.
      */
+
+
 
     @GetMapping("/items/logged")
     public List<Item> getItemsOfLoggedUser() {
