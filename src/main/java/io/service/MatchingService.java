@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -71,6 +72,19 @@ public class MatchingService {
     // returns true if this item has ongoing accepted matching
     public boolean doesThisItemHasAcceptedMatch(Item item){
         return !matchingRepository.findMatchingThatReferenceThisItemAndHasTrueState(item.getId()).isEmpty();
+    }
+
+    public boolean acceptGivenMatching(Matching matching){
+        Optional<Matching> foundMatch = matchingRepository.findById(matching.getId());
+        if(foundMatch.isPresent() && foundMatch.get().isStateOfExchange() == null){
+            Matching tmp = foundMatch.get();
+            tmp.setStateOfExchange(true);
+            matchingRepository.save(tmp);
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
 

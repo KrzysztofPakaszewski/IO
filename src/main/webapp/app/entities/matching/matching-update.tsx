@@ -92,12 +92,6 @@ export class MatchingUpdate extends React.Component<IMatchingUpdateProps, IMatch
                   </AvGroup>
                 ) : null}
                 <AvGroup>
-                  <Label id="stateOfExchangeLabel" check>
-                    <AvInput id="matching-stateOfExchange" type="checkbox" className="form-control" name="stateOfExchange" />
-                    State Of Exchange
-                  </Label>
-                </AvGroup>
-                <AvGroup>
                   <Label id="chatLabel" for="matching-chat">
                     Chat
                   </Label>

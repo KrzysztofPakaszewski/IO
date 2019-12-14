@@ -147,13 +147,23 @@ export const updateEntity: ICrudPutAction<IMatching> = entity => async dispatch 
   return result;
 };
 
+export const acceptMatching: ICrudPutAction<IMatching> = entity => async dispatch => {
+  const requestUrl = `${apiUrl}/accept`;
+  const result = await dispatch({
+    type: ACTION_TYPES.UPDATE_MATCHING,
+    payload: axios.post(requestUrl, cleanEntity(entity))
+  });
+  dispatch(getLoggedUserMatches());
+  return result;
+};
+
 export const deleteEntity: ICrudDeleteAction<IMatching> = id => async dispatch => {
   const requestUrl = `${apiUrl}/${id}`;
   const result = await dispatch({
     type: ACTION_TYPES.DELETE_MATCHING,
     payload: axios.delete(requestUrl)
   });
-  dispatch(getEntities());
+  dispatch(getLoggedUserMatches());
   return result;
 };
 

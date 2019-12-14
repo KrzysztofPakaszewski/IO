@@ -16,7 +16,7 @@ public interface MatchingRepository extends JpaRepository<Matching, Long> {
 
 
     @Query("select matching from Matching matching join fetch matching.itemOffered iof join fetch matching.itemAsked ias " +
-        "where ias.owner.login = ?1")
+        "where ias.owner.login = ?1 and matching.stateOfExchange is NULL")
     List<Matching> findAllMatchingsOfUser(String login);
 
 
