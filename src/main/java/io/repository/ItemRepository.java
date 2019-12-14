@@ -41,4 +41,9 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     @Query("select item from Item item where item.owner.login = ?1")
     List<Item> findItemsOfUser(String login);
+
+    @Modifying
+    @Query(value = "insert into Item_Interested VALUES (:id, :user_id)", nativeQuery = true )
+    void addInterested(@Param("id") long id, @Param("user_id") long user_id);
+
 }

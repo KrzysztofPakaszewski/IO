@@ -2,8 +2,10 @@ package io.web.rest;
 
 import io.config.Constants;
 import io.domain.Item;
+import io.domain.User;
 import io.domain.enumeration.Category;
 import io.repository.ItemRepository;
+import io.service.util.CustomUserIdUtil;
 import io.web.rest.errors.BadRequestAlertException;
 import io.security.SecurityUtils;
 
@@ -87,6 +89,16 @@ public class ItemResource {
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, item.getId().toString()))
             .body(result);
+    }
+
+    @PutMapping("/search")
+    public ResponseEntity<String> addInterested(@RequestBody Item item) throws URISyntaxException {
+        log.debug("REST request to save Item : {}", item);
+        long id = CustomUserIdUtil.getCurrentUserId();
+        itemRepository.addInterested(item.getId(), id);
+        return ResponseEntity.created(new URI("/api/items/" ))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, ""))
+            .body("Success");
     }
 
     /**
