@@ -118,7 +118,7 @@ export class Item extends React.Component<IItemProps, IItemState> {
                   <td>{item.hash}</td>
                   <td>
                     <Button tag={Link} to={`user/${item.owner.login}`} color="link" size="sm">
-                      {item.owner.login}
+                      {item.owner ? item.owner.login : ' '}
                     </Button>
                   </td>
                   <td className="text-right">
