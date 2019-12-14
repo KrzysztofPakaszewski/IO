@@ -169,6 +169,13 @@ public class ItemResource {
         return ResponseUtil.wrapOrNotFound(item);
     }
 
+    @GetMapping("/search/{id}")
+    public ResponseEntity<Item> getItemNoJoin(@PathVariable Long id) {
+        log.debug("REST request to get Item : {}", id);
+        Optional<Item> item = itemRepository.findByIdNoJoin(id);
+        return ResponseUtil.wrapOrNotFound(item);
+    }
+
     /**
      * {@code DELETE  /items/:id} : delete the "id" item.
      *
