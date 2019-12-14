@@ -23,10 +23,6 @@ export class Matching extends React.Component<IMatchingProps> {
       <div>
         <h2 id="matching-heading">
           Matchings
-          <Link to={`${match.url}/new`} className="btn btn-primary float-right jh-create-entity" id="jh-create-entity">
-            <FontAwesomeIcon icon="plus" />
-            &nbsp; Create a new Matching
-          </Link>
         </h2>
         <div className="table-responsive">
           {matchingList && matchingList.length > 0 ? (
@@ -35,7 +31,6 @@ export class Matching extends React.Component<IMatchingProps> {
                 <tr>
                   <th>ID</th>
                   <th>State Of Exchange</th>
-                  <th>Chat</th>
                   <th>Item Offered</th>
                   <th>Item Asked</th>
                   <th />
@@ -50,16 +45,12 @@ export class Matching extends React.Component<IMatchingProps> {
                       </Button>
                     </td>
                     <td>{matching.stateOfExchange ? 'true' : 'false'}</td>
-                    <td>{matching.chat}</td>
                     <td>{matching.itemOffered ? <Link to={`item/${matching.itemOffered.id}`}>{matching.itemOffered.id}</Link> : ''}</td>
                     <td>{matching.itemAsked ? <Link to={`item/${matching.itemAsked.id}`}>{matching.itemAsked.id}</Link> : ''}</td>
                     <td className="text-right">
                       <div className="btn-group flex-btn-group-container">
                         <Button tag={Link} to={`${match.url}/${matching.id}`} color="info" size="sm">
-                          <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
-                        </Button>
-                        <Button tag={Link} to={`${match.url}/${matching.id}/edit`} color="primary" size="sm">
-                          <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
+                          <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View Chat</span>
                         </Button>
                         <Button tag={Link} to={`${match.url}/${matching.id}/delete`} color="danger" size="sm">
                           <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Delete</span>

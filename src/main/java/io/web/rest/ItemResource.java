@@ -2,7 +2,10 @@ package io.web.rest;
 
 import io.config.Constants;
 import io.domain.Item;
+import io.domain.User;
+import io.domain.enumeration.Category;
 import io.repository.ItemRepository;
+import io.service.util.CustomUserIdUtil;
 import io.web.rest.errors.BadRequestAlertException;
 import io.security.SecurityUtils;
 
@@ -88,6 +91,16 @@ public class ItemResource {
             .body(result);
     }
 
+    @PutMapping("/search")
+    public ResponseEntity<String> addInterested(@RequestBody Item item) throws URISyntaxException {
+        log.debug("REST request to save Item : {}", item);
+        long userId = CustomUserIdUtil.getCurrentUserId();
+        itemRepository.addInterested(item.getId(), userId );
+        return ResponseEntity.created(new URI("/api/items/" ))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, ""))
+            .body("Success add to liked itemes item.id="+item.getId()+",user.id="+userId );
+    }
+
     /**
      * {@code GET  /items} : get all the items.
      *
@@ -102,11 +115,59 @@ public class ItemResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
+    @GetMapping("/search/interested")
+    public ResponseEntity<List<Item>> getLikedItemsOfLoggedUser(Pageable pageable, @RequestParam(value = "search", required = false) String search,
+                                                @RequestParam(value = "category1", required = false) Category category1,
+                                                @RequestParam(value = "category2", required = false) Category category2,
+                                                @RequestParam(value = "category3", required = false) Category category3) {
+        log.debug("REST request to get items of logged User");
+        log.debug("REST request to get a page of Items");
+        long userId = CustomUserIdUtil.getCurrentUserId();
+        Page<Item> page;
+        if (search.contains("#")) {
+            // substring to remove #
+            page = itemRepository.findAllLikedHashtag(pageable, search.substring(1), category1, category2, category3, userId);
+        } else {
+            page = itemRepository.findAllLiked(pageable, search, category1, category2, category3, userId);
+        }
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+
     /**
+     * {@code GET  /items} : get all the items.
+     *
+
+     * @param pageable the pagination information.
+
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of items in body.
+     */
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Item>> getAllItemsForSearch(Pageable pageable, @RequestParam(value = "search", required = false) String search,
+                                                           @RequestParam(value = "category1", required = false) Category category1,
+                                                           @RequestParam(value = "category2", required = false) Category category2,
+                                                           @RequestParam(value = "category3", required = false) Category category3) {
+        log.debug("REST request to get a page of Items");
+        Page<Item> page;
+        if (search.contains("#")) {
+            // substring to remove #
+            page = itemRepository.findAllForHashtagSearch(pageable, search.substring(1), category1, category2, category3);
+        } else {
+            page = itemRepository.findAllForSearch(pageable, search, category1, category2, category3);
+        }
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+        /**
      * {@code GET  /items} : get all items of logged user.
      *
      * @return the {@link List<Item>} with status {@code 200 (OK)} and the list of items in body.
      */
+
+
+
     @GetMapping("/items/logged")
     public List<Item> getItemsOfLoggedUser() {
         log.debug("REST request to get items of logged User");
@@ -135,10 +196,18 @@ public class ItemResource {
      * @param id the id of the item to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the item, or with status {@code 404 (Not Found)}.
      */
+
     @GetMapping("/items/{id}")
     public ResponseEntity<Item> getItem(@PathVariable Long id) {
         log.debug("REST request to get Item : {}", id);
         Optional<Item> item = itemRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(item);
+    }
+
+    @GetMapping("/search/{id}")
+    public ResponseEntity<Item> getItemNoJoin(@PathVariable Long id) {
+        log.debug("REST request to get Item : {}", id);
+        Optional<Item> item = itemRepository.findByIdNoJoin(id);
         return ResponseUtil.wrapOrNotFound(item);
     }
 

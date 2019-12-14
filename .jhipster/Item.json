@@ -40,6 +40,14 @@
             "otherEntityRelationshipName": "item",
             "relationshipName": "owner",
             "otherEntityField": "id"
+        },
+        {
+            "relationshipName": "interested",
+            "otherEntityName": "user",
+            "relationshipType": "many-to-many",
+            "otherEntityField": "login",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "item"
         }
     ],
     "changelogDate": "20191129111842",
@@ -51,5 +59,7 @@
     "fluentMethods": true,
     "readOnly": false,
     "clientRootFolder": "",
-    "applications": "*"
+    "applications": "*",
+    "searchEngine": false,
+    "databaseType": "sql"
 }
