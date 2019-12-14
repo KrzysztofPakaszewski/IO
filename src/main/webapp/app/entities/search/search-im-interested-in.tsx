@@ -177,7 +177,8 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
                             </thead>
                             <tbody>
                             {itemList.map((item, i) => (
-                                <tr id="clickableRow" key={`entity-${i}`} onClick={() => this.handleClick(item)} role="button">
+                                /*<tr id="clickableRow" key={`entity-${i}`} onClick={() => this.handleClick(item)} role="button">*/
+                                <tr>
                                     <td>
                                         {item.image ? (
                                             <div>
