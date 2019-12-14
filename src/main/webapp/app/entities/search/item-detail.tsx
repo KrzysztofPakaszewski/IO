@@ -4,17 +4,23 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col } from 'reactstrap';
 import { ICrudGetAction, openFile, byteSize } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { addNewInterest } from './search.reducer';
 
 import { IRootState } from 'app/shared/reducers';
 import { getEntity } from './search.reducer';
 import { IItem } from 'app/shared/model/item.model';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import {getCurrentlyLoggedUser} from "app/modules/administration/user-management/user-management.reducer";
 
 export interface IItemDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 export class ItemDetail extends React.Component<IItemDetailProps> {
   componentDidMount() {
     this.props.getEntity(this.props.match.params.id);
+  }
+
+  handleInterest() {
+    addNewInterest(this.props.itemEntity)
   }
 
   render() {
@@ -60,6 +66,11 @@ export class ItemDetail extends React.Component<IItemDetailProps> {
             </dt>
             <dd>{itemEntity.hash}</dd>
           </dl>
+          &nbsp;
+          <Button onClick={() => this.handleInterest()}>
+            <FontAwesomeIcon icon = "plus" /> <span className="d-none d-md-inline">Interested</span>
+          </Button>
+          &nbsp;
           <Button tag={Link} to="/search" replace color="info">
             <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
           </Button>

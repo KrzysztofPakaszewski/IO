@@ -1,10 +1,11 @@
 import axios from 'axios';
-import { ICrudGetAction, ICrudGetSearchFilterAction } from 'react-jhipster';
+import { ICrudGetAction } from 'react-jhipster';
 
-import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IItem, defaultValue } from 'app/shared/model/item.model';
+import { getCurrentlyLoggedUser } from 'app/modules/administration/user-management/user-management.reducer';
+import { cleanEntity } from 'app/shared/util/entity-utils';
 
 export const ACTION_TYPES = {
   FETCH_ITEM_LIST: 'item/FETCH_ITEM_LIST',
@@ -64,17 +65,16 @@ export default (state: SearchState = initialState, action): SearchState => {
   }
 };
 
-const apiUrl = 'api/items';
-const apiUrl2 = 'api/search';
+const apiUrl = 'api/search';
 // Actions
 
-export const getEntities: ICrudGetSearchFilterAction<IItem> = (search, page, size, sort, checkedBooks, checkedGames, checkedMovies) => {
+export const getEntities = (search, page, size, sort, checkedBooks, checkedGames, checkedMovies) => {
   if (checkedBooks === '' && checkedGames === '' && checkedMovies === '') {
     checkedBooks = 'Books';
     checkedGames = 'Games';
     checkedMovies = 'Movies';
   }
-  const requestUrl = `${apiUrl2}${
+  const requestUrl = `${apiUrl}${
     sort
       ? `?page=${page}&size=${size}&sort=${sort}&search=${search
           .toLowerCase()
@@ -92,6 +92,14 @@ export const getEntity: ICrudGetAction<IItem> = id => {
   return {
     type: ACTION_TYPES.FETCH_ITEM,
     payload: axios.get<IItem>(requestUrl)
+  };
+};
+
+export const addNewInterest = item => {
+  const requestUrl = `${apiUrl}`;
+  return {
+    type: ACTION_TYPES.FETCH_ITEM,
+    payload: axios.put(requestUrl, cleanEntity(item))
   };
 };
 
