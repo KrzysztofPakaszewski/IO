@@ -29,8 +29,7 @@ export class ItemDetail extends React.Component<IItemDetailProps> {
       <Row className="justify-content-md-center">
         <Col md="20">
           <h2>
-/*           Item <b><i>{itemEntity.title}</i></b> of User <b><i> {itemEntity.owner} <Link to={'/user/'+itemEntity.owner.id}/></i></b>*/
-            Item <b><i>{itemEntity.title}</i></b> of User <b><i> {itemEntity.owner} </i></b>
+            Item <b><i>{itemEntity.title}</i></b> of User <b><i> {itemEntity.owner == null ? " no owner " : "itemEntity.owner.login" + linkToUser(itemEntity)} </i></b>
           </h2>
           <dl className="jh-entity-details">
             <dd>
@@ -80,6 +79,12 @@ export class ItemDetail extends React.Component<IItemDetailProps> {
     );
   }
 }
+
+const linkToUser = (itemEntity) => {
+  return (
+    <Link to={'/user/'+itemEntity.owner.id}/>
+  );
+};
 
 const mapStateToProps = ({ item }: IRootState) => ({
   itemEntity: item.entity
