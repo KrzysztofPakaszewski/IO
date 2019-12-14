@@ -118,10 +118,11 @@ export class Item extends React.Component<IItemProps, IItemState> {
                   <td>{item.hash}</td>
                   <td>
                     <Button tag={Link} to={`user/${item.owner.login}`} color="link" size="sm">
-                      {item.owner.login}
+                      {item.owner ? item.owner.login : ' '}
                     </Button>
                   </td>
                   <td className="text-right">
+
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`${match.url}/${item.id}/detail`} color="info" size="sm" >
                         <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
