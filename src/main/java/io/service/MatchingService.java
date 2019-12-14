@@ -29,15 +29,51 @@ public class MatchingService {
     // Creates matches for owner of the chosen item
     public void createMatchesForThisItem(Item chosenItem){
         List<Item> userItems =itemRepository.findByOwnerIsCurrentUser();
+        boolean hasAcceptedMatching = doesThisItemHasAcceptedMatch(chosenItem);
+
         for ( Item item: userItems ) {
             Matching matching = new Matching();
-            matching.setStateOfExchange(false);
             matching.setItemAsked(chosenItem);
+            if(hasAcceptedMatching || doesThisItemHasAcceptedMatch(item)){
+                matching.setStateOfExchange(false);
+            }
             matching.setItemOffered(item);
             matchingRepository.save(matching);
         }
     }
 
-    
+    // Deletes all matches that has this item either in itemOffered or itemAsked
+    public void deleteAllMatchesThatHasThisItem(Item removedItem){
+        List<Matching> matchingsToRemove = matchingRepository.findAllMatchingsThatReferenceThisItem(removedItem.getId());
+        for (Matching foundMatch: matchingsToRemove) {
+            matchingRepository.delete(foundMatch);
+        }
+    }
+
+    // turns state of matches that references items from accepted match to false
+    public void changeStateOfMatchesToFalse(Item first, Item second){
+        List<Matching> matchingsToChange = matchingRepository.findAllMatchingsThatReferenceTheseItems(first.getId(),second.getId());
+        for ( Matching foundMatch : matchingsToChange) {
+            foundMatch.setStateOfExchange(false);
+            matchingRepository.save(foundMatch);
+        }
+    }
+
+    // turns state of matches that references items from cancelled match to NULL
+    public void changeStateOfMatchesToNull(Item first,Item second){
+        List<Matching> matchingsToChange = matchingRepository.findAllMatchingsThatReferenceTheseItems(first.getId(),second.getId());
+        for ( Matching foundMatch : matchingsToChange) {
+            foundMatch.setStateOfExchange(null);
+            matchingRepository.save(foundMatch);
+        }
+    }
+
+    // returns true if this item has ongoing accepted matching
+    public boolean doesThisItemHasAcceptedMatch(Item item){
+        return !matchingRepository.findMatchingThatReferenceThisItemAndHasTrueState(item.getId()).isEmpty();
+    }
+
+
+
 
 }

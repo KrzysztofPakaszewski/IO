@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IMatching, defaultValue } from 'app/shared/model/matching.model';
+import { IItem } from 'app/shared/model/item.model';
 
 export const ACTION_TYPES = {
   FETCH_MATCHING_LIST: 'matching/FETCH_MATCHING_LIST',
@@ -127,6 +128,14 @@ export const createEntity: ICrudPutAction<IMatching> = entity => async dispatch 
   });
   dispatch(getEntities());
   return result;
+};
+
+export const createMatches: ICrudPutAction<IItem> = entity => {
+  const requestUrl = `${apiUrl}/create`;
+  return {
+    type: ACTION_TYPES.CREATE_MATCHING,
+    payload: axios.post(requestUrl, cleanEntity(entity))
+  };
 };
 
 export const updateEntity: ICrudPutAction<IMatching> = entity => async dispatch => {
