@@ -59,8 +59,6 @@ export class Item extends React.Component<IItemProps, IItemState> {
             &nbsp; Create new item
           </Link>
         </h2>
-        <Checkbox value = "yourItems" checked /> Your items
-        <Checkbox value = "otherItems" checked/> Other items
         <div className="table-responsive">
           {itemList && itemList.length > 0 ? (
             <Table responsive aria-describedby="item-heading">
@@ -133,9 +131,6 @@ export class Item extends React.Component<IItemProps, IItemState> {
                       </Button>
                       <Button tag={Link} to={`${match.url}/${item.id}/delete`} color="danger" size="sm" >
                         <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Delete</span>
-                      </Button>
-                      <Button tag={Link} /* to={`${match.url}/${item.id}/delete`}*/ color="primary" size="sm" >
-                        <FontAwesomeIcon icon = "plus" /> <span className="d-none d-md-inline">Interested</span>
                       </Button>
                     </div>
                   </td>
