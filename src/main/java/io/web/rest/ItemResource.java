@@ -2,9 +2,10 @@ package io.web.rest;
 
 import io.config.Constants;
 import io.domain.Item;
-import io.domain.User;
 import io.domain.enumeration.Category;
 import io.repository.ItemRepository;
+import io.repository.UserRepository;
+import io.service.MatchingService;
 import io.service.util.CustomUserIdUtil;
 import io.web.rest.errors.BadRequestAlertException;
 import io.security.SecurityUtils;
@@ -46,9 +47,13 @@ public class ItemResource {
     private String applicationName;
 
     private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
+    private final MatchingService matchingService;
 
-    public ItemResource(ItemRepository itemRepository) {
+    public ItemResource(ItemRepository itemRepository, UserRepository userRepository, MatchingService matchingService) {
         this.itemRepository = itemRepository;
+        this.userRepository = userRepository;
+        this.matchingService = matchingService;
     }
 
     /**
@@ -94,8 +99,9 @@ public class ItemResource {
     @PutMapping("/search")
     public ResponseEntity<String> addInterested(@RequestBody Item item) throws URISyntaxException {
         log.debug("REST request to save Item : {}", item);
-        long userId = CustomUserIdUtil.getCurrentUserId();
+        long userId = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId();
         itemRepository.addInterested(item.getId(), userId );
+        matchingService.createMatchesIfBothUsersInterested(item);
         return ResponseEntity.created(new URI("/api/items/" ))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, ""))
             .body("Success add to liked itemes item.id="+item.getId()+",user.id="+userId );
@@ -122,7 +128,7 @@ public class ItemResource {
                                                 @RequestParam(value = "category3", required = false) Category category3) {
         log.debug("REST request to get items of logged User");
         log.debug("REST request to get a page of Items");
-        long userId = CustomUserIdUtil.getCurrentUserId();
+        long userId = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId();
         Page<Item> page;
         if (search.contains("#")) {
             // substring to remove #

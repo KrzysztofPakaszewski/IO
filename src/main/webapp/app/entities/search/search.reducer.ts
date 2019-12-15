@@ -66,6 +66,7 @@ export default (state: SearchState = initialState, action): SearchState => {
 };
 
 const apiUrl = 'api/search';
+const apiUrlItems = 'api/items';
 // Actions
 
 export const getEntities = (search, page, size, sort, checkedBooks, checkedGames, checkedMovies) => {
@@ -107,7 +108,7 @@ export const getLikedEntities = (search, page, size, sort, checkedBooks, checked
 };
 
 export const getEntity: ICrudGetAction<IItem> = id => {
-  const requestUrl = `${apiUrl}/${id}`;
+  const requestUrl = `${apiUrlItems}/${id}`;
   return {
     type: ACTION_TYPES.FETCH_ITEM,
     payload: axios.get<IItem>(requestUrl)

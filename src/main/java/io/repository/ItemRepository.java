@@ -1,6 +1,7 @@
 package io.repository;
 import io.domain.Item;
 
+import io.domain.User;
 import io.domain.enumeration.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -50,11 +51,14 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query("select item from Item item join fetch item.owner where item.id = ?1")
     Optional<Item> findById( Long id);
 
-    @Query("select item from Item item where item.id = ?1")
+    @Query("select item from Item item join User user on item.owner = user.id where item.id = ?1")
     Optional<Item> findByIdNoJoin( Long id);
 
     @Query("select item from Item item where item.owner.login = ?1")
     List<Item> findItemsOfUser(String login);
+
+    @Query("select user from Item item join item.interesteds ii join User user on ii.id = user.id where item.id = :item_id")
+    List<User> getUsersInterestedIn(@Param("item_id") long item_id);
 
     @Modifying
     @Query(value = "insert into Item_Interested VALUES (:id, :user_id)", nativeQuery = true )
