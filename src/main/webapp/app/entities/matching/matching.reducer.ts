@@ -133,6 +133,7 @@ export const createEntity: ICrudPutAction<IMatching> = entity => async dispatch 
   return result;
 };
 
+/*
 export const createMatches: ICrudPutAction<IItem> = entity => {
   const requestUrl = `${apiUrl}/create`;
   return {
@@ -140,6 +141,7 @@ export const createMatches: ICrudPutAction<IItem> = entity => {
     payload: axios.post(requestUrl, cleanEntity(entity))
   };
 };
+*/
 
 export const updateEntity: ICrudPutAction<IMatching> = entity => async dispatch => {
   const result = await dispatch({

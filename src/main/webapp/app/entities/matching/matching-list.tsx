@@ -77,7 +77,6 @@ export class MatchingList extends React.Component<IMatchingListProps, IMatchingL
               <CarouselItem
                 key = {matching.id}
               >
-                {MatchingComponent(matching,this.agree,this.disagree)}
               </CarouselItem>
             );
           })}

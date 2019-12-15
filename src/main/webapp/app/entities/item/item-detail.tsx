@@ -14,7 +14,6 @@ import {
 } from 'app/modules/administration/user-management/user-management.reducer';
 import { IRootState } from 'app/shared/reducers';
 import { getEntity } from './item.reducer';
-import {createMatches} from '../matching/matching.reducer';
 import { IItem } from 'app/shared/model/item.model';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import item from "app/entities/item/item";
@@ -25,15 +24,10 @@ export interface IItemDetailProps extends StateProps, DispatchProps, RouteCompon
 export class ItemDetail extends React.Component<IItemDetailProps> {
   constructor(props){
       super(props);
-      this.createMatches = this.createMatches.bind(this);
   }
   componentDidMount() {
     this.props.getEntity(this.props.match.params.id);
     this.props.getUsers();
-  }
-
-  createMatches(){
-     this.props.createMatches(this.props.itemEntity);
   }
 
   render() {
@@ -72,8 +66,7 @@ const mapStateToProps = (storeState : IRootState) => ({
 
 const mapDispatchToProps = {
   getEntity,
-  getUsers,
-  createMatches
+  getUsers
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
