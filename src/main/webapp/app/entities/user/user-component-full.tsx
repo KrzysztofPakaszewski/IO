@@ -31,82 +31,82 @@ export const UserCompFull = (userEntity, itemList, reviewList) =>{
         <dd>{userEntity.lastName}</dd>
       </dl>
 
-    <div>
+      <div>
 
-    <h2 id="item-heading">
-    User's items
-  </h2>
-  <div className="table-responsive">
-  {itemList && itemList.length > 0 ? (
-    <Table responsive aria-describedby="item-heading">
-      <thead>
-      <tr>
-        <th className="hand" >
-          Image
-        </th>
-        <th className="hand" >
-          Title
-        </th>
-        <th  className="hand" >
-          Category
-        </th>
-        <th className="hand" >
-          State
-        </th>
-        <th className="hand" >
-          Prefered Delivery
-        </th>
-        <th className="hand" >
-          Preferences
-        </th>
-        <th className="hand" >
-          Hashtags
-        </th>
-        <th className="hand" >
-          Owner
-        </th>
-        <th />
-      </tr>
-      </thead>
-      <tbody>
-      {itemList.map((item, i) => (
-        <tr key={`entity-${i}`}>
-          <td>
-            {item.image ? (
-              <div>
-                <a onClick={openFile(item.imageContentType, item.image)}>
-                  <img src={`data:${item.imageContentType};base64,${item.image}`} style={{ maxHeight: '30px' }} />
-                  &nbsp;
-                </a>
-                <span>
+        <h2 id="item-heading">
+          User's items
+        </h2>
+        <div className="table-responsive">
+          {itemList && itemList.length > 0 ? (
+            <Table responsive aria-describedby="item-heading">
+              <thead>
+              <tr>
+                <th className="hand" >
+                  Image
+                </th>
+                <th className="hand" >
+                  Title
+                </th>
+                <th  className="hand" >
+                  Category
+                </th>
+                <th className="hand" >
+                  State
+                </th>
+                <th className="hand" >
+                  Prefered Delivery
+                </th>
+                <th className="hand" >
+                  Preferences
+                </th>
+                <th className="hand" >
+                  Hashtags
+                </th>
+                <th className="hand" >
+                  Owner
+                </th>
+                <th />
+              </tr>
+              </thead>
+              <tbody>
+              {itemList.map((item, i) => (
+                <tr key={`entity-${i}`}>
+                  <td>
+                    {item.image ? (
+                      <div>
+                        <a onClick={openFile(item.imageContentType, item.image)}>
+                          <img src={`data:${item.imageContentType};base64,${item.image}`} style={{ maxHeight: '30px' }} />
+                          &nbsp;
+                        </a>
+                        <span>
                           </span>
-              </div>
-            ) : null}
-          </td>
-          <td>
-            <Button tag={Link} to={`.././item/${item.id}/detail`} color="link" size="sm">
-              {item.title}
-            </Button>
-          </td>
-          <td>{item.category}</td>
-          <td>{item.state}</td>
-          <td>{item.preferedDelivery}</td>
-          <td>{item.preferences}</td>
-          <td>{item.hash}</td>
-          <td>
-            <Button tag={Link} to={`user/${item.owner.login}`} color="link" size="sm">
-              {item.owner.login}
-            </Button>
-          </td>
-        </tr>
-      ))}
-      </tbody>
-    </Table>
-  ) : (
-    <div className="alert alert-warning">No Items found</div>
-  )}
-</div>
-  </div>
+                      </div>
+                    ) : null}
+                  </td>
+                  <td>
+                    <Button tag={Link} to={`.././item/${item.id}/detail`} color="link" size="sm">
+                      {item.title}
+                    </Button>
+                  </td>
+                  <td>{item.category}</td>
+                  <td>{item.state}</td>
+                  <td>{item.preferedDelivery}</td>
+                  <td>{item.preferences}</td>
+                  <td>{item.hash}</td>
+                  <td>
+                    <Button tag={Link} to={`user/${item.owner.login}`} color="link" size="sm">
+                      {item.owner.login}
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+              </tbody>
+            </Table>
+          ) : (
+            <div className="alert alert-warning">No Items found</div>
+          )}
+        </div>
+      </div>
 
       <div>
         <h2 id="review-heading">
@@ -135,11 +135,11 @@ export const UserCompFull = (userEntity, itemList, reviewList) =>{
                   </td>
                   <td>{review.score}</td>
                   <td>{review.review}</td>
-                  <td>{review.reviewer ? review.reviewer.id : ''}</td>
-                  <td>{review.user ? review.user.id : ''}</td>
+                  <td>{review.reviewer ? review.reviewer.login : ''}</td>
+                  <td>{review.user ? review.user.login : ''}</td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`${review.id}`} color="info" size="sm">
+                      <Button tag={Link} to={`.././review/${review.id}`} color="info" size="sm">
                         <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
                       </Button>
                     </div>
