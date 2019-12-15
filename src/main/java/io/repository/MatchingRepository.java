@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -15,7 +16,19 @@ public interface MatchingRepository extends JpaRepository<Matching, Long> {
 
 
     @Query("select matching from Matching matching join fetch matching.itemOffered iof join fetch matching.itemAsked ias " +
-        "where ias.owner.login = ?1")
+        "where ias.owner.login = ?1 and matching.stateOfExchange is NULL")
     List<Matching> findAllMatchingsOfUser(String login);
+
+
+    @Query("select matching from Matching matching where matching.itemAsked.id = ?1 OR matching.itemOffered.id = ?1")
+    List<Matching> findAllMatchingsThatReferenceThisItem(Long id);
+
+    @Query("select matching from Matching matching where (matching.itemAsked.id = ?1 OR matching.itemOffered.id = ?1) AND " +
+        "matching.stateOfExchange = true")
+    List<Matching> findMatchingThatReferenceThisItemAndHasTrueState(Long id);
+
+    @Query("select matching from Matching matching where matching.itemAsked.id = ?1 Or matching.itemOffered.id =?1 OR " +
+        "matching.itemAsked.id = ?2 OR matching.itemOffered.id = ?2")
+    List<Matching> findAllMatchingsThatReferenceTheseItems(Long idOfFirst, Long idOfSecond);
 
 }

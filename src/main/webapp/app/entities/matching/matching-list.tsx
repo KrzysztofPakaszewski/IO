@@ -4,7 +4,7 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { ICrudGetAllAction } from 'react-jhipster';
 
 import { IRootState } from 'app/shared/reducers';
-import { getLoggedUserMatches } from './matching.reducer';
+import { getLoggedUserMatches, deleteEntity, acceptMatching } from './matching.reducer';
 import { IMatching } from 'app/shared/model/matching.model';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import {MatchingComponent} from './matching-component';
@@ -28,6 +28,8 @@ export class MatchingList extends React.Component<IMatchingListProps, IMatchingL
     }
     this.previous = this.previous.bind(this);
     this.next = this.next.bind(this);
+    this.agree = this.agree.bind(this);
+    this.disagree = this.disagree.bind(this);
   }
   componentDidMount() {
     this.props.getLoggedUserMatches();
@@ -51,6 +53,12 @@ export class MatchingList extends React.Component<IMatchingListProps, IMatchingL
       activeIndex: newIndex
     });
   };
+  agree(target){
+    this.props.acceptMatching(target);
+  };
+  disagree(target){
+    this.props.deleteEntity(target.id);
+  };
 
   render() {
     const { list } = this.props;
@@ -61,14 +69,15 @@ export class MatchingList extends React.Component<IMatchingListProps, IMatchingL
           activeIndex = {activeIndex}
           next = {this.next}
           previous= {this.previous}
+          interval = {false}
         >
           <CarouselIndicators items ={list} activeIndex={activeIndex} onClickHandler={this.goToIndex}/>
-          {list.map((item)=>{
+          {list.map((matching)=>{
             return(
               <CarouselItem
-                key = {item.id}
+                key = {matching.id}
               >
-                {MatchingComponent(item)}
+                {MatchingComponent(matching,this.agree,this.disagree)}
               </CarouselItem>
             );
           })}
@@ -85,7 +94,9 @@ const mapStateToProps = ({ matching }: IRootState) => ({
 });
 
 const mapDispatchToProps = {
-  getLoggedUserMatches
+  getLoggedUserMatches,
+  deleteEntity,
+  acceptMatching
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
