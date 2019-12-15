@@ -1,5 +1,6 @@
 package io.web.rest;
 
+import io.config.Constants;
 import io.domain.Review;
 import io.repository.ReviewRepository;
 import io.web.rest.errors.BadRequestAlertException;
@@ -88,6 +89,19 @@ public class ReviewResource {
     @GetMapping("/reviews")
     public List<Review> getAllReviews() {
         log.debug("REST request to get all Reviews");
+        return reviewRepository.findAll();
+    }
+
+
+    /**
+     * {@code GET  /reviews} : get all the reviews.
+     *
+
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of reviews in body.
+     */
+    @GetMapping("/reviews/getbyuser/{login:" + Constants.LOGIN_REGEX + "}")
+    public List<Review> getReviewsByUser(@PathVariable String login) {
+        log.debug("REST request to get all Reviews of given user");
         return reviewRepository.findAll();
     }
 

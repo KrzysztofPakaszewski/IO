@@ -10,23 +10,21 @@ import {ItemCompMinimized} from '../item/item-component-minimized';
 
 
 // props = {yourItem, otherItem}
-export const MatchingComponent= (props) =>{
+export const MatchingComponent= (matching, agree,disagree) =>{
     return (
         <Box maxWidth={500}>
             <Paper>
                 <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center',padding:'3em'}}>
-                    {/* here will be your item minimized*/}
-                    {props.itemOffered ? ItemCompMinimized(props.itemOffered) : ''}
+                    {matching.itemOffered ? ItemCompMinimized(matching.itemOffered) : ''}
                     <h5>FOR</h5>
-                    {props.itemAsked ? ItemCompMinimized(props.itemAsked) : ''}
-                    {/* here will be other item minimized*/}
+                    {matching.itemAsked ? ItemCompMinimized(matching.itemAsked) : ''}
                 </div>
                 <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between',padding:'2em'}}>
-                    <Button color="success" id="agree" >
+                    <Button color="success" id="agree" onClick = {()=> agree(matching)} >
                         <FontAwesomeIcon icon="check" />
                               &nbsp; Agree
                     </Button>
-                    <Button color="danger" id="disagree" >
+                    <Button color="danger" id="disagree" onClick = {()=> disagree(matching)}>
                         <FontAwesomeIcon icon="ban" />
                             &nbsp; Disagree
                     </Button>

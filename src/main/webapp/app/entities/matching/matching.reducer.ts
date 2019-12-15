@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IMatching, defaultValue } from 'app/shared/model/matching.model';
+import { IItem } from 'app/shared/model/item.model';
 
 export const ACTION_TYPES = {
   FETCH_MATCHING_LIST: 'matching/FETCH_MATCHING_LIST',
@@ -129,6 +130,14 @@ export const createEntity: ICrudPutAction<IMatching> = entity => async dispatch 
   return result;
 };
 
+export const createMatches: ICrudPutAction<IItem> = entity => {
+  const requestUrl = `${apiUrl}/create`;
+  return {
+    type: ACTION_TYPES.CREATE_MATCHING,
+    payload: axios.post(requestUrl, cleanEntity(entity))
+  };
+};
+
 export const updateEntity: ICrudPutAction<IMatching> = entity => async dispatch => {
   const result = await dispatch({
     type: ACTION_TYPES.UPDATE_MATCHING,
@@ -138,13 +147,23 @@ export const updateEntity: ICrudPutAction<IMatching> = entity => async dispatch 
   return result;
 };
 
+export const acceptMatching: ICrudPutAction<IMatching> = entity => async dispatch => {
+  const requestUrl = `${apiUrl}/accept`;
+  const result = await dispatch({
+    type: ACTION_TYPES.UPDATE_MATCHING,
+    payload: axios.post(requestUrl, cleanEntity(entity))
+  });
+  dispatch(getLoggedUserMatches());
+  return result;
+};
+
 export const deleteEntity: ICrudDeleteAction<IMatching> = id => async dispatch => {
   const requestUrl = `${apiUrl}/${id}`;
   const result = await dispatch({
     type: ACTION_TYPES.DELETE_MATCHING,
     payload: axios.delete(requestUrl)
   });
-  dispatch(getEntities());
+  dispatch(getLoggedUserMatches());
   return result;
 };
 

@@ -1,7 +1,9 @@
 package io.web.rest;
 
+import io.domain.Item;
 import io.domain.Matching;
 import io.repository.MatchingRepository;
+import io.service.MatchingService;
 import io.web.rest.errors.BadRequestAlertException;
 import io.security.SecurityUtils;
 
@@ -36,9 +38,11 @@ public class MatchingResource {
     private String applicationName;
 
     private final MatchingRepository matchingRepository;
+    private final MatchingService matchingService;
 
-    public MatchingResource(MatchingRepository matchingRepository) {
+    public MatchingResource(MatchingRepository matchingRepository, MatchingService matchingService) {
         this.matchingRepository = matchingRepository;
+        this.matchingService = matchingService;
     }
 
     /**
@@ -59,6 +63,56 @@ public class MatchingResource {
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
+
+
+    // TODO need to add safeguards
+    /**
+     * {@code POST  /matchings} : Create new matchings for given item.
+     *
+     * @param item liked item
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with empty body, or with status {@code 400 (Bad Request)} if Item has no ID.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PostMapping("/matchings/create")
+    public ResponseEntity<String> createMatching(@RequestBody Item item) throws URISyntaxException {
+        log.debug("REST request to create Matches for item : {}", item);
+        if (item.getId() == null) {
+            throw new BadRequestAlertException("Error! Item has no ID", ENTITY_NAME, "noID");
+        }
+        matchingService.createMatchesForThisItem(item);
+        return ResponseEntity.created(new URI("/api/matchings/"))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME,""))
+            .body("");
+    }
+
+    /**
+     * {@code POST  /matchings} : set this matching as accepted
+     *
+     * @param matching match to accept
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with empty body, or with status {@code 400 (Bad Request)} if Matching not
+     * found or is disabled.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PostMapping("/matchings/accept")
+    public ResponseEntity<String> acceptMatching(@RequestBody Matching matching) throws URISyntaxException {
+        log.debug("REST request to create Matches for item : {}", matching);
+        if (matching.getId() == null) {
+            throw new BadRequestAlertException("Error! Matching has no ID", ENTITY_NAME, "noID");
+        }
+        boolean result = matchingService.acceptGivenMatching(matching);
+        if(result) {
+            // TODO: create chat
+            return ResponseEntity.created(new URI("/api/matchings/"))
+                .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, ""))
+                .body("");
+        }
+        else
+            return ResponseEntity.created(new URI("/api/matchings/"))
+                .headers(HeaderUtil.createFailureAlert(applicationName,false,ENTITY_NAME,"Matching not found",""))
+                .body("");
+    }
+
+
 
     /**
      * {@code PUT  /matchings} : Updates an existing matching.
