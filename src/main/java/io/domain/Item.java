@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.*;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import io.domain.enumeration.Category;
 
@@ -52,6 +54,12 @@ public class Item implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("items")
     private User owner;
+
+    @ManyToMany
+    @JoinTable(name = "item_interested",
+               joinColumns = @JoinColumn(name = "item_id", referencedColumnName = "id"),
+               inverseJoinColumns = @JoinColumn(name = "interested_id", referencedColumnName = "id"))
+    private Set<User> interesteds = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
@@ -177,6 +185,29 @@ public class Item implements Serializable {
 
     public void setOwner(User user) {
         this.owner = user;
+    }
+
+    public Set<User> getInteresteds() {
+        return interesteds;
+    }
+
+    public Item interesteds(Set<User> users) {
+        this.interesteds = users;
+        return this;
+    }
+
+    public Item addInterested(User user) {
+        this.interesteds.add(user);
+        return this;
+    }
+
+    public Item removeInterested(User user) {
+        this.interesteds.remove(user);
+        return this;
+    }
+
+    public void setInteresteds(Set<User> users) {
+        this.interesteds = users;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 

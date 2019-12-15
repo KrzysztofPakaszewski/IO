@@ -59,9 +59,6 @@ export class ItemDetail extends React.Component<IItemDetailProps> {
             <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Delete</span>
           </Button>
           &nbsp;
-          <Button onClick = {this.createMatches} color="primary"  /* disabled = {getUser(item.owner.id) == getCurrentlyLoggedUser()}*/ >
-            <FontAwesomeIcon icon = "plus" /> <span className="d-none d-md-inline">Interested</span>
-          </Button>
         </Col>
       </Row>
     );
@@ -86,3 +83,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(ItemDetail);
+
