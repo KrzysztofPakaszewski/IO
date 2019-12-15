@@ -84,7 +84,7 @@ export const UserCompFull = (userEntity, itemList, reviewList) =>{
             ) : null}
           </td>
           <td>
-            <Button tag={Link} to={`${item.id}`} color="link" size="sm">
+            <Button tag={Link} to={`.././item/${item.id}/detail`} color="link" size="sm">
               {item.title}
             </Button>
           </td>
