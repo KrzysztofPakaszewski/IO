@@ -22,4 +22,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @Query("select review from Review review join fetch review.reviewer where review.id = ?1")
     Optional<Review> findByIdFetch(long id);
 
+    @Query("select review from Review review join fetch review.reviewer where review.user.login = ?1")
+    List<Review> findByUserLogin(String login);
 }
