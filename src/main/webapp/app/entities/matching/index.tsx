@@ -8,6 +8,7 @@ import MatchingDetail from './matching-detail';
 import MatchingUpdate from './matching-update';
 import MatchingDeleteDialog from './matching-delete-dialog';
 import MatchingList from './matching-list';
+import Exchange from './exchange';
 
 const Routes = ({ match }) => (
   <>

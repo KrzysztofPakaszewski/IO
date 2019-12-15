@@ -28,6 +28,7 @@ public class MatchingService {
     }
 
     // Creates matches for owner of the chosen item
+
     public void createMatchesForThisItem(Item chosenItem){
         List<Item> userItems =itemRepository.findByOwnerIsCurrentUser();
         boolean hasAcceptedMatching = doesThisItemHasAcceptedMatch(chosenItem);
@@ -42,7 +43,6 @@ public class MatchingService {
             matchingRepository.save(matching);
         }
     }
-
     // Deletes all matches that has this item either in itemOffered or itemAsked
     public void deleteAllMatchesThatHasThisItem(Item removedItem){
         List<Matching> matchingsToRemove = matchingRepository.findAllMatchingsThatReferenceThisItem(removedItem.getId());
