@@ -8,9 +8,6 @@ import { addNewInterest } from './search.reducer';
 
 import { IRootState } from 'app/shared/reducers';
 import { getEntity } from './search.reducer';
-import { IItem } from 'app/shared/model/item.model';
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
-import {getCurrentlyLoggedUser} from "app/modules/administration/user-management/user-management.reducer";
 
 export interface IItemDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
@@ -25,11 +22,12 @@ export class ItemDetail extends React.Component<IItemDetailProps> {
 
   render() {
     const { itemEntity } = this.props;
+
     return (
       <Row className="justify-content-md-center">
         <Col md="20">
           <h2>
-            Item <b><i>{itemEntity.title}</i></b> of User <b><i> {itemEntity.owner == null ? " no owner " : "itemEntity.owner.login" + linkToUser(itemEntity)} </i></b>
+            Item <b><i>{itemEntity.title}</i></b> of User <b><i> {itemEntity.owner == null ? " no owner " : (<Link to={'/user/'+itemEntity.owner.id}>{itemEntity.owner.login}</Link>)} </i></b>
           </h2>
           <dl className="jh-entity-details">
             <dd>
@@ -67,24 +65,18 @@ export class ItemDetail extends React.Component<IItemDetailProps> {
             <dd>{itemEntity.hash}</dd>
           </dl>
           &nbsp;
-          <Button onClick={() => this.handleInterest()}>
-            <FontAwesomeIcon icon = "plus" /> <span className="d-none d-md-inline">Interested</span>
-          </Button>
-          &nbsp;
           <Button tag={Link} to="/search" replace color="info">
             <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
+          </Button>
+          &nbsp;
+          <Button onClick={() => this.handleInterest()}>
+            <FontAwesomeIcon icon = "plus" /> <span className="d-none d-md-inline">Interested</span>
           </Button>
         </Col>
       </Row>
     );
   }
 }
-
-const linkToUser = (itemEntity) => {
-  return (
-    <Link to={'/user/'+itemEntity.owner.id}/>
-  );
-};
 
 const mapStateToProps = ({ item }: IRootState) => ({
   itemEntity: item.entity

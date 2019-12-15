@@ -187,7 +187,7 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
                                                     &nbsp;
                                                 </a>
                                                 <span>
-                          </span>
+                                               </span>
                                             </div>
                                         ) : null}
                                     </td>
@@ -224,6 +224,10 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
                         />
                     </Row>
                 </div>
+              &nbsp;
+              <Button tag={Link} to="/search" replace color="info">
+                <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
+              </Button>
             </div>
         );
     }
