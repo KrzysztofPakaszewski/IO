@@ -5,6 +5,7 @@ import io.domain.Matching;
 import io.repository.MatchingRepository;
 import io.service.ChatRepository;
 import io.service.UserService;
+import io.service.MatchingService;
 import io.web.rest.errors.ExceptionTranslator;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -45,6 +46,9 @@ public class MatchingResourceIT {
     private MatchingRepository matchingRepository;
 
     @Autowired
+    private MatchingService matchingService;
+
+    @Autowired
     private ChatRepository chatRepository;
 
     @Autowired
@@ -72,7 +76,7 @@ public class MatchingResourceIT {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final MatchingResource matchingResource = new MatchingResource(matchingRepository, chatRepository,userService);
+        final MatchingResource matchingResource = new MatchingResource(matchingRepository, matchingService, chatRepository, userService);
         this.restMatchingMockMvc = MockMvcBuilders.standaloneSetup(matchingResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

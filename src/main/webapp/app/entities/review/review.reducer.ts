@@ -140,6 +140,14 @@ export const deleteEntity: ICrudDeleteAction<IReview> = id => async dispatch => 
   return result;
 };
 
+export const getReviews: ICrudGetAction<IReview> = login => {
+  const requestUrl = `${apiUrl}/getbyuser/${login}`;
+  return {
+    type: ACTION_TYPES.FETCH_REVIEW_LIST,
+    payload: axios.get(requestUrl)
+  };
+};
+
 export const reset = () => ({
   type: ACTION_TYPES.RESET
 });

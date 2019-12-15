@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import {match} from 'react-router'
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col, Label } from 'reactstrap';
 import { AvFeedback, AvForm, AvGroup, AvInput, AvField } from 'availity-reactstrap-validation';
@@ -7,12 +8,14 @@ import { ICrudGetAction, ICrudGetAllAction, setFileData, openFile, byteSize, ICr
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
 
+import { getCurrentlyLoggedUser, getUser} from 'app/modules/administration/user-management/user-management.reducer';
 import { IUser } from 'app/shared/model/user.model';
 import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
 import { getEntity, updateEntity, createEntity, setBlob, reset } from './item.reducer';
 import { IItem } from 'app/shared/model/item.model';
 import { convertDateTimeFromServer, convertDateTimeToServer } from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
+import {getSession} from "app/shared/reducers/authentication";
 
 export interface IItemUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
@@ -37,6 +40,7 @@ export class ItemUpdate extends React.Component<IItemUpdateProps, IItemUpdateSta
   }
 
   componentDidMount() {
+    this.props.getCurrentlyLoggedUser();
     if (this.state.isNew) {
       this.props.reset();
     } else {
@@ -59,7 +63,8 @@ export class ItemUpdate extends React.Component<IItemUpdateProps, IItemUpdateSta
       const { itemEntity } = this.props;
       const entity = {
         ...itemEntity,
-        ...values
+        ...values,
+        owner: this.props.user
       };
 
       if (this.state.isNew) {
@@ -68,6 +73,7 @@ export class ItemUpdate extends React.Component<IItemUpdateProps, IItemUpdateSta
         this.props.updateEntity(entity);
       }
     }
+    this.handleClose();
   };
 
   handleClose = () => {
@@ -84,7 +90,7 @@ export class ItemUpdate extends React.Component<IItemUpdateProps, IItemUpdateSta
       <div>
         <Row className="justify-content-center">
           <Col md="8">
-            <h2 id="culexApp.item.home.createOrEditLabel"><b><i>{itemEntity.title}</i></b> </h2>
+            <h2 id="culexApp.item.home.createOrEditLabel"><b><i>{!isNew ? itemEntity.title : "Create new item"}</i></b> </h2>
           </Col>
         </Row>
         <Row className="justify-content-center">
@@ -171,11 +177,11 @@ export class ItemUpdate extends React.Component<IItemUpdateProps, IItemUpdateSta
                 </AvGroup>
                 <AvGroup>
                   <Label id="hashLabel" for="item-hash">
-                    Hash
+                    Hashtags
                   </Label>
                   <AvField id="item-hash" type="text" name="hash" />
                 </AvGroup>
-                <Button tag={Link} id="cancel-save" to={`/item/`} replace color="info">
+                <Button tag={Link} id="cancel-save" to={`/item`} replace color="info">
                   <FontAwesomeIcon icon="arrow-left" />
                   &nbsp;
                   <span className="d-none d-md-inline">Back</span>
@@ -199,7 +205,8 @@ const mapStateToProps = (storeState: IRootState) => ({
   itemEntity: storeState.item.entity,
   loading: storeState.item.loading,
   updating: storeState.item.updating,
-  updateSuccess: storeState.item.updateSuccess
+  updateSuccess: storeState.item.updateSuccess,
+  user: storeState.userManagement.user,
 });
 
 const mapDispatchToProps = {
@@ -208,7 +215,8 @@ const mapDispatchToProps = {
   updateEntity,
   setBlob,
   createEntity,
-  reset
+  reset,
+  getCurrentlyLoggedUser
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

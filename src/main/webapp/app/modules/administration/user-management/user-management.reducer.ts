@@ -136,6 +136,14 @@ export const getCurrentlyLoggedUser = () => {
   };
 };
 
+export const getCurrentUserAndUserById: ICrudGetAction<IUser> = id => {
+  const requestUrl = `${apiUrl}/logged/${id}`;
+  return {
+    type: ACTION_TYPES.FETCH_USERS,
+    payload: axios.get<IUser>(requestUrl)
+  };
+};
+
 export const createUser: ICrudPutAction<IUser> = user => async dispatch => {
   const result = await dispatch({
     type: ACTION_TYPES.CREATE_USER,

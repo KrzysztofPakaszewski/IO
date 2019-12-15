@@ -13,6 +13,7 @@ export interface IItem {
   preferences?: string;
   preferedDelivery?: Delivery;
   owner?: IUser;
+  interesteds?: IUser[];
 }
 
 export const defaultValue: Readonly<IItem> = {};
