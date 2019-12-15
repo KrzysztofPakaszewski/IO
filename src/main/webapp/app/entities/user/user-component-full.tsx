@@ -14,7 +14,7 @@ import { Button, Col, Row, Table } from 'reactstrap';
 export const UserCompFull = (userEntity, itemList, reviewList) =>{
 
   return (
-    <Box maxWidth={600}>
+    <Box maxWidth={1200}>
       <h2> User <b><i> {userEntity.login} </i></b></h2>
       <dl className="jh-entity-details">
         <dt>
