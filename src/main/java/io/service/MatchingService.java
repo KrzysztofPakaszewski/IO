@@ -2,8 +2,10 @@ package io.service;
 
 import io.domain.Item;
 import io.domain.Matching;
+import io.domain.User;
 import io.repository.ItemRepository;
 import io.repository.MatchingRepository;
+import io.security.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,7 @@ public class MatchingService {
     // Creates matches for owner of the chosen item
 
     public void createMatchesForThisItem(Item chosenItem){
-        List<Item> userItems =itemRepository.findByOwnerIsCurrentUser();
+        List<Item> userItems = itemRepository.findByOwnerIsCurrentUser();
         boolean hasAcceptedMatching = doesThisItemHasAcceptedMatch(chosenItem);
 
         for ( Item item: userItems ) {
@@ -87,7 +89,28 @@ public class MatchingService {
         }
     }
 
+    public void createMatchesIfBothUsersInterested(Item likedItem){
+        List<Item> userItems = itemRepository.findByOwnerIsCurrentUser();
+        boolean hasAcceptedMatching = doesThisItemHasAcceptedMatch(likedItem);
 
+        for ( Item item: userItems ) {
+            List<User> interestedUsers = itemRepository.getUsersInterestedIn(item.getId());
+            for(User user : interestedUsers){
+                if(user.getId().equals(likedItem.getOwner().getId())){
+                    Matching matching = new Matching();
+                    matching.setItemAsked(likedItem);
+                    matching.setItemOffered(item);
+                    if(hasAcceptedMatching || doesThisItemHasAcceptedMatch(item)){
+                        matching.setStateOfExchange(false);
+                    }
+                    matchingRepository.save(matching);
 
+                    matching.setItemAsked(item);
+                    matching.setItemOffered(likedItem);
+                    matchingRepository.save(matching);
+                }
+            }
+        }
+    }
 
 }
