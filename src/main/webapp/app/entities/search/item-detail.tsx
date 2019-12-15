@@ -2,16 +2,29 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col } from 'reactstrap';
-import { ICrudGetAction, openFile, byteSize } from 'react-jhipster';
+import {ICrudGetAction, openFile, byteSize, getSortState, IPaginationBaseState} from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { addNewInterest } from './search.reducer';
 
 import { IRootState } from 'app/shared/reducers';
 import { getEntity } from './search.reducer';
+import {getUrlParameter} from "app/shared/util/url-utils";
+import {ITEMS_PER_PAGE} from "app/shared/util/pagination.constants";
 
 export interface IItemDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
-export class ItemDetail extends React.Component<IItemDetailProps> {
+export interface IItemDetailState{
+  showInterestedButton: boolean;
+}
+
+export class ItemDetail extends React.Component<IItemDetailProps, IItemDetailState> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showInterestedButton: false,
+    };
+  }
+
   componentDidMount() {
     this.props.getEntity(this.props.match.params.id);
   }
@@ -69,9 +82,10 @@ export class ItemDetail extends React.Component<IItemDetailProps> {
             <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
           </Button>
           &nbsp;
-          <Button onClick={() => this.handleInterest()}>
-            <FontAwesomeIcon icon = "plus" /> <span className="d-none d-md-inline">Interested</span>
-          </Button>
+          {this.state.showInterestedButton ? (<Button onClick={() => this.handleInterest()}>
+              <FontAwesomeIcon icon="plus"/> <span className="d-none d-md-inline">Interested</span>
+            </Button>) : " lalala "
+          }
         </Col>
       </Row>
     );

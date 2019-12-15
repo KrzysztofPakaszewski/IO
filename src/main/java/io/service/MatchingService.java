@@ -104,10 +104,6 @@ public class MatchingService {
                         matching.setStateOfExchange(false);
                     }
                     matchingRepository.save(matching);
-
-                    matching.setItemAsked(item);
-                    matching.setItemOffered(likedItem);
-                    matchingRepository.save(matching);
                 }
             }
         }
