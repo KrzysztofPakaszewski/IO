@@ -36,7 +36,7 @@ export class Item extends React.Component<IItemProps, IItemState> {
     );
   };
 
-    sortEntities() {
+  sortEntities() {
     this.getEntities();
     this.props.history.push(`${this.props.location.pathname}?page=${this.state.activePage}&sort=${this.state.sort},${this.state.order}`);
   }
@@ -64,8 +64,8 @@ export class Item extends React.Component<IItemProps, IItemState> {
             <Table responsive aria-describedby="item-heading">
               <thead>
               <tr>
-                <th className="hand" onClick={this.sort('image')}>
-                  Image <FontAwesomeIcon icon="sort" />
+                <th className="hand" >
+                  Image
                 </th>
                 <th className="hand" onClick={this.sort('title')}>
                   Title <FontAwesomeIcon icon="sort" />
@@ -73,8 +73,8 @@ export class Item extends React.Component<IItemProps, IItemState> {
                 <th  className="hand" onClick={this.sort('category')}>
                   Category <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={this.sort('state')}>
-                  State <FontAwesomeIcon icon="sort" />
+                <th className="hand" >
+                  State
                 </th>
                 <th className="hand" onClick={this.sort('preferedDelivery')}>
                   Prefered Delivery <FontAwesomeIcon icon="sort" />
@@ -82,11 +82,11 @@ export class Item extends React.Component<IItemProps, IItemState> {
                 <th className="hand" onClick={this.sort('preferences')}>
                   Preferences <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={this.sort('hash')}>
-                  Hashtags <FontAwesomeIcon icon="sort" />
+                <th className="hand" >
+                  Hashtags
                 </th>
-                <th className="hand" onClick={this.sort('owner')}>
-                  Owner <FontAwesomeIcon icon="sort" />
+                <th className="hand">
+                  Owner
                 </th>
                 <th />
               </tr>
