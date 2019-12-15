@@ -6,6 +6,9 @@ import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util'
 
 import { IMatching, defaultValue } from 'app/shared/model/matching.model';
 
+import * as SockJS from 'sockjs-client';
+import * as Stomp from 'webstomp-client';
+
 export const ACTION_TYPES = {
   FETCH_MATCHING_LIST: 'matching/FETCH_MATCHING_LIST',
   FETCH_MATCHING: 'matching/FETCH_MATCHING',
@@ -124,6 +127,14 @@ export const getEntity: ICrudGetAction<IMatching> = id => {
 };
 
 export const getChat: ICrudGetAction<IMatching> = id => {
+  const requestUrl = `${apiUrl}/chat/${id}`;
+  return {
+    type: ACTION_TYPES.FETCH_CHAT,
+    payload: axios.get<IMatching>(requestUrl)
+  };
+};
+
+export const sendMsg: ICrudGetAction<IMatching> = id => {
   const requestUrl = `${apiUrl}/chat/${id}`;
   return {
     type: ACTION_TYPES.FETCH_CHAT,

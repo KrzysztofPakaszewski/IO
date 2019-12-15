@@ -1,11 +1,10 @@
 package io.web.rest;
 
-import com.sun.xml.internal.ws.developer.Serialization;
 import io.domain.Matching;
 import io.domain.User;
 import io.domain.chat.Chat;
 import io.repository.MatchingRepository;
-import io.service.ChatService;
+import io.service.ChatRepository;
 import io.service.UserService;
 import io.web.rest.errors.BadRequestAlertException;
 
@@ -19,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional; 
 import org.springframework.web.bind.annotation.*;
 
-import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -42,12 +40,12 @@ public class MatchingResource {
     private String applicationName;
 
     private final MatchingRepository matchingRepository;
-    private final ChatService chatService;
+    private final ChatRepository chatRepository;
     private final UserService userService;
 
-    public MatchingResource(MatchingRepository matchingRepository, ChatService chatService, UserService userService) {
+    public MatchingResource(MatchingRepository matchingRepository, ChatRepository chatRepository, UserService userService) {
         this.matchingRepository = matchingRepository;
-        this.chatService = chatService;
+        this.chatRepository = chatRepository;
         this.userService = userService;
     }
 
@@ -80,9 +78,9 @@ public class MatchingResource {
      */
     @PostMapping("/matchings/chat")
     public void createChatMessage(@RequestBody ChatMessage chatMessage) throws URISyntaxException {
-        log.debug("REST request to add message : {}", chatMessage);
-        User user = userService.getUserWithAuthorities().get();
-        chatService.addMessage(chatMessage.getId(), user ,chatMessage.getMessage());
+//        log.debug("REST request to add message : {}", chatMessage);
+//        User user = userService.getUserWithAuthorities().get();
+//        chatRepository.addMessage(chatMessage.getId(), user.getLogin(),  ,chatMessage.getMessage());
     }
 
     /**
@@ -140,10 +138,10 @@ public class MatchingResource {
      */
     @GetMapping("/matchings/chat/{id}")
     public Chat getMatchingChat(@PathVariable Long id) {
-        log.debug("REST request to get Matching : {}", id);
-        Optional<User> user = this.userService.getUserWithAuthorities();
-        Chat chat = chatService.getChat(id, user.get().getId());
-        return chat;
+//        log.debug("REST request to get Matching : {}", id);
+//        Optional<User> user = this.userService.getUserWithAuthorities();
+//        Chat chat = chatRepository.getChat(id, user.get().getId());
+        return null;
     }
 
 

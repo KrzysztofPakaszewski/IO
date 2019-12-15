@@ -22,26 +22,26 @@ import java.util.regex.Pattern;
 
 
 @Service
-public class ChatService {
+public class ChatRepository {
 
     private static final String path = "data\\chat\\";
     private UserRepository userRepository;
     private HttpSession httpSession;
 
-    public ChatService(UserRepository userRepository) {
+    public ChatRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public Chat getChat(Long id, Long userId) {
-        Chat chat = loadChat(id, userId);
+    public Chat getChat(Long id, String userLogin) {
+        Chat chat = loadChat(id, userLogin);
         if (chat == null) {
             chat = createChat(id);
         }
         return chat;
     }
 
-    public void addMessage(Long id, User user, String message) {
-        String textToWrite = "<user:" + user.getId() + ">" + message + "\n";
+    public void addMessage(Long id, String login, String time, String message) {
+        String textToWrite = "<user:" + login + ";time:" + time + ">" + message + "\n";
         try {
             Files.write(
                 Paths.get(path + id + ".chat"),
@@ -63,10 +63,10 @@ public class ChatService {
         return new Chat();
     }
 
-    private Chat loadChat(Long id, Long userId) {
+    private Chat loadChat(Long id, String userLogin) {
         String fileContent = readFile(id);
         if(fileContent != null) {
-            return parseFile(fileContent, userId);
+            return parseFile(fileContent, userLogin);
         } else {
             return null;
         }
@@ -89,33 +89,34 @@ public class ChatService {
         }
     }
 
-    private Chat parseFile(String fileContent, Long userId) {
+    private Chat parseFile(String fileContent, String userLogin) {
 
         ArrayList<ChatItem> chatItems = new ArrayList<>();
 
-        String regex = "<user:(\\d)>(.*)";
+        String regex = "<user:(.*);time:(.*)>(.*)";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(fileContent);
 
-        Map<Long, String> users = new HashMap<>();
-        users.put(userId, "ja");
+        Map<String, String> users = new HashMap<>();
+//        users.put(userLogin, "ja");
 
         while (matcher.find()) {
-            Long id  = Long.parseLong(matcher.group(1));
-            String msg = matcher.group(2);
-            if (!users.containsKey(id)) {
-                User user = getUser(id);
+            String login  = matcher.group(1);
+            String time = matcher.group(2);
+            String msg = matcher.group(3);
+            if (!users.containsKey(login)) {
+                User user = getUser(login);
                 String name = user.getFirstName() + " " + user.getLastName();
-                users.put(id, name);
+                users.put(login, name);
             }
 
-            ChatItem chatItem = new ChatItem(users.get(id), msg);
+            ChatItem chatItem = new ChatItem(users.get(login), time, msg);
             chatItems.add(chatItem);
         }
         return new Chat(chatItems);
     }
 
-    private User getUser(Long id) {
-        return userRepository.findById(id).get();
+    private User getUser(String login) {
+        return userRepository.findOneByLogin(login).get();
     }
 }

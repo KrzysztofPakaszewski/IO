@@ -3,7 +3,7 @@ package io.web.rest;
 import io.CulexApp;
 import io.domain.Matching;
 import io.repository.MatchingRepository;
-import io.service.ChatService;
+import io.service.ChatRepository;
 import io.service.UserService;
 import io.web.rest.errors.ExceptionTranslator;
 
@@ -45,7 +45,7 @@ public class MatchingResourceIT {
     private MatchingRepository matchingRepository;
 
     @Autowired
-    private ChatService chatService;
+    private ChatRepository chatRepository;
 
     @Autowired
     private UserService userService;
@@ -72,7 +72,7 @@ public class MatchingResourceIT {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final MatchingResource matchingResource = new MatchingResource(matchingRepository, chatService,userService);
+        final MatchingResource matchingResource = new MatchingResource(matchingRepository, chatRepository,userService);
         this.restMatchingMockMvc = MockMvcBuilders.standaloneSetup(matchingResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
