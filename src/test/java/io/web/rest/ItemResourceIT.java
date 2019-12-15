@@ -3,6 +3,8 @@ package io.web.rest;
 import io.CulexApp;
 import io.domain.Item;
 import io.repository.ItemRepository;
+import io.repository.UserRepository;
+import io.service.MatchingService;
 import io.web.rest.errors.ExceptionTranslator;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -63,6 +65,12 @@ public class ItemResourceIT {
     private ItemRepository itemRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private MatchingService matchingService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -84,7 +92,7 @@ public class ItemResourceIT {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final ItemResource itemResource = new ItemResource(itemRepository);
+        final ItemResource itemResource = new ItemResource(itemRepository, userRepository, matchingService);
         this.restItemMockMvc = MockMvcBuilders.standaloneSetup(itemResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

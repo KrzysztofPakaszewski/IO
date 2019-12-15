@@ -64,8 +64,7 @@ public class MatchingResource {
             .body(result);
     }
 
-
-    // TODO need to add safeguards
+/*
     /**
      * {@code POST  /matchings} : Create new matchings for given item.
      *
@@ -73,6 +72,7 @@ public class MatchingResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with empty body, or with status {@code 400 (Bad Request)} if Item has no ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    /*
     @PostMapping("/matchings/create")
     public ResponseEntity<String> createMatching(@RequestBody Item item) throws URISyntaxException {
         log.debug("REST request to create Matches for item : {}", item);
@@ -84,6 +84,7 @@ public class MatchingResource {
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME,""))
             .body("");
     }
+    */
 
     /**
      * {@code POST  /matchings} : set this matching as accepted
@@ -99,16 +100,9 @@ public class MatchingResource {
         if (matching.getId() == null) {
             throw new BadRequestAlertException("Error! Matching has no ID", ENTITY_NAME, "noID");
         }
-        boolean result = matchingService.acceptGivenMatching(matching);
-        if(result) {
-            // TODO: create chat
+        matchingService.acceptGivenMatching(matching);
             return ResponseEntity.created(new URI("/api/matchings/"))
                 .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, ""))
-                .body("");
-        }
-        else
-            return ResponseEntity.created(new URI("/api/matchings/"))
-                .headers(HeaderUtil.createFailureAlert(applicationName,false,ENTITY_NAME,"Matching not found",""))
                 .body("");
     }
 
