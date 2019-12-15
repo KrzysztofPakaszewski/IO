@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps} from 'react-router-dom';
 import { Button, Row, Col } from 'reactstrap';
 import {ICrudGetAction, openFile, byteSize, getSortState, IPaginationBaseState} from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -21,7 +21,7 @@ export class ItemDetail extends React.Component<IItemDetailProps, IItemDetailSta
   constructor(props) {
     super(props);
     this.state = {
-      showInterestedButton: false,
+      showInterestedButton: this.props.location.state == null ? false : this.props.location.state.showInterestedButton
     };
   }
 
@@ -78,13 +78,13 @@ export class ItemDetail extends React.Component<IItemDetailProps, IItemDetailSta
             <dd>{itemEntity.hash}</dd>
           </dl>
           &nbsp;
-          <Button tag={Link} to="/search" replace color="info">
+          <Button onClick={() => this.props.history.goBack()} replace color="info">
             <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
           </Button>
           &nbsp;
           {this.state.showInterestedButton ? (<Button onClick={() => this.handleInterest()}>
               <FontAwesomeIcon icon="plus"/> <span className="d-none d-md-inline">Interested</span>
-            </Button>) : " lalala "
+            </Button>) : ""
           }
         </Col>
       </Row>
