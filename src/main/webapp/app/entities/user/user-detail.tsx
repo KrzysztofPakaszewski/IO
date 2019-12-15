@@ -9,20 +9,24 @@ import { IRootState } from 'app/shared/reducers';
 import { getEntity } from './user.reducer';
 import { IUser } from 'app/shared/model/user.model';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import {getEntities} from "app/entities/item/item.reducer";
+import {UserCompFull} from "app/entities/user/user-component-full";
+import {getUserItems} from "app/entities/item/item.reducer";
 
-export interface IUserDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
+export interface IUserDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string, login: string }> {}
 
 export class UserDetail extends React.Component<IUserDetailProps> {
   componentDidMount() {
     this.props.getEntity(this.props.match.params.id);
+    getUserItems(this.props.match.params.login);
   }
 
   render() {
-    const { userEntity } = this.props;
+    const { userEntity, itemList} = this.props;
     return (
       <Row className="justify-content-md-center">
         <Col md="20">
-          {UserComp(userEntity)}
+          {UserCompFull(userEntity, itemList, null)}
           <Button tag={Link} to="/item" replace color="info">
             <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
           </Button>
@@ -33,11 +37,13 @@ export class UserDetail extends React.Component<IUserDetailProps> {
   }
 }
 
-const mapStateToProps = ({ user }: IRootState) => ({
-  userEntity: user.entity
+const mapStateToProps = ( storeState: IRootState) => ({
+  userEntity: storeState.user.entity,
+  item: storeState.item.entity,
+  itemList: storeState.item.entities
 });
 
-const mapDispatchToProps = { getEntity };
+const mapDispatchToProps = { getEntity, getUserItems };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;
