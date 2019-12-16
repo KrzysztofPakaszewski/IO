@@ -190,7 +190,7 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
                       {item.image ? (
                         <div>
                           <a onClick={openFile(item.imageContentType, item.image)}>
-                            <img src={`data:${item.imageContentType};base64,${item.image}`} style={{ maxHeight: '300px' }} />
+                            <img src={`data:${item.imageContentType};base64,${item.image}`} style={{ maxHeight: '30px' }} />
                             &nbsp;
                           </a>
                           <span>

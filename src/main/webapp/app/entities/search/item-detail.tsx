@@ -2,14 +2,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps} from 'react-router-dom';
 import { Button, Row, Col } from 'reactstrap';
-import {ICrudGetAction, openFile, byteSize, getSortState, IPaginationBaseState} from 'react-jhipster';
+import { openFile } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { addNewInterest } from './search.reducer';
+import { getCurrentlyLoggedUser } from "app/modules/administration/user-management/user-management.reducer";
+
 
 import { IRootState } from 'app/shared/reducers';
 import { getEntity } from './search.reducer';
-import {getUrlParameter} from "app/shared/util/url-utils";
-import {ITEMS_PER_PAGE} from "app/shared/util/pagination.constants";
 
 export interface IItemDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
@@ -27,10 +27,15 @@ export class ItemDetail extends React.Component<IItemDetailProps, IItemDetailSta
 
   componentDidMount() {
     this.props.getEntity(this.props.match.params.id);
+    this.props.getCurrentlyLoggedUser();
   }
 
   handleInterest() {
     addNewInterest(this.props.itemEntity)
+  }
+
+  interestButtonLogic(itemEntity, currentUser) {
+    return !itemEntity.interesteds.some(function (user) {return user.login === currentUser})
   }
 
   render() {
@@ -82,7 +87,9 @@ export class ItemDetail extends React.Component<IItemDetailProps, IItemDetailSta
             <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
           </Button>
           &nbsp;
-          {this.state.showInterestedButton ? (<Button onClick={() => this.handleInterest()}>
+          {(this.state.showInterestedButton && (itemEntity.owner == null ? true : itemEntity.owner.login !== this.props.user.login) &&
+            (itemEntity.interesteds == null ? true : this.interestButtonLogic(itemEntity, this.props.user.login))) ?
+            (<Button onClick={() => this.handleInterest()}>
               <FontAwesomeIcon icon="plus"/> <span className="d-none d-md-inline">Interested</span>
             </Button>) : ""
           }
@@ -92,11 +99,16 @@ export class ItemDetail extends React.Component<IItemDetailProps, IItemDetailSta
   }
 }
 
-const mapStateToProps = ({ item }: IRootState) => ({
-  itemEntity: item.entity
+
+const mapStateToProps = ({ item, userManagement }: IRootState) => ({
+  itemEntity: item.entity,
+  user: userManagement.user,
 });
 
-const mapDispatchToProps = { getEntity };
+const mapDispatchToProps = {
+  getEntity,
+  getCurrentlyLoggedUser
+};
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;
