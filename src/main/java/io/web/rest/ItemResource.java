@@ -213,7 +213,7 @@ public class ItemResource {
     @GetMapping("/search/{id}")
     public ResponseEntity<Item> getItemNoJoin(@PathVariable Long id) {
         log.debug("REST request to get Item : {}", id);
-        Optional<Item> item = itemRepository.findByIdNoJoin(id);
+        Optional<Item> item = itemRepository.findByIdLeftJoin(id);
         return ResponseUtil.wrapOrNotFound(item);
     }
 

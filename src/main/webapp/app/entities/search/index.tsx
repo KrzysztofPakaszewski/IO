@@ -11,6 +11,7 @@ import SearchImInterestedIn from './search-im-interested-in';
 const Routes = ({ match }) => (
   <>
     <Switch>
+      <ErrorBoundaryRoute exact path={`${match.url}/interested/:id`} component={SearchImInterestedIn} />
       <ErrorBoundaryRoute exact path={`${match.url}/interested`} component={SearchImInterestedIn} />
       <ErrorBoundaryRoute exact path={`${match.url}/:id`} component={ItemDetail} />
       <ErrorBoundaryRoute path={match.url} component={Search} />
