@@ -70,8 +70,8 @@ export class SearchImInterestedIn extends React.Component<ISearchProps, ISearchS
         );
     };
 
-    handleClick = (item) => {
-        this.props.history.push(`${this.props.location.pathname}/${item.id}`);
+    handleRowClick = (item) => {
+        this.props.history.push(`/search/${item.id}`);
     };
 
     handleBooksCheckboxChange = event =>
@@ -177,8 +177,7 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
                             </thead>
                             <tbody>
                             {itemList.map((item, i) => (
-                                /*<tr id="clickableRow" key={`entity-${i}`} onClick={() => this.handleClick(item)} role="button">*/
-                                <tr>
+                                <tr id="clickableRow" key={`entity-${i}`} onClick={() => this.handleRowClick(item)} role="button">
                                     <td>
                                         {item.image ? (
                                             <div>
@@ -198,7 +197,7 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
                                     <td>{item.preferences}</td>
                                     <td>{item.hash}</td>
                                     <td className="text-right">
-                                        <Button tag={Link} to={`${match.url}/${item.id}`} color="info" size="sm">
+                                        <Button onClick={() => this.handleRowClick(item)} color="info" size="sm">
                                             <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
                                         </Button>
                                     </td>

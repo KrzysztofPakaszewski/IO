@@ -108,7 +108,7 @@ export const getLikedEntities = (search, page, size, sort, checkedBooks, checked
 };
 
 export const getEntity: ICrudGetAction<IItem> = id => {
-  const requestUrl = `${apiUrlItems}/${id}`;
+  const requestUrl = `${apiUrl}/${id}`;
   return {
     type: ACTION_TYPES.FETCH_ITEM,
     payload: axios.get<IItem>(requestUrl)

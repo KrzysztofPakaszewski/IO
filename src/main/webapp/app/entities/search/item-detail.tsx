@@ -1,23 +1,41 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps} from 'react-router-dom';
 import { Button, Row, Col } from 'reactstrap';
-import { ICrudGetAction, openFile, byteSize } from 'react-jhipster';
+import { openFile } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { addNewInterest } from './search.reducer';
+import { getCurrentlyLoggedUser } from "app/modules/administration/user-management/user-management.reducer";
+
 
 import { IRootState } from 'app/shared/reducers';
 import { getEntity } from './search.reducer';
 
 export interface IItemDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
-export class ItemDetail extends React.Component<IItemDetailProps> {
+export interface IItemDetailState{
+  showInterestedButton: boolean;
+}
+
+export class ItemDetail extends React.Component<IItemDetailProps, IItemDetailState> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showInterestedButton: this.props.location.state == null ? false : this.props.location.state.showInterestedButton
+    };
+  }
+
   componentDidMount() {
     this.props.getEntity(this.props.match.params.id);
+    this.props.getCurrentlyLoggedUser();
   }
 
   handleInterest() {
     addNewInterest(this.props.itemEntity)
+  }
+
+  interestButtonLogic(itemEntity, currentUser) {
+    return !itemEntity.interesteds.some(function (user) {return user.login === currentUser})
   }
 
   render() {
@@ -65,24 +83,32 @@ export class ItemDetail extends React.Component<IItemDetailProps> {
             <dd>{itemEntity.hash}</dd>
           </dl>
           &nbsp;
-          <Button tag={Link} to="/search" replace color="info">
+          <Button onClick={() => this.props.history.goBack()} replace color="info">
             <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
           </Button>
           &nbsp;
-          <Button onClick={() => this.handleInterest()}>
-            <FontAwesomeIcon icon = "plus" /> <span className="d-none d-md-inline">Interested</span>
-          </Button>
+          {(this.state.showInterestedButton && (itemEntity.owner == null ? true : itemEntity.owner.login !== this.props.user.login) &&
+            (itemEntity.interesteds == null ? true : this.interestButtonLogic(itemEntity, this.props.user.login))) ?
+            (<Button onClick={() => this.handleInterest()}>
+              <FontAwesomeIcon icon="plus"/> <span className="d-none d-md-inline">Interested</span>
+            </Button>) : ""
+          }
         </Col>
       </Row>
     );
   }
 }
 
-const mapStateToProps = ({ item }: IRootState) => ({
-  itemEntity: item.entity
+
+const mapStateToProps = ({ item, userManagement }: IRootState) => ({
+  itemEntity: item.entity,
+  user: userManagement.user,
 });
 
-const mapDispatchToProps = { getEntity };
+const mapDispatchToProps = {
+  getEntity,
+  getCurrentlyLoggedUser
+};
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;
