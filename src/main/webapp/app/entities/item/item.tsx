@@ -117,11 +117,11 @@ export class Item extends React.Component<IItemProps, IItemState> {
                   <td>{item.preferences}</td>
                   <td>{item.hash}</td>
                   <td>
-                    {item.owner == null ? "" :(
+                  {item.owner ?(
                     <Button tag={Link} to={`user/${item.owner.login}`} color="link" size="sm">
-                      {item.owner ? item.owner.login : ' '}
+                      {item.owner.login}
                     </Button>
-                    )}
+                    ) : ''}
                   </td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
