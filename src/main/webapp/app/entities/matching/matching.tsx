@@ -50,7 +50,10 @@ export class Matching extends React.Component<IMatchingProps> {
                     <td className="text-right">
                       <div className="btn-group flex-btn-group-container">
                         <Button tag={Link} to={`${match.url}/${matching.id}`} color="info" size="sm">
-                          <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View Chat</span>
+                          <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
+                        </Button>
+                        <Button tag={Link} to={`${match.url}/${matching.id}/chat`} color="warning" size="sm">
+                          <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">Chat</span>
                         </Button>
                         <Button tag={Link} to={`${match.url}/${matching.id}/delete`} color="danger" size="sm">
                           <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Delete</span>

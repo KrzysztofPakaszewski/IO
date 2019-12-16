@@ -3,6 +3,8 @@ package io.web.rest;
 import io.CulexApp;
 import io.domain.Matching;
 import io.repository.MatchingRepository;
+import io.service.ChatRepository;
+import io.service.UserService;
 import io.service.MatchingService;
 import io.web.rest.errors.ExceptionTranslator;
 
@@ -47,6 +49,12 @@ public class MatchingResourceIT {
     private MatchingService matchingService;
 
     @Autowired
+    private ChatRepository chatRepository;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -68,7 +76,7 @@ public class MatchingResourceIT {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final MatchingResource matchingResource = new MatchingResource(matchingRepository,matchingService);
+        final MatchingResource matchingResource = new MatchingResource(matchingRepository, matchingService, chatRepository, userService);
         this.restMatchingMockMvc = MockMvcBuilders.standaloneSetup(matchingResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -160,7 +168,7 @@ public class MatchingResourceIT {
             .andExpect(jsonPath("$.[*].stateOfExchange").value(hasItem(DEFAULT_STATE_OF_EXCHANGE.booleanValue())))
             .andExpect(jsonPath("$.[*].chat").value(hasItem(DEFAULT_CHAT)));
     }
-
+    
     @Test
     @Transactional
     public void getMatching() throws Exception {

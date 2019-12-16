@@ -7,10 +7,15 @@ import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util'
 import { IMatching, defaultValue } from 'app/shared/model/matching.model';
 import { IItem } from 'app/shared/model/item.model';
 
+import * as SockJS from 'sockjs-client';
+import * as Stomp from 'webstomp-client';
+
 export const ACTION_TYPES = {
   FETCH_MATCHING_LIST: 'matching/FETCH_MATCHING_LIST',
   FETCH_MATCHING: 'matching/FETCH_MATCHING',
+  FETCH_CHAT: 'matching/FETCH_CHAT',
   CREATE_MATCHING: 'matching/CREATE_MATCHING',
+  CREATE_MESSAGE: 'matching/CREATE_MESSAGE',
   UPDATE_MATCHING: 'matching/UPDATE_MATCHING',
   DELETE_MATCHING: 'matching/DELETE_MATCHING',
   RESET: 'matching/RESET'
@@ -20,6 +25,7 @@ const initialState = {
   loading: false,
   errorMessage: null,
   entities: [] as ReadonlyArray<IMatching>,
+  chat: [] as ReadonlyArray<any>,
   entity: defaultValue,
   updating: false,
   updateSuccess: false
@@ -32,6 +38,7 @@ export type MatchingState = Readonly<typeof initialState>;
 export default (state: MatchingState = initialState, action): MatchingState => {
   switch (action.type) {
     case REQUEST(ACTION_TYPES.FETCH_MATCHING_LIST):
+    case REQUEST(ACTION_TYPES.FETCH_CHAT):
     case REQUEST(ACTION_TYPES.FETCH_MATCHING):
       return {
         ...state,
@@ -71,6 +78,13 @@ export default (state: MatchingState = initialState, action): MatchingState => {
         ...state,
         loading: false,
         entity: action.payload.data
+      };
+    case SUCCESS(ACTION_TYPES.FETCH_CHAT):
+    case SUCCESS(ACTION_TYPES.CREATE_MESSAGE):
+      return {
+        ...state,
+        loading: false,
+        chat: action.payload.data.chat
       };
     case SUCCESS(ACTION_TYPES.CREATE_MATCHING):
     case SUCCESS(ACTION_TYPES.UPDATE_MATCHING):
@@ -122,6 +136,31 @@ export const getEntity: ICrudGetAction<IMatching> = id => {
     type: ACTION_TYPES.FETCH_MATCHING,
     payload: axios.get<IMatching>(requestUrl)
   };
+};
+
+export const getChat: ICrudGetAction<IMatching> = id => {
+  const requestUrl = `${apiUrl}/chat/${id}`;
+  return {
+    type: ACTION_TYPES.FETCH_CHAT,
+    payload: axios.get<IMatching>(requestUrl)
+  };
+};
+
+export const sendMsg: ICrudGetAction<IMatching> = id => {
+  const requestUrl = `${apiUrl}/chat/${id}`;
+  return {
+    type: ACTION_TYPES.FETCH_CHAT,
+    payload: axios.get<IMatching>(requestUrl)
+  };
+};
+
+export const addMessage: ICrudPutAction<IMatching> = entity => async dispatch => {
+  const result = await dispatch({
+    type: ACTION_TYPES.CREATE_MESSAGE,
+    payload: axios.post(`${apiUrl}/chat`, entity)
+  });
+  dispatch(getChat(entity.id));
+  return result;
 };
 
 export const createEntity: ICrudPutAction<IMatching> = entity => async dispatch => {

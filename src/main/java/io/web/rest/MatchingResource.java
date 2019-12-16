@@ -2,13 +2,18 @@ package io.web.rest;
 
 import io.domain.Item;
 import io.domain.Matching;
+import io.domain.User;
+import io.domain.chat.Chat;
 import io.repository.MatchingRepository;
 import io.service.MatchingService;
+import io.service.ChatRepository;
+import io.service.UserService;
 import io.web.rest.errors.BadRequestAlertException;
 import io.security.SecurityUtils;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import io.web.rest.vm.ChatMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,10 +43,15 @@ public class MatchingResource {
     private String applicationName;
 
     private final MatchingRepository matchingRepository;
+    private final ChatRepository chatRepository;
+    private final UserService userService;
     private final MatchingService matchingService;
 
-    public MatchingResource(MatchingRepository matchingRepository, MatchingService matchingService) {
+    public MatchingResource(MatchingRepository matchingRepository, MatchingService matchingService, ChatRepository chatRepository, UserService userService) {
+//    public MatchingResource(MatchingRepository matchingRepository, ChatRepository chatRepository, UserService userService) {
         this.matchingRepository = matchingRepository;
+        this.chatRepository = chatRepository;
+        this.userService = userService;
         this.matchingService = matchingService;
     }
 
@@ -108,6 +118,21 @@ public class MatchingResource {
 
 
 
+    // TODO coś zwrócić
+    /**
+     * {@code POST  /matchings/chat} : Create a new chat message.
+     *
+     * @param chatMessage the matching to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new matching, or with status {@code 400 (Bad Request)} if the matching has already an ID.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PostMapping("/matchings/chat")
+    public void createChatMessage(@RequestBody ChatMessage chatMessage) throws URISyntaxException {
+//        log.debug("REST request to add message : {}", chatMessage);
+//        User user = userService.getUserWithAuthorities().get();
+//        chatRepository.addMessage(chatMessage.getId(), user.getLogin(),  ,chatMessage.getMessage());
+    }
+
     /**
      * {@code PUT  /matchings} : Updates an existing matching.
      *
@@ -170,6 +195,22 @@ public class MatchingResource {
         Optional<Matching> matching = matchingRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(matching);
     }
+
+    // TODO opakować w ResponseEntity
+    /**
+     * {@code GET  /matchings/chat/:id} : get the "id" chat.
+     *
+     * @param id the id of the chat to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the chat, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/matchings/chat/{id}")
+    public Chat getMatchingChat(@PathVariable Long id) {
+//        log.debug("REST request to get Matching : {}", id);
+//        Optional<User> user = this.userService.getUserWithAuthorities();
+//        Chat chat = chatRepository.getChat(id, user.get().getId());
+        return null;
+    }
+
 
     /**
      * {@code DELETE  /matchings/:id} : delete the "id" matching.
