@@ -22,8 +22,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query("select item from Item item where item.owner.login = ?#{principal.username}")
     List<Item> findByOwnerIsCurrentUser();
 
-    @Query(value = "select item from Item item join fetch item.owner",
-        countQuery = "select count(item) from Item item join item.owner")
+    @Query(value = "select item from Item item join fetch User u on u.id = item.owner.id where u.login = ?#{principal.username}",
+        countQuery = "select count(item) from Item item join fetch User u on u.id = item.owner.id where u.login = ?#{principal.username}")
     Page<Item> findAll(Pageable pageable);
 
     @Query(value = "select item from Item item where lower(item.title) like %:search% and (item.category =:category1 or item.category =:category2 or item.category =:category3)",

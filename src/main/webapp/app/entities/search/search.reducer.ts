@@ -66,7 +66,6 @@ export default (state: SearchState = initialState, action): SearchState => {
 };
 
 const apiUrl = 'api/search';
-const apiUrlItems = 'api/items';
 // Actions
 
 export const getEntities = (search, page, size, sort, checkedBooks, checkedGames, checkedMovies) => {

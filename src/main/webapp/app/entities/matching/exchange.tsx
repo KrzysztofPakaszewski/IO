@@ -105,6 +105,11 @@ export class Exchange extends React.Component<IExchangeProps,IExchangeState> {
                               <FontAwesomeIcon icon="plus" /> <span className="d-none d-md-inline">Add Review</span>
                             </Button>
                           </Grid>
+                          <Grid item>
+                            <Button tag={Link} to={`/matching/${item.id}/chat`} color="warning" size="sm">
+                               <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">Chat</span>
+                            </Button>
+                          </Grid>
                         </Grid>
                       </this.TabPanel>
                     ))}
