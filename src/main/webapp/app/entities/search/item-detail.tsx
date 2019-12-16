@@ -31,7 +31,10 @@ export class ItemDetail extends React.Component<IItemDetailProps, IItemDetailSta
   }
 
   handleInterest() {
-    addNewInterest(this.props.itemEntity)
+    addNewInterest(this.props.itemEntity);
+    this.setState({
+      showInterestedButton: this.props.location.state == false
+    });
   }
 
   interestButtonLogic(itemEntity, currentUser) {
