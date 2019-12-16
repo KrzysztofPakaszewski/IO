@@ -71,7 +71,7 @@ export class SearchImInterestedIn extends React.Component<ISearchProps, ISearchS
     };
 
     handleRowClick = (item) => {
-        this.props.history.push(`${this.props.location.pathname}/${item.id}`);
+        this.props.history.push(`/search/${item.id}`);
     };
 
     handleBooksCheckboxChange = event =>
