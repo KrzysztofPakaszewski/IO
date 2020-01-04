@@ -1,0 +1,15 @@
+.drawer {
+  width: drawerWidth;
+  flexshrink: 0;
+}
+
+.drawerPaper {
+  width: 240px;
+}
+
+.drawerHeader {
+  display: 'flex';
+  alignitems: 'center';
+  padding: 0px 1px;
+  justifycontent: 'flex-end';
+}

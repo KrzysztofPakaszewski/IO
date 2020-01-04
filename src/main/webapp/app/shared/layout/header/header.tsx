@@ -1,11 +1,11 @@
 import './header.scss';
 
 import React, { useState } from 'react';
+import clsx from 'clsx';
 
-import { Navbar, Nav, NavbarToggler, NavbarBrand, Collapse } from 'reactstrap';
+import { Button, Navbar, Nav, NavbarToggler, NavbarBrand, Collapse } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { NavLink as Link } from 'react-router-dom';
 import LoadingBar from 'react-redux-loading-bar';
 
 import { Home, Brand } from './header-components';
@@ -17,6 +17,8 @@ export interface IHeaderProps {
   ribbonEnv: string;
   isInProduction: boolean;
   isSwaggerEnabled: boolean;
+  handleOpen: func;
+  openDrawer: boolean;
 }
 
 const Header = (props: IHeaderProps) => {
@@ -34,10 +36,19 @@ const Header = (props: IHeaderProps) => {
   /* jhipster-needle-add-element-to-menu - JHipster will add new menu items here */
 
   return (
+  <div>
     <div id="app-header">
-      {renderDevRibbon()}
       <LoadingBar className="loading-bar" />
-      <Navbar dark expand="sm" fixed="top" className="jh-navbar">
+      <Navbar dark expand="sm" fixed="top"
+        className={clsx("jh-navbar", { ["appBarShift"]: props.openDrawer,})
+        }>
+        {props.isAuthenticated &&
+        <Button onClick= {props.handleOpen} id="drawerToggler"
+          className = {clsx( props.openDrawer && "hide")}
+        >
+          <FontAwesomeIcon icon = "bars"/>
+        </Button>
+        }
         <NavbarToggler aria-label="Menu" onClick={toggleMenu} />
         <Brand />
         <Collapse isOpen={menuOpen} navbar>
@@ -52,6 +63,7 @@ const Header = (props: IHeaderProps) => {
         </Collapse>
       </Navbar>
     </div>
+  </div>
   );
 };
 
