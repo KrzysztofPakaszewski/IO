@@ -1,22 +1,21 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Col } from 'reactstrap';
-import { AvFeedback, AvForm, AvGroup, AvInput, AvField } from 'availity-reactstrap-validation';
+import {connect} from 'react-redux';
+import {Link, RouteComponentProps} from 'react-router-dom';
+import {Button, Row, Col} from 'reactstrap';
+import {AvFeedback, AvForm, AvGroup, AvInput, AvField} from 'availity-reactstrap-validation';
 import {ICrudGetAction, Storage} from 'react-jhipster';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Observable, Observer, Subscription } from 'rxjs';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {Observable, Observer, Subscription} from 'rxjs';
 
-import { IRootState } from 'app/shared/reducers';
-import { getChat, addMessage, sendMsg } from './matching.reducer';
-import { IMatching } from 'app/shared/model/matching.model';
-import {APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import {IRootState} from 'app/shared/reducers';
 import * as SockJS from 'sockjs-client';
 import * as Stomp from 'webstomp-client';
 
-export interface IMatchingDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
+export interface IMatchingDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {
+}
 
 export class Chat extends React.Component<IMatchingDetailProps> {
+  readonly state: any = {message: '', messages: []};
 
   stompClient = null;
   subscriber = null;
@@ -26,14 +25,13 @@ export class Chat extends React.Component<IMatchingDetailProps> {
   listenerObserver: Observer<any>;
   alreadyConnectedOnce = false;
   private subscription: Subscription;
-  messages: Array<any>;
   chatId: string;
 
   constructor(props) {
     super(props);
     this.connection = this.createConnection();
     this.listener = this.createListener();
-    this.messages = [];
+    this.onHandleChange = this.onHandleChange.bind(this);
   }
 
   connect() {
@@ -42,7 +40,6 @@ export class Chat extends React.Component<IMatchingDetailProps> {
     }
     // building absolute path so that websocket doesn't fail when deploying with a context path
     let url = '/websocket/tracker';
-    // url = this.location.prepareExternalUrl(url);
     const authToken = Storage.local.get('jhi-authenticationToken') || Storage.session.get('jhi-authenticationToken');
     if (authToken) {
       url += '?access_token=' + authToken;
@@ -68,8 +65,6 @@ export class Chat extends React.Component<IMatchingDetailProps> {
     this.connection.then(() => {
       this.subscriber = this.stompClient.subscribe('/chat/public/' + this.chatId, data => {
         this.listenerObserver.next(JSON.parse(data.body));
-      }, dat2 => {
-        this.messages = dat2;
       });
     });
   }
@@ -86,61 +81,35 @@ export class Chat extends React.Component<IMatchingDetailProps> {
 
   componentDidMount() {
     this.chatId = this.props.match.params.id;
-    // this.props.getChat(this.props.match.params.id);
     this.connect();
-    // const dat = this;
     this.receive().subscribe(message => {
 
       if (Array.isArray(message)) {
-        this.messages = message;
+        this.setState({messages: message})
       } else {
-        this.messages.push(message);
+        const temp = this.state.messages;
+        temp.push(message);
+        this.setState({"messages": temp});
       }
-      this.setState(function(oldState, oldProps) {
-        return {
-        };
-      })
     });
-    // this.forceUpdate();
   };
 
   componentWillUnmount() {
     this.disconnect();
   };
 
-  sendMessage = (event, errors, values) => {
-    if (errors.length === 0) {
-      // const { chat, messages } = this.props;
-      const data = {
-        id: this.props.match.params.id,
-        ...values
-      };
-
-      this.props.addMessage(data);
-    }
-  };
-
   sendMsg = (event, errors, values) => {
-    const { message } = values;
-    if (message.length === 0) {
-      return;
-    }
-
-    // console.log(message);
-    this.send(message);
-    // this.props.addMessage(message);
-
-  };
-
-  send(message) {
+    const message = this.state.message;
     if (this.stompClient !== null && this.stompClient.connected) {
       this.stompClient.send(
         '/chat/' + this.chatId, // destination
-        JSON.stringify({ message }), // body
+        JSON.stringify({message}), // body
         {} // header
       );
     }
-  }
+    this.setState({message: ''});
+
+  };
 
   disconnect() {
     if (this.stompClient !== null) {
@@ -154,10 +123,13 @@ export class Chat extends React.Component<IMatchingDetailProps> {
     this.alreadyConnectedOnce = false;
   }
 
+  onHandleChange(e) {
+    this.setState({
+      message: e.target.value
+    });
+  }
 
   render() {
-    const { chat } = this.props;
-    // const { messages } = this.state.matching;
 
     return (
       <div>
@@ -166,10 +138,10 @@ export class Chat extends React.Component<IMatchingDetailProps> {
         </h2>
         <div>
           <div className="chat-messages">
-            {this.messages.map((message, i) => (
+            {this.state.messages.map((message, i) => (
               <div className="row" key={`entity-${i}`}>
                 <div className="col-sm-2">
-                  <strong>{message.userLogin}</strong>
+                  <strong>{message.userName}</strong>
                 </div>
                 <div className="col-sm-8">
                   {message.message}
@@ -185,8 +157,12 @@ export class Chat extends React.Component<IMatchingDetailProps> {
 
           </div>
 
-          <AvForm name="chatForm" onSubmit={this.sendMsg}>
-            <AvField id="form-control" type="text" name="message"/>
+
+          <AvForm id="form-control" name="chatForm" onSubmit={this.sendMsg}>
+            <div className="form-group">
+              <input className="form-control" type="text" onChange={this.onHandleChange} name="message"
+                     value={this.state.message}/>
+            </div>
             <Button color="primary" id="save-entity" type="submit">
               <FontAwesomeIcon icon="save"/>
               &nbsp; Send
@@ -199,13 +175,9 @@ export class Chat extends React.Component<IMatchingDetailProps> {
   }
 }
 
-const mapStateToProps = ({ matching }: IRootState) => ({
-  chat: matching.chat,
-  // messages: matching.messages || [],
-  message: ''
-});
+const mapStateToProps = ({matching}: IRootState) => ({});
 
-const mapDispatchToProps = { getChat, addMessage, sendMsg, };
+const mapDispatchToProps = {};
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;
