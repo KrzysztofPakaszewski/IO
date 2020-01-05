@@ -17,7 +17,7 @@ export interface IHeaderProps {
   ribbonEnv: string;
   isInProduction: boolean;
   isSwaggerEnabled: boolean;
-  handleOpen: func;
+  toggleDrawer: func;
   openDrawer: boolean;
 }
 
@@ -40,12 +40,9 @@ const Header = (props: IHeaderProps) => {
     <div id="app-header">
       <LoadingBar className="loading-bar" />
       <Navbar dark expand="sm" fixed="top"
-        className={clsx("jh-navbar", { ["appBarShift"]: props.openDrawer,})
-        }>
+        className="jh-navbar">
         {props.isAuthenticated &&
-        <Button onClick= {props.handleOpen} id="drawerToggler"
-          className = {clsx( props.openDrawer && "hide")}
-        >
+        <Button onClick= {props.toggleDrawer} id="drawerToggler">
           <FontAwesomeIcon icon = "bars"/>
         </Button>
         }

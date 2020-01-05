@@ -1,42 +1,50 @@
-import './side-bar.scss';
-
 import React, { useState } from 'react';
 
 import { Button } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { Drawer, List, ListItem, ListItemIcon, ListItemText} from '@material-ui/core';
+import { SwipeableDrawer, List, ListItem, ListItemIcon, ListItemText} from '@material-ui/core';
 
+import { makeStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
 
 import ListElem from './list-item';
 
 export interface IDrawerProps {
   closeDrawer: func;
+  openDrawer: func;
   drawerOpened: boolean;
 }
 
+const useStyles= makeStyles({
+  list: {
+    width: 240,
+    paddingTop: 50,
+  },
+});
+
 const SideBar = (props: IDrawerProps) => {
+  const classes = useStyles();
 
   return (
-    <Drawer
-      className="drawer"
-      variant="persistent"
-      anchor="left"
+    <SwipeableDrawer
       open={props.drawerOpened}
-      classes={{
-         paper: "drawerPaper",
-      }}
+      onClose={props.closeDrawer}
+      onOpen={props.openDrawer}
       >
-      <Button onClick={props.closeDrawer}>
-        <FontAwesomeIcon icon="arrow-left"/>
-      </Button>
+      <div
+        className={classes.list}
+        role="presentation"
+        onClick={props.closeDrawer}
+        onKeyDown={props.closeDrawer}
+      >
       <List>
         <ListElem icon="search" to="/search" text="search" key="search"/>
         <ListElem icon="asterisk" to="/item" text="your items" key="items"/>
         <ListElem icon="exchange-alt" to="/exchange" text="exchanges" key="exchange"/>
       </List>
-    </Drawer>
+      </div>
+    </SwipeableDrawer>
   );
 };
 

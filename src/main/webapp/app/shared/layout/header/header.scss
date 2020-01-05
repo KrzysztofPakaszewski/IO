@@ -40,7 +40,7 @@ Navbar styles
 .jh-navbar {
   background-color: #353d47;
   padding: 0.2em 1em;
-  transition: all 0.2s ease-in-out;
+  z-index: 1400;
   .profile-image {
     margin: -10px 0px;
     height: 40px;
@@ -116,10 +116,4 @@ Navbar styles
 
 .hide {
   display: none;
-}
-
-.appBarShift {
-  width: calc(100% - 240px);
-  margin-left: 240px;
-  transition: all 0.2s ease-in-out;
 }

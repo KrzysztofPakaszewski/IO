@@ -38,6 +38,10 @@ export const App = (props: IAppProps) => {
 
   const [OpenDrawer, setOpenDrawer] = React.useState(false);
 
+  const toggleDrawer = () => {
+    setOpenDrawer(!OpenDrawer);
+  };
+
    const handleDrawerOpen = () => {
       setOpenDrawer(true);
    };
@@ -51,24 +55,25 @@ export const App = (props: IAppProps) => {
       <div className="app-container" style={{ paddingTop }}>
         <ToastContainer position={toast.POSITION.TOP_LEFT} className="toastify-container" toastClassName="toastify-toast" />
         <ErrorBoundary>
+          {props.isAuthenticated &&
+          <SideBar
+            closeDrawer={handleDrawerClose}
+            drawerOpened={OpenDrawer}
+            openDrawer={handleDrawerOpen}
+          />
+          }
           <Header
             isAuthenticated={props.isAuthenticated}
             isAdmin={props.isAdmin}
             ribbonEnv={props.ribbonEnv}
             isInProduction={props.isInProduction}
             isSwaggerEnabled={props.isSwaggerEnabled}
-            handleOpen= {handleDrawerOpen}
+            toggleDrawer= {toggleDrawer}
             openDrawer ={OpenDrawer}
           />
-          {props.isAuthenticated &&
-          <SideBar
-            closeDrawer={handleDrawerClose}
-            drawerOpened={OpenDrawer}
-          />
-          }
         </ErrorBoundary>
         <div className="container-fluid view-container" id="app-view-container">
-          <Card className={clsx("jh-card",{["contentShift"]: OpenDrawer,})}>
+          <Card className="jh-card">
             <ErrorBoundary>
               <AppRoutes />
             </ErrorBoundary>
