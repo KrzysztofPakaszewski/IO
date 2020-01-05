@@ -13,9 +13,7 @@ import * as Stomp from 'webstomp-client';
 export const ACTION_TYPES = {
   FETCH_MATCHING_LIST: 'matching/FETCH_MATCHING_LIST',
   FETCH_MATCHING: 'matching/FETCH_MATCHING',
-  // FETCH_CHAT: 'matching/FETCH_CHAT',
   CREATE_MATCHING: 'matching/CREATE_MATCHING',
-  // CREATE_MESSAGE: 'matching/CREATE_MESSAGE',
   UPDATE_MATCHING: 'matching/UPDATE_MATCHING',
   DELETE_MATCHING: 'matching/DELETE_MATCHING',
   RESET: 'matching/RESET'
@@ -78,13 +76,6 @@ export default (state: MatchingState = initialState, action): MatchingState => {
         loading: false,
         entity: action.payload.data
       };
-    // case SUCCESS(ACTION_TYPES.FETCH_CHAT):
-    // case SUCCESS(ACTION_TYPES.CREATE_MESSAGE):
-    //   return {
-    //     ...state,
-    //     loading: false,
-    //     chat: action.payload.data.chat
-    //   };
     case SUCCESS(ACTION_TYPES.CREATE_MATCHING):
     case SUCCESS(ACTION_TYPES.UPDATE_MATCHING):
       return {
