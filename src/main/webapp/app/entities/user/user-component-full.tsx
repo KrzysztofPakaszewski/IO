@@ -34,7 +34,7 @@ export const UserCompFull = (userEntity, itemList, reviewList) =>{
       <div>
 
         <h2 id="item-heading">
-          User's items
+          User&apos;s items
         </h2>
         <div className="table-responsive">
           {itemList && itemList.length > 0 ? (

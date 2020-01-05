@@ -17,7 +17,7 @@ export interface IHeaderProps {
   ribbonEnv: string;
   isInProduction: boolean;
   isSwaggerEnabled: boolean;
-  toggleDrawer: func;
+  toggleDrawer: any;
   openDrawer: boolean;
 }
 

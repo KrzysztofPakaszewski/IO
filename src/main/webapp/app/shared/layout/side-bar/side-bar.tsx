@@ -11,8 +11,8 @@ import { Link } from 'react-router-dom';
 import ListElem from './list-item';
 
 export interface IDrawerProps {
-  closeDrawer: func;
-  openDrawer: func;
+  closeDrawer: any;
+  openDrawer: any;
   drawerOpened: boolean;
 }
 
