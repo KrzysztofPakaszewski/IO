@@ -52,9 +52,9 @@ public class ChatService implements ApplicationListener<SessionDisconnectEvent> 
 //        session.setAttribute("chatId", room);
         log.debug("User {} subscribed to Chat from IP {}", login, ipAddress);
         MessageDTO messageDTO = new MessageDTO();
-        messageDTO.setUserLogin(login);
-        messageDTO.setTime(dateTimeFormatter.format(ZonedDateTime.now()));
-        messageDTO.setMessage("<<join>>");
+//        messageDTO.setUserLogin(login);
+//        messageDTO.setTime(dateTimeFormatter.format(ZonedDateTime.now()));
+//        messageDTO.setMessage("<<join>>");
         messagingTemplate.convertAndSend("/chat/public/"+room, messageDTO);
 
         Chat chat = chatRepository.getChat(Long.parseLong(room), principal.getName());
