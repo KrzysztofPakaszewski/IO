@@ -13,6 +13,8 @@ import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
 import {Category} from "app/shared/model/enumerations/category.model";
 import {getUrlParameter} from "app/shared/util/url-utils";
 
+import { ItemList } from '../item/item-list';
+
 export interface ISearchProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
 
 export interface ISearchState extends IPaginationBaseState{
@@ -72,9 +74,12 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
     );
   };
 
+/*
   handleRowClick = (item) => {
     this.props.history.push(`${this.props.location.pathname}/${item.id}`,  {showInterestedButton: true});
   };
+  */
+
 
   handleBooksCheckboxChange = event =>
     this.setState({checkedBooks: event.target.checked},
@@ -156,63 +161,7 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
         </div>
         <div className="table-responsive">
           {itemList && itemList.length > 0 ? (
-            <Table responsive aria-describedby="item-heading">
-              <thead>
-                <tr>
-                  <th>
-                    Image
-                  </th>
-                  <th className="hand" onClick={this.sort('title')}>
-                    Title <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={this.sort('category')}>
-                    Category <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={this.sort('state')}>
-                    State <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={this.sort('preferedDelivery')}>
-                    Prefered Delivery <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={this.sort('preferences')}>
-                    Preferences <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={this.sort('hash')}>
-                    Hashtags <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th />
-                </tr>
-              </thead>
-              <tbody>
-                {itemList.map((item, i) => (
-                  <tr id="clickableRow" key={`entity-${i}`} onClick={() => this.handleRowClick(item)} role="button">
-                    <td>
-                      {item.image ? (
-                        <div>
-                          <a onClick={openFile(item.imageContentType, item.image)}>
-                            <img src={`data:${item.imageContentType};base64,${item.image}`} style={{ maxHeight: '30px' }} />
-                            &nbsp;
-                          </a>
-                          <span>
-                          </span>
-                        </div>
-                      ) : null}
-                    </td>
-                    <td>{item.title}</td>
-                    <td>{item.category}</td>
-                    <td>{item.state}</td>
-                    <td>{item.preferedDelivery}</td>
-                    <td>{item.preferences}</td>
-                    <td>{item.hash}</td>
-                    <td className="text-right">
-                        <Button onClick={() => this.handleRowClick(item)} color="info" size="sm">
-                          <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
-                        </Button>
-                      </td>
-                    </tr>
-                ))}
-              </tbody>
-            </Table>
+            ItemList(itemList)
           ) : (
             <div className="alert alert-warning">No Items found</div>
           )}

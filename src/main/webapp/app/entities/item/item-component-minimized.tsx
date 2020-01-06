@@ -8,12 +8,11 @@ import { Link } from 'react-router-dom';
 import {openFile} from "react-jhipster";
 
 
-// props: {score:Integer(0-5), login:String, review:String}
 export const ItemCompMinimized = (itemEntity) =>{
 
   return (
     <Card>
-      <Button color="link" tag={Link} to={`/item/${itemEntity.id}/detail`}>
+      <Button color="link" tag={Link} to={`/search/${itemEntity.id}`}>
         <Grid container
           direction="column"
           justify="center"
