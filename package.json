@@ -43,6 +43,7 @@
     "webstomp-client": "1.2.6"
   },
   "devDependencies": {
+    "@openapitools/openapi-generator-cli": "0.0.14-4.0.2",
     "@types/enzyme": "3.9.1",
     "@types/jest": "24.0.11",
     "@types/lodash": "4.14.123",
@@ -101,14 +102,13 @@
     "sourcemap-istanbul-instrumenter-loader": "0.2.0",
     "stripcomment-loader": "0.1.0",
     "style-loader": "0.23.1",
-    "swagger-ui": "3.23.11",
+    "swagger-ui": "^2.2.10",
     "terser-webpack-plugin": "1.2.3",
     "thread-loader": "2.1.2",
     "to-string-loader": "1.1.5",
     "ts-jest": "24.0.0",
     "ts-loader": "5.3.3",
     "typescript": "3.3.4000",
-    "@openapitools/openapi-generator-cli": "0.0.14-4.0.2",
     "webpack": "4.28.4",
     "webpack-cli": "3.3.0",
     "webpack-dev-server": "3.2.1",
