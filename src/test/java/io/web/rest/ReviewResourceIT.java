@@ -156,7 +156,7 @@ public class ReviewResourceIT {
             .andExpect(jsonPath("$.[*].score").value(hasItem(DEFAULT_SCORE)))
             .andExpect(jsonPath("$.[*].review").value(hasItem(DEFAULT_REVIEW)));
     }
-    
+
     @Test
     @Transactional
     public void getReview() throws Exception {
