@@ -2,6 +2,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import './app.scss';
 
 import React, { useEffect } from 'react';
+import clsx from 'clsx';
 import { connect } from 'react-redux';
 import { Card } from 'reactstrap';
 import { BrowserRouter as Router } from 'react-router-dom';
@@ -18,6 +19,8 @@ import ErrorBoundary from 'app/shared/error/error-boundary';
 import { AUTHORITIES } from 'app/config/constants';
 import AppRoutes from 'app/routes';
 
+import SideBar from 'app/shared/layout/side-bar/side-bar';
+
 const baseHref = document
   .querySelector('base')
   .getAttribute('href')
@@ -32,17 +35,41 @@ export const App = (props: IAppProps) => {
   }, []);
 
   const paddingTop = '60px';
+
+  const [OpenDrawer, setOpenDrawer] = React.useState(false);
+
+  const toggleDrawer = () => {
+    setOpenDrawer(!OpenDrawer);
+  };
+
+   const handleDrawerOpen = () => {
+      setOpenDrawer(true);
+   };
+
+   const handleDrawerClose = () => {
+      setOpenDrawer(false);
+    };
+
   return (
     <Router basename={baseHref}>
       <div className="app-container" style={{ paddingTop }}>
         <ToastContainer position={toast.POSITION.TOP_LEFT} className="toastify-container" toastClassName="toastify-toast" />
         <ErrorBoundary>
+          {props.isAuthenticated &&
+          <SideBar
+            closeDrawer={handleDrawerClose}
+            drawerOpened={OpenDrawer}
+            openDrawer={handleDrawerOpen}
+          />
+          }
           <Header
             isAuthenticated={props.isAuthenticated}
             isAdmin={props.isAdmin}
             ribbonEnv={props.ribbonEnv}
             isInProduction={props.isInProduction}
             isSwaggerEnabled={props.isSwaggerEnabled}
+            toggleDrawer= {toggleDrawer}
+            openDrawer ={OpenDrawer}
           />
         </ErrorBoundary>
         <div className="container-fluid view-container" id="app-view-container">

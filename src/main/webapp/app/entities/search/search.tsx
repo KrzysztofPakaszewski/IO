@@ -56,7 +56,8 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
   handlePagination = activePage => {
     this.setState(
       {
-        activePage : activePage
+        // activePage :
+        activePage
       },
       () => this.searchFilter()
     );
@@ -113,7 +114,7 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
         </h2>
         <div>
           <Button tag={Link} to={`${match.url}/interested`} color="info" size="lg">
-            <FontAwesomeIcon icon="eye" /> <span>Items I'm interested in...</span>
+            <FontAwesomeIcon icon="eye" /> <span>Items I&apos;m interested in...</span>
           </Button>
         </div>
         <div>

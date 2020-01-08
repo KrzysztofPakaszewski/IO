@@ -5,18 +5,18 @@ package io.web.websocket.dto;
  */
 public class MessageDTO {
 
-    private String userLogin;
+    private String userName;
 
     private String message;
 
     private String time;
 
-    public String getUserLogin() {
-        return userLogin;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUserLogin(String userLogin) {
-        this.userLogin = userLogin;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getMessage() {

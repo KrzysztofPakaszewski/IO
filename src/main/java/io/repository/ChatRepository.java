@@ -1,12 +1,10 @@
-package io.service;
+package io.repository;
 
 import io.domain.User;
 import io.domain.chat.Chat;
 import io.domain.chat.ChatItem;
-import io.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -26,14 +24,13 @@ public class ChatRepository {
 
     private static final String path = "data\\chat\\";
     private UserRepository userRepository;
-    private HttpSession httpSession;
 
     public ChatRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public Chat getChat(Long id, String userLogin) {
-        Chat chat = loadChat(id, userLogin);
+    public Chat getChat(Long id) {
+        Chat chat = loadChat(id);
         if (chat == null) {
             chat = createChat(id);
         }
@@ -63,10 +60,10 @@ public class ChatRepository {
         return new Chat();
     }
 
-    private Chat loadChat(Long id, String userLogin) {
+    private Chat loadChat(Long id) {
         String fileContent = readFile(id);
-        if(fileContent != null) {
-            return parseFile(fileContent, userLogin);
+        if (fileContent != null) {
+            return parseFile(fileContent);
         } else {
             return null;
         }
@@ -75,7 +72,7 @@ public class ChatRepository {
     private String readFile(Long id) {
         Path filePath = Paths.get(path + id + ".chat");
         String path = System.getProperty("user.dir");
-        if(Files.exists(filePath)) {
+        if (Files.exists(filePath)) {
             String result = null;
             try {
                 result = String.join("\n",
@@ -89,7 +86,7 @@ public class ChatRepository {
         }
     }
 
-    private Chat parseFile(String fileContent, String userLogin) {
+    private Chat parseFile(String fileContent) {
 
         ArrayList<ChatItem> chatItems = new ArrayList<>();
 
@@ -98,10 +95,9 @@ public class ChatRepository {
         Matcher matcher = pattern.matcher(fileContent);
 
         Map<String, String> users = new HashMap<>();
-//        users.put(userLogin, "ja");
 
         while (matcher.find()) {
-            String login  = matcher.group(1);
+            String login = matcher.group(1);
             String time = matcher.group(2);
             String msg = matcher.group(3);
             if (!users.containsKey(login)) {
