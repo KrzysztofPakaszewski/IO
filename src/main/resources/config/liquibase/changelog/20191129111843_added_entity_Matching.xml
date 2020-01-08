@@ -12,6 +12,11 @@
         Added the entity Matching.
     -->
     <changeSet id="20191129111843-1" author="jhipster">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="matching"></tableExists>
+            </not>
+        </preConditions>
         <createTable tableName="matching">
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
