@@ -2,14 +2,20 @@ package io.web.rest;
 
 import io.CulexApp;
 import io.domain.Review;
+import io.domain.User;
 import io.repository.ReviewRepository;
+import io.repository.UserRepository;
+import io.service.MailService;
+import io.service.UserService;
 import io.web.rest.errors.ExceptionTranslator;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -43,6 +49,9 @@ public class ReviewResourceIT {
     private ReviewRepository reviewRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -60,6 +69,8 @@ public class ReviewResourceIT {
     private MockMvc restReviewMockMvc;
 
     private Review review;
+
+    private User user;
 
     @BeforeEach
     public void setup() {
@@ -79,11 +90,31 @@ public class ReviewResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Review createEntity(EntityManager em) {
+    public static Review createEntity(EntityManager em, User user) {
         Review review = new Review()
             .score(DEFAULT_SCORE)
-            .review(DEFAULT_REVIEW);
+            .review(DEFAULT_REVIEW)
+            .reviewer(user);
         return review;
+    }
+
+    /**
+     * Create a User.
+     *
+     * This is a static method, as tests for other entities might also need it,
+     * if they test an entity which has a required relationship to the User entity.
+     */
+    public static User createUser(EntityManager em) {
+        User user = new User();
+        user.setLogin("login" + RandomStringUtils.randomAlphabetic(5));
+        user.setPassword(RandomStringUtils.random(60));
+        user.setActivated(true);
+        user.setEmail(RandomStringUtils.randomAlphabetic(5) + "@something");
+        user.setFirstName("first");
+        user.setLastName("last");
+        user.setImageUrl("http://placehold.it/50x50");
+        user.setLangKey("en");
+        return user;
     }
     /**
      * Create an updated entity for this test.
@@ -100,7 +131,9 @@ public class ReviewResourceIT {
 
     @BeforeEach
     public void initTest() {
-        review = createEntity(em);
+        user = createUser(em);
+        userRepository.saveAndFlush(user);
+        review = createEntity(em,user);
     }
 
     @Test
