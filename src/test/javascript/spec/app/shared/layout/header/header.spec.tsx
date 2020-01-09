@@ -16,7 +16,9 @@ describe('Header', () => {
     isAdmin: true,
     ribbonEnv: 'dev',
     isInProduction: false,
-    isSwaggerEnabled: true
+    isSwaggerEnabled: true,
+    toggleDrawer: 0,
+    openDrawer: false
   };
   const prodProps = {
     ...devProps,
