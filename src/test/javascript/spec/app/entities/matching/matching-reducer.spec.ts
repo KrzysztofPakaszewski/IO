@@ -30,6 +30,7 @@ describe('Entities reducer tests', () => {
     loading: false,
     errorMessage: null,
     entities: [] as ReadonlyArray<IMatching>,
+    chat: [] as ReadonlyArray<any>,
     entity: defaultValue,
     updating: false,
     updateSuccess: false

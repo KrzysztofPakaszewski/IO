@@ -12,6 +12,11 @@
         Added the entity Item.
     -->
     <changeSet id="20191129111842-1" author="jhipster">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="item"></tableExists>
+            </not>
+        </preConditions>
         <createTable tableName="item">
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
@@ -48,6 +53,11 @@
     </changeSet>
 
     <changeSet id="20191129111842-1-relations" author="jhipster">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="item_interested"></tableExists>
+            </not>
+        </preConditions>
 
         <createTable tableName="item_interested">
             <column name="interested_id" type="bigint">
@@ -59,7 +69,7 @@
         </createTable>
 
         <addPrimaryKey columnNames="item_id, interested_id" tableName="item_interested"/>
-        
+
     </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->
 

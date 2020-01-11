@@ -2,11 +2,13 @@ package io.web.rest;
 
 import io.CulexApp;
 import io.domain.Item;
+import io.domain.User;
 import io.repository.ItemRepository;
 import io.repository.UserRepository;
 import io.service.MatchingService;
 import io.web.rest.errors.ExceptionTranslator;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
@@ -15,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,6 +92,8 @@ public class ItemResourceIT {
 
     private Item item;
 
+    private User user;
+
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -107,7 +112,7 @@ public class ItemResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Item createEntity(EntityManager em) {
+    public static Item createEntity(EntityManager em, User user) {
         Item item = new Item()
             .title(DEFAULT_TITLE)
             .state(DEFAULT_STATE)
@@ -116,8 +121,28 @@ public class ItemResourceIT {
             .imageContentType(DEFAULT_IMAGE_CONTENT_TYPE)
             .hash(DEFAULT_HASH)
             .preferences(DEFAULT_PREFERENCES)
-            .preferedDelivery(DEFAULT_PREFERED_DELIVERY);
+            .preferedDelivery(DEFAULT_PREFERED_DELIVERY)
+            .owner(user);
         return item;
+    }
+
+    /**
+     * Create a User.
+     *
+     * This is a static method, as tests for other entities might also need it,
+     * if they test an entity which has a required relationship to the User entity.
+     */
+    public static User createUser(EntityManager em) {
+        User user = new User();
+        user.setLogin("login");
+        user.setPassword(RandomStringUtils.random(60));
+        user.setActivated(true);
+        user.setEmail(RandomStringUtils.randomAlphabetic(5) + "@something");
+        user.setFirstName("first");
+        user.setLastName("last");
+        user.setImageUrl("http://placehold.it/50x50");
+        user.setLangKey("en");
+        return user;
     }
     /**
      * Create an updated entity for this test.
@@ -140,7 +165,9 @@ public class ItemResourceIT {
 
     @BeforeEach
     public void initTest() {
-        item = createEntity(em);
+        user = createUser(em);
+        userRepository.saveAndFlush(user);
+        item = createEntity(em,user);
     }
 
     @Test
@@ -190,6 +217,7 @@ public class ItemResourceIT {
 
     @Test
     @Transactional
+    @WithMockUser("login")
     public void getAllItems() throws Exception {
         // Initialize the database
         itemRepository.saveAndFlush(item);
@@ -208,7 +236,7 @@ public class ItemResourceIT {
             .andExpect(jsonPath("$.[*].preferences").value(hasItem(DEFAULT_PREFERENCES)))
             .andExpect(jsonPath("$.[*].preferedDelivery").value(hasItem(DEFAULT_PREFERED_DELIVERY.toString())));
     }
-    
+
     @Test
     @Transactional
     public void getItem() throws Exception {

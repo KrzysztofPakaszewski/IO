@@ -3,8 +3,6 @@ package io.web.rest;
 import io.CulexApp;
 import io.domain.Matching;
 import io.repository.MatchingRepository;
-import io.service.ChatRepository;
-import io.service.UserService;
 import io.service.MatchingService;
 import io.web.rest.errors.ExceptionTranslator;
 
@@ -49,12 +47,6 @@ public class MatchingResourceIT {
     private MatchingService matchingService;
 
     @Autowired
-    private ChatRepository chatRepository;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -76,7 +68,7 @@ public class MatchingResourceIT {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final MatchingResource matchingResource = new MatchingResource(matchingRepository, matchingService, chatRepository, userService);
+        final MatchingResource matchingResource = new MatchingResource(matchingRepository, matchingService);
         this.restMatchingMockMvc = MockMvcBuilders.standaloneSetup(matchingResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -87,7 +79,7 @@ public class MatchingResourceIT {
 
     /**
      * Create an entity for this test.
-     *
+     * <p>
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
@@ -97,9 +89,10 @@ public class MatchingResourceIT {
             .chat(DEFAULT_CHAT);
         return matching;
     }
+
     /**
      * Create an updated entity for this test.
-     *
+     * <p>
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
@@ -168,7 +161,7 @@ public class MatchingResourceIT {
             .andExpect(jsonPath("$.[*].stateOfExchange").value(hasItem(DEFAULT_STATE_OF_EXCHANGE.booleanValue())))
             .andExpect(jsonPath("$.[*].chat").value(hasItem(DEFAULT_CHAT)));
     }
-    
+
     @Test
     @Transactional
     public void getMatching() throws Exception {
