@@ -48,7 +48,7 @@ export class ItemDetail extends React.Component<IItemDetailProps, IItemDetailSta
       <Row className="justify-content-md-center">
         <Col md="20">
           <h2>
-            Item <b><i>{itemEntity.title}</i></b> of User <b><i> {itemEntity.owner == null ? " no owner " : (<Link to={'/user/'+itemEntity.owner.login}>{itemEntity.owner.login}</Link>)} </i></b>
+            Item <b><i>{itemEntity.title}</i></b> of User <b><i> {itemEntity.owner == null ? " no owner " : (<Link to={'/user/'+itemEntity.owner.login + '/profile'}>{itemEntity.owner.login}</Link>)} </i></b>
           </h2>
           <dl className="jh-entity-details">
             <dd>

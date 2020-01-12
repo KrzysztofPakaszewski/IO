@@ -62,9 +62,6 @@ export const UserCompFull = (userEntity, itemList, reviewList) =>{
                 <th className="hand" >
                   Hashtags
                 </th>
-                <th className="hand" >
-                  Owner
-                </th>
                 <th />
               </tr>
               </thead>
@@ -93,11 +90,6 @@ export const UserCompFull = (userEntity, itemList, reviewList) =>{
                   <td>{item.preferedDelivery}</td>
                   <td>{item.preferences}</td>
                   <td>{item.hash}</td>
-                  <td>
-                    <Button tag={Link} to={`user/${item.owner.login}`} color="link" size="sm">
-                      {item.owner.login}
-                    </Button>
-                  </td>
                 </tr>
               ))}
               </tbody>

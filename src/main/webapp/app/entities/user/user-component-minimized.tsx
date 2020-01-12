@@ -10,7 +10,7 @@ export const UserCompMinimized = (userEntity) =>{
 
   return (
     <Box width={80}>
-      <Button color="link" tag={Link} to={`/user/${userEntity.login}`}>
+      <Button color="link" tag={Link} to={`/user/${userEntity.login}/profile`}>
         <Grid container
           direction="column"
           justify="center"

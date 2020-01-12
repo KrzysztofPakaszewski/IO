@@ -102,7 +102,7 @@ public class ReviewResource {
     @GetMapping("/reviews/getbyuser/{login:" + Constants.LOGIN_REGEX + "}")
     public List<Review> getReviewsByUser(@PathVariable String login) {
         log.debug("REST request to get all Reviews of given user");
-        return reviewRepository.findAll();
+        return reviewRepository.findByUserLogin(login);
     }
 
     /**
