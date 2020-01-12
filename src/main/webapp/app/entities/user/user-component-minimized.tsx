@@ -17,7 +17,7 @@ export const UserCompMinimized = (userEntity) =>{
           alignItems="center"
         >
           <Grid item>
-            <Avatar>H</Avatar>
+            <Avatar/>
           </Grid>
           <Grid item>
             {userEntity.login}

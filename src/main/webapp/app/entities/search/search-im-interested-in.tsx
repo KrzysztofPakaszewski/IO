@@ -161,13 +161,11 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
             <span>Movies</span>
           </label>
         </div>
-        <div className="table-responsive">
           {itemList && itemList.length > 0 ? (
             ItemList(itemList)
           ) : (
             <div className="alert alert-warning">No Items found</div>
           )}
-        </div>
         <div className={itemList && itemList.length > 0 ? '' : 'd-none'}>
           <Row className="justify-content-center">
             <JhiItemCount page={this.state.activePage} total={totalItems} itemsPerPage={this.state.itemsPerPage}/>

@@ -8,7 +8,8 @@ import {JhiItemCount, JhiPagination, openFile} from "react-jhipster";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Checkbox} from "@material-ui/core";
 import { Button, Col, Row, Table } from 'reactstrap';
-
+import {ItemList} from '../item/item-list';
+import {ReviewComp} from '../review/review-component';
 
 // props: {score:Integer(0-5), login:String, review:String}
 export const UserCompFull = (userEntity, itemList, reviewList) =>{
@@ -36,68 +37,10 @@ export const UserCompFull = (userEntity, itemList, reviewList) =>{
         <h2 id="item-heading">
           User&apos;s items
         </h2>
-        <div className="table-responsive">
-          {itemList && itemList.length > 0 ? (
-            <Table responsive aria-describedby="item-heading">
-              <thead>
-              <tr>
-                <th className="hand" >
-                  Image
-                </th>
-                <th className="hand" >
-                  Title
-                </th>
-                <th  className="hand" >
-                  Category
-                </th>
-                <th className="hand" >
-                  State
-                </th>
-                <th className="hand" >
-                  Prefered Delivery
-                </th>
-                <th className="hand" >
-                  Preferences
-                </th>
-                <th className="hand" >
-                  Hashtags
-                </th>
-                <th />
-              </tr>
-              </thead>
-              <tbody>
-              {itemList.map((item, i) => (
-                <tr key={`entity-${i}`}>
-                  <td>
-                    {item.image ? (
-                      <div>
-                        <a onClick={openFile(item.imageContentType, item.image)}>
-                          <img src={`data:${item.imageContentType};base64,${item.image}`} style={{ maxHeight: '30px' }} />
-                          &nbsp;
-                        </a>
-                        <span>
-                          </span>
-                      </div>
-                    ) : null}
-                  </td>
-                  <td>
-                    <Button tag={Link} to={`.././item/${item.id}/detail`} color="link" size="sm">
-                      {item.title}
-                    </Button>
-                  </td>
-                  <td>{item.category}</td>
-                  <td>{item.state}</td>
-                  <td>{item.preferedDelivery}</td>
-                  <td>{item.preferences}</td>
-                  <td>{item.hash}</td>
-                </tr>
-              ))}
-              </tbody>
-            </Table>
-          ) : (
+          {itemList && itemList.length > 0 ?
+            ItemList(itemList) : (
             <div className="alert alert-warning">No Items found</div>
           )}
-        </div>
       </div>
 
       <div>
@@ -106,41 +49,15 @@ export const UserCompFull = (userEntity, itemList, reviewList) =>{
         </h2>
         <div className="table-responsive">
           {reviewList && reviewList.length > 0 ? (
-            <Table responsive aria-describedby="review-heading">
-              <thead>
-              <tr>
-                <th>ID</th>
-                <th>Score</th>
-                <th>Review</th>
-                <th>Reviewer</th>
-                <th>User</th>
-                <th />
-              </tr>
-              </thead>
-              <tbody>
-              {reviewList.map((review, i) => (
-                <tr key={`entity-${i}`}>
-                  <td>
-                    <Button tag={Link} to={`${review.id}`} color="link" size="sm">
-                      {review.id}
-                    </Button>
-                  </td>
-                  <td>{review.score}</td>
-                  <td>{review.review}</td>
-                  <td>{review.reviewer ? review.reviewer.login : ''}</td>
-                  <td>{review.user ? review.user.login : ''}</td>
-                  <td className="text-right">
-                    <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`.././review/${review.id}`} color="info" size="sm">
-                        <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              </tbody>
-            </Table>
-          ) : (
+              <Grid container>
+                 {reviewList.map( (item, index)=>(
+                   <Grid item key={index}>
+                      {ReviewComp(item)}
+                   </Grid>
+                  ))}
+              </Grid>
+              )
+            : (
             <div className="alert alert-warning">No Reviews found</div>
           )}
         </div>
