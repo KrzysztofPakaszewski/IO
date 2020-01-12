@@ -21,7 +21,7 @@ export class ItemDetail extends React.Component<IItemDetailProps, IItemDetailSta
   constructor(props) {
     super(props);
     this.state = {
-      showInterestedButton: this.props.location.state == null ? false : this.props.location.state.showInterestedButton
+      showInterestedButton: true
     };
   }
 
@@ -33,7 +33,7 @@ export class ItemDetail extends React.Component<IItemDetailProps, IItemDetailSta
   handleInterest() {
     addNewInterest(this.props.itemEntity);
     this.setState({
-      showInterestedButton: this.props.location.state === false
+      showInterestedButton: false
     });
   }
 
@@ -90,11 +90,11 @@ export class ItemDetail extends React.Component<IItemDetailProps, IItemDetailSta
             <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
           </Button>
           &nbsp;
-          {(this.state.showInterestedButton && (itemEntity.owner == null ? true : itemEntity.owner.login !== this.props.user.login) &&
-            (itemEntity.interesteds == null ? true : this.interestButtonLogic(itemEntity, this.props.user.login))) ?
+          { this.state.showInterestedButton && itemEntity && itemEntity.owner && itemEntity.owner.login !== this.props.user.login &&
+            this.interestButtonLogic(itemEntity, this.props.user.login) &&
             (<Button onClick={() => this.handleInterest()}>
               <FontAwesomeIcon icon="plus"/> <span className="d-none d-md-inline">Interested</span>
-            </Button>) : ""
+            </Button>)
           }
         </Col>
       </Row>

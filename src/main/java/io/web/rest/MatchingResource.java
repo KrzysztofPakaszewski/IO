@@ -1,6 +1,7 @@
 package io.web.rest;
 
 import io.domain.Matching;
+import io.repository.ItemInterestedRepository;
 import io.repository.MatchingRepository;
 import io.service.MatchingService;
 import io.web.rest.errors.BadRequestAlertException;
@@ -39,7 +40,7 @@ public class MatchingResource {
     private final MatchingRepository matchingRepository;
     private final MatchingService matchingService;
 
-    public MatchingResource(MatchingRepository matchingRepository, MatchingService matchingService) {
+    public MatchingResource(MatchingRepository matchingRepository,MatchingService matchingService) {
         this.matchingRepository = matchingRepository;
         this.matchingService = matchingService;
     }

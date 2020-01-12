@@ -3,9 +3,11 @@ package io.web.rest;
 import io.CulexApp;
 import io.domain.Item;
 import io.domain.User;
+import io.repository.ItemInterestedRepository;
 import io.repository.ItemRepository;
 import io.repository.UserRepository;
 import io.service.MatchingService;
+import io.service.UserService;
 import io.web.rest.errors.ExceptionTranslator;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -74,6 +76,12 @@ public class ItemResourceIT {
     private MatchingService matchingService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
+    private ItemInterestedRepository itemInterestedRepository;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -97,7 +105,7 @@ public class ItemResourceIT {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final ItemResource itemResource = new ItemResource(itemRepository, userRepository, matchingService);
+        final ItemResource itemResource = new ItemResource(itemRepository, userRepository, matchingService, userService,itemInterestedRepository);
         this.restItemMockMvc = MockMvcBuilders.standaloneSetup(itemResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

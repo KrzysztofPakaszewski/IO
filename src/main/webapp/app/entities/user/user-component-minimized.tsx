@@ -1,6 +1,7 @@
 import React from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
+import Avatar from '@material-ui/core/Avatar';
 import { Button} from 'reactstrap';
 import { Link } from 'react-router-dom';
 
@@ -16,7 +17,7 @@ export const UserCompMinimized = (userEntity) =>{
           alignItems="center"
         >
           <Grid item>
-            <Box bgcolor="primary.main" color="primary.contrastText" width={60} height={60}/>
+            <Avatar>H</Avatar>
           </Grid>
           <Grid item>
             {userEntity.login}
