@@ -106,7 +106,12 @@ export class Exchange extends React.Component<IExchangeProps,IExchangeState> {
                             </Button>
                           </Grid>
                           <Grid item>
-                            <Button tag={Link} to={`/matching/${item.id}/chat`} color="warning" size="sm">
+                            <Button tag={Link} to={`/exchange/${item.id}/delete`} color="danger" size="sm">
+                              <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Discard exchange</span>
+                            </Button>
+                          </Grid>
+                          <Grid item>
+                            <Button tag={Link} to={`/exchange/${item.id}/chat`} color="warning" size="sm">
                                <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">Chat</span>
                             </Button>
                           </Grid>
