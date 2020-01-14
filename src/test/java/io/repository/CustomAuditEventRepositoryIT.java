@@ -71,6 +71,11 @@ public class CustomAuditEventRepositoryIT {
     }
 
     @Test
+    public void testFind(){
+
+    }
+
+    @Test
     public void addAuditEvent() {
         Map<String, Object> data = new HashMap<>();
         data.put("test-key", "test-value");

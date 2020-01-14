@@ -498,6 +498,8 @@ public class AccountResourceIT {
         assertThat(updatedUser.getImageUrl()).isEqualTo(userDTO.getImageUrl());
         assertThat(updatedUser.getActivated()).isEqualTo(true);
         assertThat(updatedUser.getAuthorities()).isEmpty();
+
+
     }
 
     @Test
