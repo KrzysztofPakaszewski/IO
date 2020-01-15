@@ -79,6 +79,7 @@ public class ItemResource {
         if (item.getId() != null) {
             throw new BadRequestAlertException("A new item cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        item.setArchived(false);
         Item result = itemRepository.save(item);
         return ResponseEntity.created(new URI("/api/items/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
@@ -114,7 +115,7 @@ public class ItemResource {
         ItemInterested itemInterested = new ItemInterested(loggedUser,itemRep);
         log.debug("user: " + itemInterested.getInterested().getLogin() + " " + itemInterested.getItem().getTitle());
         itemInterestedRepository.save(itemInterested);
-        matchingService.createMatchesIfBothUsersInterested(item);
+        matchingService.createMatchesIfBothUsersInterested(itemRep);
         return ResponseEntity.created(new URI("/api/items/" ))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, ""))
             .body("Success add to liked itemes item.id="+item.getId()+",user.id="+ loggedUser.getLogin() );

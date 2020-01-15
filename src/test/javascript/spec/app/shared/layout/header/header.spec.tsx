@@ -11,13 +11,17 @@ import Header from 'app/shared/layout/header/header';
 describe('Header', () => {
   let mountedWrapper;
 
+  const toggle = ()=>{
+
+  };
+
   const devProps = {
     isAuthenticated: true,
     isAdmin: true,
     ribbonEnv: 'dev',
     isInProduction: false,
     isSwaggerEnabled: true,
-    toggleDrawer: 0,
+    toggleDrawer: toggle,
     openDrawer: false
   };
   const prodProps = {

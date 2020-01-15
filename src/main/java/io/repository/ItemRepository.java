@@ -19,32 +19,32 @@ import java.util.Optional;
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
-    @Query("select item from Item item where item.owner.login = ?#{principal.username}")
+    @Query("select item from Item item where item.owner.login = ?#{principal.username} and item.archived = false")
     List<Item> findByOwnerIsCurrentUser();
 
-    @Query(value = "select item from Item item join fetch User u on u.id = item.owner.id where u.login = ?#{principal.username}",
+    @Query(value = "select item from Item item join fetch User u on u.id = item.owner.id where u.login = ?#{principal.username} and item.archived = false",
         countQuery = "select count(item) from Item item join fetch User u on u.id = item.owner.id where u.login = ?#{principal.username}")
     Page<Item> findAll(Pageable pageable);
 
-    @Query(value = "select item from Item item where lower(item.title) like %:search% and (item.category =:category1 or item.category =:category2 or item.category =:category3)",
-        countQuery = "select count(item) from Item item  where lower(item.title) like %:search% and (item.category =:category1 or item.category =:category2 or item.category =:category3)")
+    @Query(value = "select item from Item item where lower(item.title) like %:search% and (item.category =:category1 or item.category =:category2 or item.category =:category3) and item.archived = false",
+        countQuery = "select count(item) from Item item  where lower(item.title) like %:search% and (item.category =:category1 or item.category =:category2 or item.category =:category3) and item.archived = false")
     Page<Item> findAllForSearch(Pageable pageable, @Param("search") String search, @Param("category1") Category category1, @Param("category2") Category category2, @Param("category3") Category category3);
 
-    @Query(value = "select item from Item item where lower(item.hash)=:search and (item.category =:category1 or item.category =:category2 or item.category =:category3)",
-        countQuery = "select count(item) from Item item  where lower(item.hash)=:search and (item.category =:category1 or item.category =:category2 or item.category =:category3)")
+    @Query(value = "select item from Item item where lower(item.hash)=:search and (item.category =:category1 or item.category =:category2 or item.category =:category3)  and item.archived = false",
+        countQuery = "select count(item) from Item item  where lower(item.hash)=:search and (item.category =:category1 or item.category =:category2 or item.category =:category3)  and item.archived = false")
     Page<Item> findAllForHashtagSearch(Pageable pageable, @Param("search") String search, @Param("category1") Category category1, @Param("category2") Category category2, @Param("category3") Category category3);
 
     @Query(value = "select item from Item item join item.interesteds ii where " +
-        "ii.id = :userId and lower(item.title) like %:search% and (item.category =:category1 or item.category =:category2 or item.category =:category3)",
+        "ii.id = :userId and lower(item.title) like %:search% and (item.category =:category1 or item.category =:category2 or item.category =:category3)  and item.archived = false",
         countQuery = "select count(item) from Item item join item.interesteds ii where " +
-            "ii.id = :userId and lower(item.title) like %:search% and (item.category =:category1 or item.category =:category2 or item.category =:category3)")
+            "ii.id = :userId and lower(item.title) like %:search% and (item.category =:category1 or item.category =:category2 or item.category =:category3)  and item.archived = false")
     Page<Item> findAllLiked(Pageable pageable, @Param("search") String search, @Param("category1") Category category1, @Param("category2") Category category2,
                             @Param("category3") Category category3, @Param("userId") long userId);
 
     @Query(value = "select item from Item item join item.interesteds ii where " +
-        "ii.id = :userId and lower(item.hash)=:search and (item.category =:category1 or item.category =:category2 or item.category =:category3)",
+        "ii.id = :userId and lower(item.hash)=:search and (item.category =:category1 or item.category =:category2 or item.category =:category3)  and item.archived = false",
         countQuery = "select count(item) from Item item join item.interesteds ii where " +
-            "ii.id = :userId and lower(item.hash)=:search and (item.category =:category1 or item.category =:category2 or item.category =:category3)")
+            "ii.id = :userId and lower(item.hash)=:search and (item.category =:category1 or item.category =:category2 or item.category =:category3)  and item.archived = false")
     Page<Item> findAllLikedHashtag(Pageable pageable, @Param("search") String search, @Param("category1") Category category1, @Param("category2") Category category2,
                                    @Param("category3") Category category3, @Param("userId") long userId);
 
@@ -60,8 +60,5 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query("select user from Item item join item.interesteds ii join User user on ii.id = user.id where item.id = :item_id")
     List<User> getUsersInterestedIn(@Param("item_id") long item_id);
 
-    @Modifying
-    @Query(value = "insert into Item_Interested VALUES (:id, :user_id)", nativeQuery = true )
-    void addInterested(@Param("id") long id, @Param("user_id") long user_id);
 
 }

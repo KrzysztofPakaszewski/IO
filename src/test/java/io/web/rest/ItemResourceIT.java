@@ -130,7 +130,8 @@ public class ItemResourceIT {
             .hash(DEFAULT_HASH)
             .preferences(DEFAULT_PREFERENCES)
             .preferedDelivery(DEFAULT_PREFERED_DELIVERY)
-            .owner(user);
+            .owner(user)
+            .archived(false);
         return item;
     }
 

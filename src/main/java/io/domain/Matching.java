@@ -18,8 +18,11 @@ public class Matching implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "state_of_exchange")
-    private Boolean stateOfExchange;
+    @Column(name = "offeror_received")
+    private Boolean offerorReceived;
+
+    @Column(name = "asker_received")
+    private Boolean askerReceived;
 
     @Column(name = "chat")
     private String chat;
@@ -41,18 +44,32 @@ public class Matching implements Serializable {
         this.id = id;
     }
 
-    public Boolean isStateOfExchange() {
-        return stateOfExchange;
+    public Boolean isOfferorReceived() {
+        return offerorReceived;
     }
 
-    public Matching stateOfExchange(Boolean stateOfExchange) {
-        this.stateOfExchange = stateOfExchange;
+    public Matching offerorReceived(Boolean offerorReceived) {
+        this.offerorReceived = offerorReceived;
         return this;
     }
 
-    public void setStateOfExchange(Boolean stateOfExchange) {
-        this.stateOfExchange = stateOfExchange;
+    public void setOfferorReceived(Boolean offerorReceived) {
+        this.offerorReceived = offerorReceived;
     }
+
+    public Boolean isAskerReceived() {
+        return askerReceived;
+    }
+
+    public Matching askerReceived(Boolean askerReceived) {
+        this.askerReceived = askerReceived;
+        return this;
+    }
+
+    public void setAskerReceived(Boolean askerReceived) {
+        this.askerReceived = askerReceived;
+    }
+
 
     public String getChat() {
         return chat;
@@ -114,7 +131,6 @@ public class Matching implements Serializable {
     public String toString() {
         return "Matching{" +
             "id=" + getId() +
-            ", stateOfExchange='" + isStateOfExchange() + "'" +
             ", chat='" + getChat() + "'" +
             "}";
     }

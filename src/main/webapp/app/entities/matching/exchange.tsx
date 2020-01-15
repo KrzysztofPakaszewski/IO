@@ -10,7 +10,7 @@ import { MatchingComponent } from './matching-component';
 import { getCurrentlyLoggedUser } from 'app/modules/administration/user-management/user-management.reducer';
 
 import { IRootState } from 'app/shared/reducers';
-import { getLoggedUserMatches } from './matching.reducer';
+import { getLoggedUserMatches, acceptMatching } from './matching.reducer';
 import { IMatching } from 'app/shared/model/matching.model';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 
@@ -115,6 +115,13 @@ export class Exchange extends React.Component<IExchangeProps,IExchangeState> {
                                <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">Chat</span>
                             </Button>
                           </Grid>
+                          <Grid item>
+                            <Button color="danger" size="sm" onClick={(event)=>{
+                              this.props.acceptMatching(item);
+                            }}>
+                               <FontAwesomeIcon icon="check" /> <span className="d-none d-md-inline">You have received your item</span>
+                            </Button>
+                          </Grid>
                         </Grid>
                       </this.TabPanel>
                     ))}
@@ -135,7 +142,8 @@ const mapStateToProps = (storeState: IRootState) => ({
 
 const mapDispatchToProps = {
   getLoggedUserMatches,
-  getCurrentlyLoggedUser
+  getCurrentlyLoggedUser,
+  acceptMatching
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
