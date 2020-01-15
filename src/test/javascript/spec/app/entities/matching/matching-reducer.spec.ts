@@ -84,19 +84,18 @@ describe('Entities reducer tests', () => {
       );
     });
 
-    // TODO Fix bug
-    // it('should reset the state', () => {
-    //   expect(
-    //     reducer(
-    //       { ...initialState, loading: true },
-    //       {
-    //         type: ACTION_TYPES.RESET
-    //       }
-    //     )
-    //   ).toEqual({
-    //     ...initialState
-    //   });
-    // });
+    it('should reset the state', () => {
+      expect(
+        reducer(
+          { ...initialState, loading: true },
+          {
+            type: ACTION_TYPES.RESET
+          }
+        )
+      ).toEqual({
+        ...initialState
+      });
+    });
   });
 
   describe('Failures', () => {
