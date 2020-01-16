@@ -27,10 +27,6 @@ export class MatchingDetail extends React.Component<IMatchingDetailProps> {
           </h2>
           <dl className="jh-entity-details">
             <dt>
-              <span id="stateOfExchange">State Of Exchange</span>
-            </dt>
-            <dd>{matchingEntity.stateOfExchange ? 'true' : 'false'}</dd>
-            <dt>
               <span id="chat">Chat</span>
             </dt>
             <dd>{matchingEntity.chat}</dd>

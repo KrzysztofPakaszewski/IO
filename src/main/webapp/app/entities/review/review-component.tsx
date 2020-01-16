@@ -13,9 +13,9 @@ export const ReviewComp = (props) =>{
 
   return (
    <Box maxWidth={600}>
-      <Paper>
+      <Paper elevation ={5}>
         <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between'}}>
-        {props.reviewer ? UserCompMinimized(props.reviewer) : ''}
+        {props.reviewer && UserCompMinimized(props.reviewer)}
           <Rating
            value = {props.score}
            readOnly

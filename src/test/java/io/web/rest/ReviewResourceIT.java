@@ -1,8 +1,12 @@
 package io.web.rest;
 
 import io.CulexApp;
+import io.domain.Item;
+import io.domain.Matching;
 import io.domain.Review;
 import io.domain.User;
+import io.repository.ItemRepository;
+import io.repository.MatchingRepository;
 import io.repository.ReviewRepository;
 import io.repository.UserRepository;
 import io.service.MailService;
@@ -19,6 +23,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,6 +57,15 @@ public class ReviewResourceIT {
     private UserRepository userRepository;
 
     @Autowired
+    private ItemRepository itemRepository;
+
+    @Autowired
+    private MatchingRepository matchingRepository;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -75,7 +89,7 @@ public class ReviewResourceIT {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final ReviewResource reviewResource = new ReviewResource(reviewRepository);
+        final ReviewResource reviewResource = new ReviewResource(reviewRepository,userService,matchingRepository);
         this.restReviewMockMvc = MockMvcBuilders.standaloneSetup(reviewResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -90,11 +104,12 @@ public class ReviewResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Review createEntity(EntityManager em, User user) {
+    public static Review createEntity(EntityManager em, User user,User user2) {
         Review review = new Review()
             .score(DEFAULT_SCORE)
             .review(DEFAULT_REVIEW)
-            .reviewer(user);
+            .reviewer(user)
+            .user(user2);
         return review;
     }
 
@@ -104,9 +119,9 @@ public class ReviewResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which has a required relationship to the User entity.
      */
-    public static User createUser(EntityManager em) {
+    public static User createUser(String login) {
         User user = new User();
-        user.setLogin("login" + RandomStringUtils.randomAlphabetic(5));
+        user.setLogin(login);
         user.setPassword(RandomStringUtils.random(60));
         user.setActivated(true);
         user.setEmail(RandomStringUtils.randomAlphabetic(5) + "@something");
@@ -131,15 +146,30 @@ public class ReviewResourceIT {
 
     @BeforeEach
     public void initTest() {
-        user = createUser(em);
+        user = createUser("first");
+        User user2 =createUser("second");
         userRepository.saveAndFlush(user);
-        review = createEntity(em,user);
+        userRepository.saveAndFlush(user2);
+        review = createEntity(em,user,user2);
     }
 
     @Test
     @Transactional
+    @WithMockUser("first")
     public void createReview() throws Exception {
         int databaseSizeBeforeCreate = reviewRepository.findAll().size();
+        Item item = new Item();
+        item.setOwner(review.getUser());
+        itemRepository.save(item);
+        Item item2 = new Item();
+        item2.setOwner(review.getReviewer());
+        itemRepository.save(item2);
+
+        Matching matching = new Matching();
+        matching.setItemAsked(item);
+        matching.setItemOffered(item2);
+        matchingRepository.save(matching);
+
 
         // Create the Review
         restReviewMockMvc.perform(post("/api/reviews")

@@ -10,9 +10,11 @@ import { MatchingComponent } from './matching-component';
 import { getCurrentlyLoggedUser } from 'app/modules/administration/user-management/user-management.reducer';
 
 import { IRootState } from 'app/shared/reducers';
-import { getLoggedUserMatches } from './matching.reducer';
+import { getLoggedUserMatches, acceptMatching } from './matching.reducer';
 import { IMatching } from 'app/shared/model/matching.model';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+
+import { Chat } from '../matching/chat';
 
 export interface IExchangeProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
 
@@ -96,21 +98,48 @@ export class Exchange extends React.Component<IExchangeProps,IExchangeState> {
                           justify="space-between"
                           alignItems="flex-start"
                         >
+                        <Grid item>
+                        <Grid container
+                          direction = "column"
+                          justify = "space-between"
+                          alignItems = "flex-start"
+                        >
                           <Grid item>
                             {MatchingComponent(item,loggedUser)}
                           </Grid>
-                          <Grid item>
-                           <Button tag={Link} to={`/review/${loggedUser.login === item.itemOffered.owner.login ?
-                            item.itemAsked.owner.login : item.itemOffered.owner.login }/add`} color="primary" size="sm">
-                              <FontAwesomeIcon icon="plus" /> <span className="d-none d-md-inline">Add Review</span>
-                            </Button>
-                          </Grid>
-                          <Grid item>
-                            <Button tag={Link} to={`/matching/${item.id}/chat`} color="warning" size="sm">
-                               <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">Chat</span>
-                            </Button>
+
+                          <Grid container
+                            direction = "row"
+                            justify= "space-between"
+                            alignItems="flex-start"
+                            >
+                            <Grid item>
+                              <Button color="success" size="sm" onClick={(event)=>{
+                                this.props.acceptMatching(item);
+                              }}>
+                                 <FontAwesomeIcon icon="check" /> <span className="d-none d-md-inline">You have received your item</span>
+                              </Button>
+                            </Grid>
+                            <Grid item>
+                              <Button tag={Link} to={`/exchange/${item.id}/delete`} color="danger" size="sm">
+                                <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Discard exchange</span>
+                              </Button>
+                            </Grid>
+                            <Grid item>
+                            <Button tag={Link} to={`/review/${loggedUser.login === item.itemOffered.owner.login ?
+                              item.itemAsked.owner.login : item.itemOffered.owner.login }/add`} color="primary" size="sm">
+                                <FontAwesomeIcon icon="plus" /> <span className="d-none d-md-inline">Add Review</span>
+                              </Button>
+                            </Grid>
                           </Grid>
                         </Grid>
+                        </Grid>
+                        <Grid item>
+                              <Button tag={Link} to={`/exchange/${item.id}/chat`} color="warning" size="sm">
+                                <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">chat</span>
+                              </Button>
+                        </Grid>
+                      </Grid>
                       </this.TabPanel>
                     ))}
              </Box>
@@ -130,7 +159,8 @@ const mapStateToProps = (storeState: IRootState) => ({
 
 const mapDispatchToProps = {
   getLoggedUserMatches,
-  getCurrentlyLoggedUser
+  getCurrentlyLoggedUser,
+  acceptMatching
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

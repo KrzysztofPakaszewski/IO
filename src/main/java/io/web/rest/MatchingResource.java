@@ -1,6 +1,7 @@
 package io.web.rest;
 
 import io.domain.Matching;
+import io.repository.ItemInterestedRepository;
 import io.repository.MatchingRepository;
 import io.service.MatchingService;
 import io.web.rest.errors.BadRequestAlertException;
@@ -39,7 +40,7 @@ public class MatchingResource {
     private final MatchingRepository matchingRepository;
     private final MatchingService matchingService;
 
-    public MatchingResource(MatchingRepository matchingRepository, MatchingService matchingService) {
+    public MatchingResource(MatchingRepository matchingRepository,MatchingService matchingService) {
         this.matchingRepository = matchingRepository;
         this.matchingService = matchingService;
     }
@@ -57,6 +58,8 @@ public class MatchingResource {
         if (matching.getId() != null) {
             throw new BadRequestAlertException("A new matching cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        matching.setOfferorReceived(false);
+        matching.setAskerReceived(false);
         Matching result = matchingRepository.save(matching);
         return ResponseEntity.created(new URI("/api/matchings/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
@@ -100,6 +103,7 @@ public class MatchingResource {
             throw new BadRequestAlertException("Error! Matching has no ID", ENTITY_NAME, "noID");
         }
         matchingService.acceptGivenMatching(matching);
+        matchingService.finishedMatching(matching.getId());
         return ResponseEntity.created(new URI("/api/matchings/"))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, ""))
             .body("");
@@ -174,7 +178,15 @@ public class MatchingResource {
     @DeleteMapping("/matchings/{id}")
     public ResponseEntity<Void> deleteMatching(@PathVariable Long id) {
         log.debug("REST request to delete Matching : {}", id);
-        matchingRepository.deleteById(id);
+        Optional< Matching> optionalMatching= matchingRepository.findById(id);
+        if(optionalMatching.isPresent()) {
+            Matching matching = optionalMatching.get();
+            matchingService.deleteInteresteds(matching);
+            matchingRepository.deleteById(id);
+            matchingService.createMatchesIfPossible(matching.getItemAsked());
+            matchingService.createMatchesIfPossible(matching.getItemOffered());
+        }
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
+
     }
 }

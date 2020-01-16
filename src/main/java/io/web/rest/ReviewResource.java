@@ -2,7 +2,10 @@ package io.web.rest;
 
 import io.config.Constants;
 import io.domain.Review;
+import io.domain.User;
+import io.repository.MatchingRepository;
 import io.repository.ReviewRepository;
+import io.service.UserService;
 import io.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -36,8 +39,14 @@ public class ReviewResource {
 
     private final ReviewRepository reviewRepository;
 
-    public ReviewResource(ReviewRepository reviewRepository) {
+    private final UserService userService;
+
+    private final MatchingRepository matchingRepository;
+
+    public ReviewResource(ReviewRepository reviewRepository, UserService userService, MatchingRepository matchingRepository) {
         this.reviewRepository = reviewRepository;
+        this.userService = userService;
+        this.matchingRepository = matchingRepository;
     }
 
     /**
@@ -52,6 +61,15 @@ public class ReviewResource {
         log.debug("REST request to save Review : {}", review);
         if (review.getId() != null) {
             throw new BadRequestAlertException("A new review cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        Optional<User> optLogged =userService.getUserWithAuthorities();
+        if(!optLogged.isPresent()){
+            throw new BadRequestAlertException("No user logged", ENTITY_NAME, "");
+        }
+        User logged = optLogged.get();
+        review.setReviewer(logged);
+        if(matchingRepository.findMatchingOfUsers(logged.getLogin(),review.getUser().getLogin()).isEmpty()){
+            throw new BadRequestAlertException("You have no exchanges with this user", ENTITY_NAME, "");
         }
         Review result = reviewRepository.save(review);
         return ResponseEntity.created(new URI("/api/reviews/" + result.getId()))
@@ -102,7 +120,7 @@ public class ReviewResource {
     @GetMapping("/reviews/getbyuser/{login:" + Constants.LOGIN_REGEX + "}")
     public List<Review> getReviewsByUser(@PathVariable String login) {
         log.debug("REST request to get all Reviews of given user");
-        return reviewRepository.findAll();
+        return reviewRepository.findByUserLogin(login);
     }
 
     /**

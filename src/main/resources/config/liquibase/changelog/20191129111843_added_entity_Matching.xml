@@ -21,7 +21,10 @@
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="state_of_exchange" type="boolean">
+            <column name="offeror_received" type="boolean">
+                <constraints nullable="true" />
+            </column>
+            <column name="asker_received" type="boolean">
                 <constraints nullable="true" />
             </column>
             <column name="chat" type="varchar(255)">
@@ -56,7 +59,7 @@
                   separator=";"
                   tableName="matching">
             <column name="id" type="numeric"/>
-            <column name="state_of_exchange" type="boolean"/>
+            <column name="offeror_received" type="boolean"/>
             <column name="chat" type="string"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here, do not remove-->
         </loadData>

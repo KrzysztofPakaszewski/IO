@@ -30,6 +30,9 @@ public class Item implements Serializable {
     @Column(name = "state")
     private String state;
 
+    @Column(name = "archived")
+    private Boolean archived;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "category")
     private Category category;
@@ -94,6 +97,19 @@ public class Item implements Serializable {
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public Boolean isArchived() {
+        return archived;
+    }
+
+    public void setArchived(Boolean archived) {
+        this.archived = archived;
+    }
+
+    public Item archived(Boolean archived){
+        this.archived = archived;
+        return this;
     }
 
     public Category getCategory() {

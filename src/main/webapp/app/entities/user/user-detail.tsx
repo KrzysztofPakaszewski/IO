@@ -14,13 +14,13 @@ import {UserCompFull} from "app/entities/user/user-component-full";
 import {getUserItems} from "app/entities/item/item.reducer";
 import {getReviews} from "app/entities/review/review.reducer";
 
-export interface IUserDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string, login: string }> {}
+export interface IUserDetailProps extends StateProps, DispatchProps, RouteComponentProps<{  login: string }> {}
 
 export class UserDetail extends React.Component<IUserDetailProps> {
   componentDidMount() {
-    this.props.getEntity(this.props.match.params.id);
-    getUserItems(this.props.match.params.login);
-    getReviews(this.props.match.params.login);
+    this.props.getEntity(this.props.match.params.login);
+    this.props.getUserItems(this.props.match.params.login);
+    this.props.getReviews(this.props.match.params.login);
   }
 
   render() {
@@ -29,7 +29,7 @@ export class UserDetail extends React.Component<IUserDetailProps> {
       <Row className="justify-content-md-center">
         <Col md="20">
           {UserCompFull(userEntity, itemList, reviewList)}
-          <Button tag={Link} to="/item" replace color="info">
+          <Button onClick={() => this.props.history.goBack()} replace color="info">
             <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
           </Button>
           &nbsp;
