@@ -92,13 +92,6 @@ export class Exchange extends React.Component<IExchangeProps,IExchangeState> {
                   </Tabs>
                    {matchingList.map((item,iterator)=>(
                       <this.TabPanel key = {iterator} value={this.state.index} index={iterator}>
-                        <Grid
-                          container
-                          direction="row"
-                          justify="space-between"
-                          alignItems="flex-start"
-                        >
-                        <Grid item>
                         <Grid container
                           direction = "column"
                           justify = "space-between"
@@ -110,7 +103,7 @@ export class Exchange extends React.Component<IExchangeProps,IExchangeState> {
 
                           <Grid container
                             direction = "row"
-                            justify= "space-between"
+                            justify= "space-evenly"
                             alignItems="flex-start"
                             >
                             <Grid item>
@@ -131,15 +124,13 @@ export class Exchange extends React.Component<IExchangeProps,IExchangeState> {
                                 <FontAwesomeIcon icon="plus" /> <span className="d-none d-md-inline">Add Review</span>
                               </Button>
                             </Grid>
+                            <Grid item>
+                                <Button tag={Link} to={`/exchange/${item.id}/chat`} color="warning" size="sm">
+                                    <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">chat</span>
+                                </Button>
+                            </Grid>
                           </Grid>
                         </Grid>
-                        </Grid>
-                        <Grid item>
-                              <Button tag={Link} to={`/exchange/${item.id}/chat`} color="warning" size="sm">
-                                <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">chat</span>
-                              </Button>
-                        </Grid>
-                      </Grid>
                       </this.TabPanel>
                     ))}
              </Box>

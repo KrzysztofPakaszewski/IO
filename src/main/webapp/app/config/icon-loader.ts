@@ -31,6 +31,8 @@ import { faCloud } from '@fortawesome/free-solid-svg-icons/faCloud';
 import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck';
 import { faBars } from '@fortawesome/free-solid-svg-icons/faBars';
 import { faExchangeAlt } from '@fortawesome/free-solid-svg-icons/faExchangeAlt';
+import { faCaretDown } from '@fortawesome/free-solid-svg-icons/faCaretDown';
+import { faCaretUp } from '@fortawesome/free-solid-svg-icons/faCaretUp';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 
@@ -68,6 +70,8 @@ export const loadIcons = () => {
     faSearch,
     faCheck,
     faBars,
-    faExchangeAlt
+    faExchangeAlt,
+    faCaretDown,
+    faCaretUp
   );
 };
