@@ -17,7 +17,7 @@ export const EntitiesMenu = props => (
     <MenuItem icon="asterisk" to="/search">
       Search
     </MenuItem>
-    <MenuItem icon="asterisk" to="/matching">
+    <MenuItem icon="asterisk" to="/exchange/matching">
       Matching
     </MenuItem>
     <MenuItem icon="asterisk" to="/exchange">

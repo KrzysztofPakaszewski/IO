@@ -2,10 +2,14 @@ package io.web.rest;
 
 import io.config.Constants;
 import io.domain.Item;
+import io.domain.ItemInterested;
+import io.domain.User;
 import io.domain.enumeration.Category;
+import io.repository.ItemInterestedRepository;
 import io.repository.ItemRepository;
 import io.repository.UserRepository;
 import io.service.MatchingService;
+import io.service.UserService;
 import io.service.util.CustomUserIdUtil;
 import io.web.rest.errors.BadRequestAlertException;
 import io.security.SecurityUtils;
@@ -49,11 +53,17 @@ public class ItemResource {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final MatchingService matchingService;
+    private final UserService userService;
+    private final ItemInterestedRepository itemInterestedRepository;
 
-    public ItemResource(ItemRepository itemRepository, UserRepository userRepository, MatchingService matchingService) {
+    public ItemResource(ItemRepository itemRepository, UserRepository userRepository,
+                        MatchingService matchingService, UserService userService,
+                        ItemInterestedRepository itemInterestedRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.matchingService = matchingService;
+        this.itemInterestedRepository = itemInterestedRepository;
+        this.userService = userService;
     }
 
     /**
@@ -69,6 +79,7 @@ public class ItemResource {
         if (item.getId() != null) {
             throw new BadRequestAlertException("A new item cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        item.setArchived(false);
         Item result = itemRepository.save(item);
         return ResponseEntity.created(new URI("/api/items/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
@@ -99,12 +110,15 @@ public class ItemResource {
     @PutMapping("/search")
     public ResponseEntity<String> addInterested(@RequestBody Item item) throws URISyntaxException {
         log.debug("REST request to save Item : {}", item);
-        long userId = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId();
-        itemRepository.addInterested(item.getId(), userId );
-        matchingService.createMatchesIfBothUsersInterested(item);
+        User loggedUser = userService.getUserWithAuthorities().get();
+        Item itemRep = itemRepository.findById(item.getId()).get();
+        ItemInterested itemInterested = new ItemInterested(loggedUser,itemRep);
+        log.debug("user: " + itemInterested.getInterested().getLogin() + " " + itemInterested.getItem().getTitle());
+        itemInterestedRepository.save(itemInterested);
+        matchingService.createMatchesIfBothUsersInterested(itemRep);
         return ResponseEntity.created(new URI("/api/items/" ))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, ""))
-            .body("Success add to liked itemes item.id="+item.getId()+",user.id="+userId );
+            .body("Success add to liked itemes item.id="+item.getId()+",user.id="+ loggedUser.getLogin() );
     }
 
     /**

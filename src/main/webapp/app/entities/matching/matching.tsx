@@ -44,7 +44,6 @@ export class Matching extends React.Component<IMatchingProps> {
                         {matching.id}
                       </Button>
                     </td>
-                    <td>{matching.stateOfExchange ? 'true' : 'false'}</td>
                     <td>{matching.itemOffered ? <Link to={`search/${matching.itemOffered.id}`}>{matching.itemOffered.id}</Link> : ''}</td>
                     <td>{matching.itemAsked ? <Link to={`search/${matching.itemAsked.id}`}>{matching.itemAsked.id}</Link> : ''}</td>
                     <td className="text-right">

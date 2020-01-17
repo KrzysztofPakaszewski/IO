@@ -9,7 +9,7 @@ import UserDetail from './user-detail';
 const Routes = ({ match }) => (
   <>
     <Switch>
-      <ErrorBoundaryRoute exact path={`${match.url}/:id`} component={UserDetail} />
+      <ErrorBoundaryRoute exact path={`${match.url}/:login/profile`} component={UserDetail} />
     </Switch>
   </>
 );

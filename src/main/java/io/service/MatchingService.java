@@ -1,8 +1,10 @@
 package io.service;
 
 import io.domain.Item;
+import io.domain.ItemInterested;
 import io.domain.Matching;
 import io.domain.User;
+import io.repository.ItemInterestedRepository;
 import io.repository.ItemRepository;
 import io.repository.MatchingRepository;
 import io.security.SecurityUtils;
@@ -24,63 +26,83 @@ public class MatchingService {
 
     private final ItemRepository itemRepository;
 
-    public MatchingService(MatchingRepository matchingRepository, ItemRepository itemRepository){
+    private final ItemInterestedRepository itemInterestedRepository;
+
+    public MatchingService(MatchingRepository matchingRepository, ItemRepository itemRepository, ItemInterestedRepository itemInterestedRepository){
         this.matchingRepository = matchingRepository;
         this.itemRepository = itemRepository;
+        this.itemInterestedRepository = itemInterestedRepository;
     }
 
-    // Creates matches for owner of the chosen item
+    // delete this item from interesteds
+    // should be called if item was archived
+    public void deleteAllInteretedsThatHasThisItem(Item removedItem){
+        List<ItemInterested> itemInterestedsToRemove = itemInterestedRepository.findByItem(removedItem.getId());
+        itemInterestedRepository.deleteAll(itemInterestedsToRemove);
+    }
 
-    public void createMatchesForThisItem(Item chosenItem){
-        List<Item> userItems = itemRepository.findByOwnerIsCurrentUser();
-        boolean hasAcceptedMatching = doesThisItemHasAcceptedMatch(chosenItem);
-
-        for ( Item item: userItems ) {
-            Matching matching = new Matching();
-            matching.setItemAsked(chosenItem);
-            if(hasAcceptedMatching || doesThisItemHasAcceptedMatch(item)){
-                matching.setStateOfExchange(false);
+    public boolean deleteInteresteds(Matching matching){
+        Optional<String> optLogin = SecurityUtils.getCurrentUserLogin();
+        if(optLogin.isPresent()){
+            String login = optLogin.get();
+            Item discardedItem;
+            if( matching.getItemAsked().getOwner().getLogin().equals(login)){
+                discardedItem = matching.getItemOffered();
+            }else if (matching.getItemOffered().getOwner().getLogin().equals(login)){
+                discardedItem = matching.getItemAsked();
+            }else{
+                return false;
             }
-            matching.setItemOffered(item);
-            matchingRepository.save(matching);
+            List<ItemInterested>itemsToRemove = itemInterestedRepository.findByUserAndItem(login,discardedItem.getId());
+            itemInterestedRepository.deleteAll(itemsToRemove);
+            return true;
         }
+        return false;
     }
-    // Deletes all matches that has this item either in itemOffered or itemAsked
-    public void deleteAllMatchesThatHasThisItem(Item removedItem){
-        List<Matching> matchingsToRemove = matchingRepository.findAllMatchingsThatReferenceThisItem(removedItem.getId());
-        for (Matching foundMatch: matchingsToRemove) {
-            matchingRepository.delete(foundMatch);
-        }
-    }
-
-    // turns state of matches that references items from accepted match to false
-    public void changeStateOfMatchesToFalse(Item first, Item second){
-        List<Matching> matchingsToChange = matchingRepository.findAllMatchingsThatReferenceTheseItems(first.getId(),second.getId());
-        for ( Matching foundMatch : matchingsToChange) {
-            foundMatch.setStateOfExchange(false);
-            matchingRepository.save(foundMatch);
-        }
-    }
-
-    // turns state of matches that references items from cancelled match to NULL
-    public void changeStateOfMatchesToNull(Item first,Item second){
-        List<Matching> matchingsToChange = matchingRepository.findAllMatchingsThatReferenceTheseItems(first.getId(),second.getId());
-        for ( Matching foundMatch : matchingsToChange) {
-            foundMatch.setStateOfExchange(null);
-            matchingRepository.save(foundMatch);
-        }
-    }
-
     // returns true if this item has ongoing accepted matching
-    public boolean doesThisItemHasAcceptedMatch(Item item){
+    public boolean doesThisItemHasMatch(Item item){
         return !matchingRepository.findMatchingThatReferenceThisItemAndHasTrueState(item.getId()).isEmpty();
+    }
+
+    public boolean finishedMatching(Long id){
+        Optional<Matching> optMatching = matchingRepository.findById(id);
+        if(optMatching.isPresent()) {
+            Matching matching = optMatching.get();
+            if (matching.isOfferorReceived() && matching.isAskerReceived()) {
+                deleteInteresteds(matching);
+                Optional<Item>optAsked =  itemRepository.findById(matching.getItemAsked().getId());
+                Optional<Item>optOffered =  itemRepository.findById(matching.getItemOffered().getId());
+                if(optAsked.isPresent()){
+                    Item item = optAsked.get();
+                    item.setArchived(true);
+                    itemRepository.save(item);
+                    deleteAllInteretedsThatHasThisItem(item);
+                }
+                if(optOffered.isPresent()){
+                    Item item = optOffered.get();
+                    item.setArchived(true);
+                    itemRepository.save(item);
+                    deleteAllInteretedsThatHasThisItem(item);
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean acceptGivenMatching(Matching matching){
         Optional<Matching> foundMatch = matchingRepository.findById(matching.getId());
-        if(foundMatch.isPresent() && foundMatch.get().isStateOfExchange() == null){
+        Optional<String> optLogin = SecurityUtils.getCurrentUserLogin();
+        if(foundMatch.isPresent() && optLogin.isPresent()){
+            String login = optLogin.get();
             Matching tmp = foundMatch.get();
-            tmp.setStateOfExchange(true);
+            if(tmp.getItemAsked().getOwner().getLogin().equals(login)){
+                tmp.setAskerReceived(true);
+            }else if(tmp.getItemOffered().getOwner().getLogin().equals(login)){
+                tmp.setOfferorReceived(true);
+            }else{
+                return false;
+            }
             matchingRepository.save(tmp);
             return true;
         }
@@ -89,21 +111,43 @@ public class MatchingService {
         }
     }
 
-    public void createMatchesIfBothUsersInterested(Item likedItem){
-        List<Item> userItems = itemRepository.findByOwnerIsCurrentUser();
-        boolean hasAcceptedMatching = doesThisItemHasAcceptedMatch(likedItem);
-
-        for ( Item item: userItems ) {
-            List<User> interestedUsers = itemRepository.getUsersInterestedIn(item.getId());
-            for(User user : interestedUsers){
-                if(user.getId().equals(likedItem.getOwner().getId())){
+    public boolean createMatchesIfPossible(Item releasedItem){
+        List<ItemInterested> interestedsOfOwner = itemInterestedRepository.findByUser(releasedItem.getOwner().getLogin());
+        List<ItemInterested> interestedsOfItem = itemInterestedRepository.findByItem(releasedItem.getId());
+        for(ItemInterested owner: interestedsOfOwner){
+            for(ItemInterested item : interestedsOfItem){
+                if(owner.getItem().getOwner().getLogin().equals(item.getInterested().getLogin()) &&
+                !doesThisItemHasMatch(owner.getItem())){
                     Matching matching = new Matching();
-                    matching.setItemAsked(likedItem);
-                    matching.setItemOffered(item);
-                    if(hasAcceptedMatching || doesThisItemHasAcceptedMatch(item)){
-                        matching.setStateOfExchange(false);
-                    }
+                    matching.setItemOffered(owner.getItem());
+                    matching.setItemAsked(item.getItem());
+                    matching.setOfferorReceived(false);
+                    matching.setAskerReceived(false);
                     matchingRepository.save(matching);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void createMatchesIfBothUsersInterested(Item likedItem){
+        if(!doesThisItemHasMatch(likedItem)) {
+            Optional<String> tmp= SecurityUtils.getCurrentUserLogin();
+            User owner = likedItem.getOwner();
+            if( tmp.isPresent()) {
+                String logggedLogin = tmp.get();
+                List<ItemInterested> listOfInteresteds = itemInterestedRepository.findByUser(owner.getLogin());
+                for( ItemInterested row : listOfInteresteds){
+                    if(row.getItem().getOwner().getLogin().equals(logggedLogin) && !doesThisItemHasMatch(row.getItem())){
+                        Matching matching = new Matching();
+                        matching.setItemAsked(likedItem);
+                        matching.setItemOffered(row.getItem());
+                        matching.setAskerReceived(false);
+                        matching.setOfferorReceived(false);
+                        matchingRepository.save(matching);
+                        break;
+                    }
                 }
             }
         }

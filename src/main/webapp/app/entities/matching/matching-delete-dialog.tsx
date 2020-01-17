@@ -29,9 +29,9 @@ export class MatchingDeleteDialog extends React.Component<IMatchingDeleteDialogP
   render() {
     const { matchingEntity } = this.props;
     return (
-      <Modal isOpen toggle={this.handleClose}>
-        <ModalHeader toggle={this.handleClose}>Confirm delete operation</ModalHeader>
-        <ModalBody id="culexApp.matching.delete.question">Are you sure you want to delete this Matching?</ModalBody>
+      <Modal isOpen toggle={this.handleClose} zIndex={1500}>
+        <ModalHeader toggle={this.handleClose}>Confirm discard operation</ModalHeader>
+        <ModalBody id="culexApp.matching.delete.question">Are you sure you want to discard this Matching?</ModalBody>
         <ModalFooter>
           <Button color="secondary" onClick={this.handleClose}>
             <FontAwesomeIcon icon="ban" />
@@ -39,7 +39,7 @@ export class MatchingDeleteDialog extends React.Component<IMatchingDeleteDialogP
           </Button>
           <Button id="jhi-confirm-delete-matching" color="danger" onClick={this.confirmDelete}>
             <FontAwesomeIcon icon="trash" />
-            &nbsp; Delete
+            &nbsp; Discard
           </Button>
         </ModalFooter>
       </Modal>
