@@ -72,7 +72,11 @@ public class CustomAuditEventRepositoryIT {
 
     @Test
     public void testFind(){
-
+        AuditEvent auditEvent = new AuditEvent("principal", "type", new HashMap<String, Object>());
+        customAuditEventRepository.add(auditEvent);
+        assertThat(customAuditEventRepository.find("principal", auditEvent.getTimestamp(), "type").size() == 1);
+        assertThat(customAuditEventRepository.find("principal", auditEvent.getTimestamp(), "type").isEmpty() == false);
+        assertThat(customAuditEventRepository.find("principal", auditEvent.getTimestamp(), "type").contains(auditEvent) == true);
     }
 
     @Test

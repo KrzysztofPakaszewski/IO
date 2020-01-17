@@ -351,4 +351,5 @@ public class ItemResourceIT {
         List<Item> itemList = itemRepository.findAll();
         assertThat(itemList).hasSize(databaseSizeBeforeDelete - 1);
     }
+
 }
