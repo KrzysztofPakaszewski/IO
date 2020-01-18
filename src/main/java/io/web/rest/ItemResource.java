@@ -152,22 +152,22 @@ public class ItemResource {
     }
 
     @GetMapping("/items/recommended")
-    public ResponseEntity<List<Item>> getRecommendedItemsOfLoggedUser() {
-        List<Item> items;
-        Set<User> users = new HashSet<>();
-        List<Item> items2 = new ArrayList<>();
+    public ResponseEntity<List<Item[]>> getRecommendedItemsOfLoggedUser() {
+        List<Item> userItems;
+        List<Item[]> itemsPairsList = new ArrayList<>();
         log.debug("REST request to get items of users that liked current any of current user items");
-        items = itemRepository.findByOwnerIsCurrentUser();
-        for(Item item : items) {
-            List<User> user2 = itemRepository.getUsersInterestedIn(item.getId());
-            users.addAll(new HashSet<>(user2));
-        }
+        userItems = itemRepository.findByOwnerIsCurrentUser();
 
-        for(User user : users){
-            List<Item> item3 = getItemsOfUser(user.getLogin());
-            items2.addAll(item3);
+        for(Item userItem : userItems) {
+            List<User> usersInterestedIn = itemRepository.getUsersInterestedIn(userItem.getId());
+            for(User user : usersInterestedIn){
+                List<Item> recommendedItems = getItemsOfUser(user.getLogin());
+                for(Item recommendedItem  : recommendedItems ) {
+                    itemsPairsList.add(new Item[]{userItem , recommendedItem});
+                }
+            }
         }
-        return ResponseEntity.ok().body(items2);
+        return ResponseEntity.ok().body(itemsPairsList);
     }
 
     /**

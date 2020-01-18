@@ -7,7 +7,6 @@ import { IRootState } from 'app/shared/reducers';
 import {SingleCard} from './single-card';
 import {createMatching, getRecommendedItems} from "app/entities/swipes/swipe.reducer";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {IMatching} from "app/shared/model/matching.model";
 
 export interface ISwipeProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
 
@@ -31,13 +30,20 @@ export class Swipe extends React.Component<ISwipeProps> {
     this.props.getRecommendedItems();
   };
 
+  onEnd = () => {
+    return (
+      <div className="alert alert-warning">No recommended items found</div>
+    )
+  };
+
+
 
   onConfirm = (userItem, recommendedItem) => {
     this.props.createMatching(userItem, recommendedItem);
   };
 
   render() {
-    const { itemList, match  } = this.props;
+    const { itemList } = this.props;
     return (
      <div className="container">
         <div id="card-stack" />
@@ -45,17 +51,17 @@ export class Swipe extends React.Component<ISwipeProps> {
         <Cards
           alertRight={<CustomAlertRight />}
           alertLeft={<CustomAlertLeft />}
-          onEnd={() => this.onLoad()}
+          onEnd={() => this.onEnd()}
         >
           {itemList.map((item) => {
             return (
               <Card
                 key={item.id}
                 onSwipeLeft={() => {}}
-                onSwipeRight={() => { this.onConfirm(item, item); }}
+                onSwipeRight={() => { this.onConfirm(item[0], item[1]); }}
                 className="master-root"
               >
-                {SingleCard(item, item)}
+                {SingleCard(item[0], item[1])}
               </Card>
             )})}
         </Cards>
