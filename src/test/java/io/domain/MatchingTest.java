@@ -104,19 +104,6 @@ public class MatchingTest {
         assertEquals("user", matching.getItemAsked().getOwner().getLogin());
     }
 
-    @Test
-    public void testStateOfExchange(){
-        matching = matching.stateOfExchange(true);
-        assertNotNull(matching.isStateOfExchange());
-        assertThat(matching.isStateOfExchange());
-    }
-
-    @Test
-    public void testSetStateOfExchange(){
-        matching.setStateOfExchange(true);
-        assertNotNull(matching.isStateOfExchange());
-        assertThat(matching.isStateOfExchange());
-    }
 
     @Test
     public void testChat(){

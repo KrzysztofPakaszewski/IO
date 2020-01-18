@@ -46,12 +46,13 @@ const Header = (props: IHeaderProps) => {
           <FontAwesomeIcon icon = "bars"/>
         </Button>
         }
-        <NavbarToggler aria-label="Menu" onClick={toggleMenu} />
         <Brand />
+        <NavbarToggler aria-label="Menu" onClick={toggleMenu} >
+          {menuOpen ? <FontAwesomeIcon icon="caret-up"/> : <FontAwesomeIcon icon="caret-down"/>}
+        </NavbarToggler>
         <Collapse isOpen={menuOpen} navbar>
           <Nav id="header-tabs" className="ml-auto" navbar>
             <Home />
-            {props.isAuthenticated && <EntitiesMenu />}
             {props.isAuthenticated && props.isAdmin && (
               <AdminMenu showSwagger={props.isSwaggerEnabled} showDatabase={!props.isInProduction} />
             )}

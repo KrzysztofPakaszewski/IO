@@ -12,16 +12,16 @@ import {ItemCompMinimized} from '../item/item-component-minimized';
 // props = {yourItem, otherItem}
 export const MatchingComponent= (matching,loggedUser) =>{
     return (
-        <Box>
+        <Box >
             <Paper>
                 {matching.itemOffered ?(
-                <Box style={{display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center',padding:'3em'}}>
+                <Box style={{display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
                     <Box>
                         <h3>Your Item</h3>
                         {loggedUser.login === matching.itemOffered.owner.login ? ItemCompMinimized(matching.itemOffered):
                         ItemCompMinimized(matching.itemAsked)}
                     </Box>
-                    <h1>FOR </h1>
+                    <h3>FOR </h3>
                     <Box>
                        <h3>Offered Item</h3>
                           {loggedUser.login === matching.itemOffered.owner.login ? ItemCompMinimized(matching.itemAsked):

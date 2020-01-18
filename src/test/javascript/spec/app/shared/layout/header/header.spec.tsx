@@ -64,7 +64,6 @@ describe('Header', () => {
     expect(nav.length).toEqual(1);
     expect(nav.find(Home).length).toEqual(1);
     expect(nav.find(AdminMenu).length).toEqual(1);
-    expect(nav.find(EntitiesMenu).length).toEqual(1);
 
     expect(nav.find(AccountMenu).length).toEqual(1);
   });
@@ -80,7 +79,6 @@ describe('Header', () => {
     expect(nav.length).toEqual(1);
     expect(nav.find(Home).length).toEqual(1);
     expect(nav.find(AdminMenu).length).toEqual(1);
-    expect(nav.find(EntitiesMenu).length).toEqual(1);
 
     expect(nav.find(AccountMenu).length).toEqual(1);
     const ribbon = component.find('.ribbon.dev');
@@ -90,7 +88,6 @@ describe('Header', () => {
   it('Renders a Header component in prod profile with logged in User', () => {
     const nav = wrapper(userProps).find(Nav);
     expect(nav.find(AdminMenu).length).toEqual(0);
-    expect(nav.find(EntitiesMenu).length).toEqual(1);
     const account = nav.find(AccountMenu);
     expect(account.first().props().isAuthenticated).toEqual(true);
   });

@@ -44,8 +44,6 @@ class ChatRepositoryTest {
         assertNotNull(chat3);
         assertEquals(chat2.getChat(), chat3.getChat());
         assertNotSame(chat2, chat3);
-
-
     }
 
     @Test
