@@ -4,7 +4,6 @@ import { ICrudGetAction } from 'react-jhipster';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IItem, defaultValue } from 'app/shared/model/item.model';
-import { getCurrentlyLoggedUser } from 'app/modules/administration/user-management/user-management.reducer';
 import { cleanEntity } from 'app/shared/util/entity-utils';
 
 export const ACTION_TYPES = {

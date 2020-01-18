@@ -9,6 +9,7 @@ import Item from './item';
 import Search from './search';
 import Exchange from './matching';
 import User from './user';
+import Swipe from './swipes';
 /* jhipster-needle-add-route-import - JHipster will add routes here */
 
 const Routes = ({ match }) => (
@@ -20,6 +21,7 @@ const Routes = ({ match }) => (
       <ErrorBoundaryRoute path={`${match.url}search`} component={Search} />
       <ErrorBoundaryRoute path={`${match.url}item`} component={Item}  />
       <ErrorBoundaryRoute path={`${match.url}exchange`} component={Exchange} />
+      <ErrorBoundaryRoute path={`${match.url}swipe`} component={Swipe} />
       <ErrorBoundaryRoute path={`${match.url}user`} component={User} />
       {/* jhipster-needle-add-route-path - JHipster will add routes here */}
     </Switch>
