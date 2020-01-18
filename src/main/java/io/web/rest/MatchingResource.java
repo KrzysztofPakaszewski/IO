@@ -65,28 +65,6 @@ public class MatchingResource {
             .body(result);
     }
 
-/*
-    /**
-     * {@code POST  /matchings} : Create new matchings for given item.
-     *
-     * @param item liked item
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with empty body, or with status {@code 400 (Bad Request)} if Item has no ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
-    /*
-    @PostMapping("/matchings/create")
-    public ResponseEntity<String> createMatching(@RequestBody Item item) throws URISyntaxException {
-        log.debug("REST request to create Matches for item : {}", item);
-        if (item.getId() == null) {
-            throw new BadRequestAlertException("Error! Item has no ID", ENTITY_NAME, "noID");
-        }
-        matchingService.createMatchesForThisItem(item);
-        return ResponseEntity.created(new URI("/api/matchings/"))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME,""))
-            .body("");
-    }
-    */
-
     /**
      * {@code POST  /matchings} : set this matching as accepted
      *
