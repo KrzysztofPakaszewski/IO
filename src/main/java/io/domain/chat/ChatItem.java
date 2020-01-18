@@ -1,7 +1,5 @@
 package io.domain.chat;
 
-import io.domain.User;
-
 public class ChatItem {
 
     private String owner;

@@ -27,7 +27,6 @@ export class MatchingDeleteDialog extends React.Component<IMatchingDeleteDialogP
   };
 
   render() {
-    const { matchingEntity } = this.props;
     return (
       <Modal isOpen toggle={this.handleClose} zIndex={1500}>
         <ModalHeader toggle={this.handleClose}>Confirm discard operation</ModalHeader>

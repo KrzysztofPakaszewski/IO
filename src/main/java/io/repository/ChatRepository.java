@@ -3,6 +3,7 @@ package io.repository;
 import io.domain.User;
 import io.domain.chat.Chat;
 import io.domain.chat.ChatItem;
+import io.web.rest.errors.BadRequestAlertException;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -15,6 +16,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -113,6 +115,10 @@ public class ChatRepository {
     }
 
     private User getUser(String login) {
-        return userRepository.findOneByLogin(login).get();
+        Optional<User> tmp = userRepository.findOneByLogin(login);
+        if(!tmp.isPresent()){
+            throw new BadRequestAlertException("invalid login","","");
+        }
+        return tmp.get();
     }
 }

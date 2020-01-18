@@ -114,7 +114,7 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
   };
 
   render() {
-    const {match, itemList, totalItems} = this.props;
+    const { itemList, totalItems} = this.props;
     return (
       <div>
         <h2 id="search-heading">

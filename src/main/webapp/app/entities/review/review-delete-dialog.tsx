@@ -27,7 +27,6 @@ export class ReviewDeleteDialog extends React.Component<IReviewDeleteDialogProps
   };
 
   render() {
-    const { reviewEntity } = this.props;
     return (
       <Modal isOpen toggle={this.handleClose}>
         <ModalHeader toggle={this.handleClose}>Confirm delete operation</ModalHeader>

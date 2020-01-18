@@ -197,8 +197,13 @@ public class UserResource {
     @GetMapping("/users/logged/{login:" + Constants.LOGIN_REGEX + "}")
     public ResponseEntity<List<UserDTO>> getCurrentlyLoggedUserAndUserByLogin(@PathVariable String login) {
         log.debug("REST request to get currently logged User and User : {}", login);
-        List<UserDTO> result = Arrays.asList(userService.getUserWithAuthorities().map(UserDTO::new).get(),
-                    userService.getUserWithAuthoritiesByLogin(login).map(UserDTO::new).get());
+        Optional<User> optLogged = userService.getUserWithAuthorities();
+        Optional<User> optUser = userService.getUserWithAuthoritiesByLogin(login);
+        if(!optLogged.isPresent() || !optUser.isPresent()){
+            throw new BadRequestAlertException("user is invalid or there is no logged user","","");
+        }
+        List<UserDTO> result = Arrays.asList(optLogged.map(UserDTO::new).get(),
+                    optUser.map(UserDTO::new).get());
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

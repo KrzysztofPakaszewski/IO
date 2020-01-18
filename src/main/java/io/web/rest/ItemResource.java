@@ -10,7 +10,6 @@ import io.repository.ItemRepository;
 import io.repository.UserRepository;
 import io.service.MatchingService;
 import io.service.UserService;
-import io.service.util.CustomUserIdUtil;
 import io.web.rest.errors.BadRequestAlertException;
 import io.security.SecurityUtils;
 
@@ -23,7 +22,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,16 +49,14 @@ public class ItemResource {
     private String applicationName;
 
     private final ItemRepository itemRepository;
-    private final UserRepository userRepository;
     private final MatchingService matchingService;
     private final UserService userService;
     private final ItemInterestedRepository itemInterestedRepository;
 
-    public ItemResource(ItemRepository itemRepository, UserRepository userRepository,
+    public ItemResource(ItemRepository itemRepository,
                         MatchingService matchingService, UserService userService,
                         ItemInterestedRepository itemInterestedRepository) {
         this.itemRepository = itemRepository;
-        this.userRepository = userRepository;
         this.matchingService = matchingService;
         this.itemInterestedRepository = itemInterestedRepository;
         this.userService = userService;
@@ -107,22 +103,36 @@ public class ItemResource {
             .body(result);
     }
 
+    /**
+     * {@code PUT  /search} : Adds given item to interested of logged user.
+     *
+     * @param item the item to add to interested
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with operation log in body,
+     * or with status {@code 400 (Bad Request)} if the item is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the item couldn't be added.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
     @PutMapping("/search")
     public ResponseEntity<String> addInterested(@RequestBody Item item) throws URISyntaxException {
         log.debug("REST request to save Item : {}", item);
-        User loggedUser = userService.getUserWithAuthorities().get();
-        Item itemRep = itemRepository.findById(item.getId()).get();
+        Optional<User> optLoggedUser = userService.getUserWithAuthorities();
+        Optional<Item> optItemRep = itemRepository.findById(item.getId());
+        if(!optItemRep.isPresent() || !optLoggedUser.isPresent()){
+            throw new BadRequestAlertException("invalid user or item ", "","");
+        }
+        User loggedUser = optLoggedUser.get();
+        Item itemRep = optItemRep.get();
         ItemInterested itemInterested = new ItemInterested(loggedUser,itemRep);
         log.debug("user: " + itemInterested.getInterested().getLogin() + " " + itemInterested.getItem().getTitle());
         itemInterestedRepository.save(itemInterested);
         matchingService.createMatchesIfBothUsersInterested(itemRep);
         return ResponseEntity.created(new URI("/api/items/" ))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, ""))
-            .body("Success add to liked itemes item.id="+item.getId()+",user.id="+ loggedUser.getLogin() );
+            .body("Success add to liked items item.id="+item.getId()+",user.id="+ loggedUser.getLogin() );
     }
 
     /**
-     * {@code GET  /items} : get all the items.
+     * {@code GET  /items} : get all the items of logged user.
      *
      * @param pageable the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of items in body.
@@ -142,7 +152,12 @@ public class ItemResource {
                                                 @RequestParam(value = "category3", required = false) Category category3) {
         log.debug("REST request to get items of logged User");
         log.debug("REST request to get a page of Items");
-        long userId = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId();
+        Optional<User> optionalUser = userService.getUserWithAuthorities();
+        if(!optionalUser.isPresent()){
+            throw new BadRequestAlertException("there is no logged in user","","");
+        }
+        long userId = optionalUser.get().getId();
+
         Page<Item> page;
         if (search.contains("#")) {
             // substring to remove #
@@ -180,14 +195,12 @@ public class ItemResource {
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
+
         /**
      * {@code GET  /items} : get all items of logged user.
      *
      * @return the {@link List<Item>} with status {@code 200 (OK)} and the list of items in body.
      */
-
-
-
     @GetMapping("/items/logged")
     public List<Item> getItemsOfLoggedUser() {
         log.debug("REST request to get items of logged User");
