@@ -90,13 +90,16 @@ export class ItemDetail extends React.Component<IItemDetailProps, IItemDetailSta
             <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
           </Button>
           &nbsp;
-          {this.props.user && itemEntity.owner && this.props.user.login === itemEntity.owner.login &&
+          {this.props.user && itemEntity.owner && this.props.user.login === itemEntity.owner.login &&(
+          <div>
               <Button tag={Link} to={`/item/${itemEntity.id}/edit`} replace color="primary">
                   <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
               </Button>
               <Button tag={Link} to={`/item/${itemEntity.id}/delete`} replace color="danger">
                   <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Delete</span>
                 </Button>
+                </div>
+                )
               }
           { this.state.showInterestedButton && itemEntity && itemEntity.owner && itemEntity.owner.login !== this.props.user.login &&
             this.interestButtonLogic(itemEntity, this.props.user.login) &&
