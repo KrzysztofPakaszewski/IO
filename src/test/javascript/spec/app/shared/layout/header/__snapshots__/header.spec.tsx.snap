@@ -40,13 +40,32 @@ exports[`Header Renders a Header component in dev profile with LoadingBar, Navba
           transform={null}
         />
       </Button>
+      <Component />
       <NavbarToggler
         aria-label="Menu"
         onClick={[Function]}
         tag="button"
         type="button"
-      />
-      <Component />
+      >
+        <FontAwesomeIcon
+          border={false}
+          className=""
+          fixedWidth={false}
+          flip={null}
+          icon="caret-down"
+          inverse={false}
+          listItem={false}
+          mask={null}
+          pull={null}
+          pulse={false}
+          rotation={null}
+          size={null}
+          spin={false}
+          symbol={false}
+          title=""
+          transform={null}
+        />
+      </NavbarToggler>
       <Collapse
         appear={false}
         enter={true}
@@ -72,7 +91,6 @@ exports[`Header Renders a Header component in dev profile with LoadingBar, Navba
           tag="ul"
           vertical={false}
         >
-          <Component />
           <Component />
           <Component
             showDatabase={true}
@@ -128,13 +146,32 @@ exports[`Header Renders a Header component in prod profile with LoadingBar, Navb
           transform={null}
         />
       </Button>
+      <Component />
       <NavbarToggler
         aria-label="Menu"
         onClick={[Function]}
         tag="button"
         type="button"
-      />
-      <Component />
+      >
+        <FontAwesomeIcon
+          border={false}
+          className=""
+          fixedWidth={false}
+          flip={null}
+          icon="caret-down"
+          inverse={false}
+          listItem={false}
+          mask={null}
+          pull={null}
+          pulse={false}
+          rotation={null}
+          size={null}
+          spin={false}
+          symbol={false}
+          title=""
+          transform={null}
+        />
+      </NavbarToggler>
       <Collapse
         appear={false}
         enter={true}
@@ -160,7 +197,6 @@ exports[`Header Renders a Header component in prod profile with LoadingBar, Navb
           tag="ul"
           vertical={false}
         >
-          <Component />
           <Component />
           <Component
             showDatabase={false}

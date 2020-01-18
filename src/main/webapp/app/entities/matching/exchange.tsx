@@ -83,7 +83,7 @@ export class Exchange extends React.Component<IExchangeProps,IExchangeState> {
                     value={this.state.index}
                     onChange={this.handleChange}
                     aria-label="Vertical tabs"
-                    style = {{borderRight: `1px solid`-m ""}}
+                    style = {{borderRight: `1px solid`}}
                    >
                   {matchingList.map((item,index)=>(
                     <Tab key = {index} label={loggedUser.login === item.itemOffered.owner.login ?
