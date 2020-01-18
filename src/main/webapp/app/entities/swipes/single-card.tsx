@@ -3,6 +3,7 @@ import Box from "@material-ui/core/Box";
 import Paper from "@material-ui/core/Paper";
 import {connect} from "react-redux";
 import {Item} from "app/entities/item/item";
+import {ItemCompMinimized} from "app/entities/item/item-component-minimized";
 
 export interface ISingleCardState extends StateProps{
   userItem : Item;
@@ -12,10 +13,6 @@ export interface ISingleCardState extends StateProps{
 class SingleCard extends Component<StateProps, ISingleCardState> {
   constructor(props) {
     super(props);
-    this.state = {
-      userItem: props.userItem,
-      recommendedItem: props.recommendedItem,
-    };
   }
 
   onClick(e) {
@@ -29,25 +26,24 @@ class SingleCard extends Component<StateProps, ISingleCardState> {
         id="singleCard"
         onClick={this.onClick.bind(this)}
       >
-        <div>
-          <Box>
-            <Paper>
-              {recommendedItem ?(
-                <Box style={{display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center',padding:'3em'}}>
-                  <Box>
-                    <h3>Your Item</h3>
-                    ItemCompMinimized(userItem)
-                  </Box>
-                  <h1>FOR </h1>
-                  <Box>
-                    <h3>Offered Item</h3>
-                    ItemCompMinimized(recommendedItem)
-                  </Box>
+        <Box>
+          <Paper>
+            {recommendedItem !== null ?(
+              <Box style={{display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center',padding:'3em'}}>
+                ItemCompMinimized(recommendedItem)
+                <Box>
+                  <h3>Your Item</h3>
+                  ItemCompMinimized(recommendedItem)
                 </Box>
-              ) : ' '}
-            </Paper>
-          </Box>
-        </div>
+                <h1>FOR </h1>
+                <Box>
+                  <h3>Offered Item</h3>
+                  ItemCompMinimized(recommendedItem)
+                </Box>
+              </Box>
+            ) : ' '}
+          </Paper>
+        </Box>
       </div>
 
       );
