@@ -1,5 +1,6 @@
 package io.web.rest;
 
+import io.domain.Item;
 import io.domain.Matching;
 import io.repository.MatchingRepository;
 import io.service.MatchingService;
@@ -105,6 +106,20 @@ public class MatchingResource {
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, matching.getId().toString()))
             .body(result);
+    }
+
+    @PutMapping("/matchings/addFromSwipe")
+    public ResponseEntity<String> addMatching(@RequestBody Item[] items) throws URISyntaxException {
+        log.debug("REST request to create Matching : {}", items[0], items[1]);
+        Matching matching = new Matching();
+        matching.setItemOffered(items[0]);
+        matching.setItemAsked(items[1]);
+        matching.setAskerReceived(false);
+        matching.setOfferorReceived(false);
+        matchingRepository.save(matching);
+        return ResponseEntity.created(new URI("/api/matchings/" ))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, ""))
+            .body("Success adding matching for items item.id="+items[0].getId()+" and item.id="+ items[1].getId() );
     }
 
     /**

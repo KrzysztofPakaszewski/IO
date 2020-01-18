@@ -182,7 +182,6 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
       </div>
     );
   }
-
 }
 
 const mapStateToProps = ({ item }: IRootState) => ({

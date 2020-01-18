@@ -1,12 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-import { Button } from 'reactstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import { SwipeableDrawer, List, ListItem, ListItemIcon, ListItemText} from '@material-ui/core';
+import { SwipeableDrawer, List } from '@material-ui/core';
 
 import { makeStyles } from '@material-ui/core/styles';
-import { Link } from 'react-router-dom';
 
 import ListElem from './list-item';
 
@@ -42,6 +38,7 @@ const SideBar = (props: IDrawerProps) => {
         <ListElem icon="search" to="/search" text="search" key="search"/>
         <ListElem icon="asterisk" to="/item" text="your items" key="items"/>
         <ListElem icon="exchange-alt" to="/exchange" text="exchanges" key="exchange"/>
+        <ListElem icon="search" to="/swipe" text="recommended items" key="swipe"/>
       </List>
       </div>
     </SwipeableDrawer>

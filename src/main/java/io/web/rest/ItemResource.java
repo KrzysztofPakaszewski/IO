@@ -30,8 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * REST controller for managing {@link io.domain.Item}.
@@ -166,6 +165,24 @@ public class ItemResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
+    @GetMapping("/items/recommended")
+    public ResponseEntity<List<Item[]>> getRecommendedItemsOfLoggedUser() {
+        List<Item> userItems;
+        List<Item[]> itemsPairsList = new ArrayList<>();
+        log.debug("REST request to get items of users that liked current any of current user items");
+        userItems = itemRepository.findByOwnerIsCurrentUser();
+
+        for(Item userItem : userItems) {
+            List<User> usersInterestedIn = itemRepository.getUsersInterestedIn(userItem.getId());
+            for(User user : usersInterestedIn){
+                List<Item> recommendedItems = getItemsOfUser(user.getLogin());
+                for(Item recommendedItem  : recommendedItems ) {
+                    itemsPairsList.add(new Item[]{userItem , recommendedItem});
+                }
+            }
+        }
+        return ResponseEntity.ok().body(itemsPairsList);
+    }
 
     /**
      * {@code GET  /items} : get all the items.

@@ -5,10 +5,6 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IMatching, defaultValue } from 'app/shared/model/matching.model';
-import { IItem } from 'app/shared/model/item.model';
-
-import * as SockJS from 'sockjs-client';
-import * as Stomp from 'webstomp-client';
 
 export const ACTION_TYPES = {
   FETCH_MATCHING_LIST: 'matching/FETCH_MATCHING_LIST',
