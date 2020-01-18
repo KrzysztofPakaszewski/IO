@@ -4,7 +4,7 @@ import Cards, { Card } from 'react-swipe-card';
 import {RouteComponentProps} from 'react-router-dom';
 
 import { IRootState } from 'app/shared/reducers';
-import SingleCard from './single-card';
+import {SingleCard} from './single-card';
 import {createMatching, getRecommendedItems} from "app/entities/swipes/swipe.reducer";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {IMatching} from "app/shared/model/matching.model";
@@ -55,7 +55,7 @@ export class Swipe extends React.Component<ISwipeProps> {
                 onSwipeRight={() => { this.onConfirm(item, item); }}
                 className="master-root"
               >
-                <SingleCard userItem={item} recommendedItem={item} />
+                {SingleCard(item, item)}
               </Card>
             )})}
         </Cards>
