@@ -32,8 +32,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * REST controller for managing {@link io.domain.Item}.
@@ -152,6 +151,26 @@ public class ItemResource {
         }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    @GetMapping("/swipe")
+    public ResponseEntity<List<Item>> getRecommendedItemsOfLoggedUser() {
+        List<Item> items;
+        Set<User> users = new HashSet<>();
+        List<Item> items2 = new ArrayList<>();
+        log.debug("REST request to get items of users that liked current any of current user items");
+        long userId = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId();
+        items = itemRepository.findByOwnerIsCurrentUser();
+        for(Item item : items) {
+            List<User> user2 = itemRepository.getUsersInterestedIn(item.getId());
+            users.addAll(new HashSet<>(user2));
+        }
+
+        for(User user : users){
+            List<Item> item3 = getItemsOfUser(user.getLogin());
+            items2.addAll(item3);
+        }
+        return ResponseEntity.ok().body(items2);
     }
 
 
