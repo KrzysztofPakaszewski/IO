@@ -4,7 +4,6 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col } from 'reactstrap';
 import { ICrudGetAction, openFile, byteSize } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {UserComp} from "app/entities/user/user-component";
 import { IRootState } from 'app/shared/reducers';
 import { getUser } from 'app/modules/administration/user-management/user-management.reducer';
 import { IUser } from 'app/shared/model/user.model';
