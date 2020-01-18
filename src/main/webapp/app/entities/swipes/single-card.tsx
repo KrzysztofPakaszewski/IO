@@ -17,7 +17,7 @@ export const SingleCard = (userItem, recommendedItem) =>{
         <Box>
           <Paper>
             {userItem !== undefined ?(
-              <Box style={{display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center',padding:'3em'}}>
+              <Box style={{display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
                 <Box>
                   <h3>Your Item</h3>
                   {ItemCompMinimized(userItem)}
