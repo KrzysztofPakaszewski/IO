@@ -152,11 +152,8 @@ public class ItemResource {
                                                 @RequestParam(value = "category3", required = false) Category category3) {
         log.debug("REST request to get items of logged User");
         log.debug("REST request to get a page of Items");
-        Optional<User> optionalUser = userService.getUserWithAuthorities();
-        if(!optionalUser.isPresent()){
-            throw new BadRequestAlertException("there is no logged in user","","");
-        }
-        long userId = optionalUser.get().getId();
+        long userId =  userService.getUserWithAuthorities().orElseThrow(()-> new  BadRequestAlertException(
+            "there is no one logged","","")).getId();
 
         Page<Item> page;
         if (search.contains("#")) {
