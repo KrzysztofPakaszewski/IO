@@ -10,7 +10,6 @@ import io.repository.ItemRepository;
 import io.repository.UserRepository;
 import io.service.MatchingService;
 import io.service.UserService;
-import io.service.util.CustomUserIdUtil;
 import io.web.rest.errors.BadRequestAlertException;
 import io.security.SecurityUtils;
 
@@ -23,7 +22,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,16 +49,14 @@ public class ItemResource {
     private String applicationName;
 
     private final ItemRepository itemRepository;
-    private final UserRepository userRepository;
     private final MatchingService matchingService;
     private final UserService userService;
     private final ItemInterestedRepository itemInterestedRepository;
 
-    public ItemResource(ItemRepository itemRepository, UserRepository userRepository,
+    public ItemResource(ItemRepository itemRepository,
                         MatchingService matchingService, UserService userService,
                         ItemInterestedRepository itemInterestedRepository) {
         this.itemRepository = itemRepository;
-        this.userRepository = userRepository;
         this.matchingService = matchingService;
         this.itemInterestedRepository = itemInterestedRepository;
         this.userService = userService;

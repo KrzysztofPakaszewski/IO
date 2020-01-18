@@ -39,26 +39,26 @@ export class MatchingList extends React.Component<IMatchingListProps, IMatchingL
     this.setState({
       activeIndex: (this.state.activeIndex + 1)% this.props.list.length
     });
-  };
+  }
 
   previous(){
     this.setState({
       activeIndex: (this.state.activeIndex - 1)% this.props.list.length
     });
-  };
+  }
 
 
   goToIndex = newIndex =>{
     this.setState({
       activeIndex: newIndex
     });
-  };
+  }
   agree(target){
     this.props.acceptMatching(target);
-  };
+  }
   disagree(target){
     this.props.deleteEntity(target.id);
-  };
+  }
 
   render() {
     const { list } = this.props;

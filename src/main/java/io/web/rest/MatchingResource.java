@@ -1,7 +1,6 @@
 package io.web.rest;
 
 import io.domain.Matching;
-import io.repository.ItemInterestedRepository;
 import io.repository.MatchingRepository;
 import io.service.MatchingService;
 import io.web.rest.errors.BadRequestAlertException;
