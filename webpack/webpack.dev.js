@@ -1,5 +1,6 @@
 const webpack = require('webpack');
 const writeFilePlugin = require('write-file-webpack-plugin');
+const WorkboxPlugin = require('workbox-webpack-plugin');
 const webpackMerge = require('webpack-merge');
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
@@ -103,6 +104,10 @@ module.exports = (options) => webpackMerge(commonConfig({ env: ENV }), {
     new WebpackNotifierPlugin({
       title: 'JHipster',
       contentImage: path.join(__dirname, 'logo-jhipster.png')
+    }),
+    new WorkboxPlugin.GenerateSW({
+      clientsClaim: true,
+      skipWaiting: true,
     })
   ].filter(Boolean)
 });
