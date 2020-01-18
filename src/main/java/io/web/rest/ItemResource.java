@@ -10,7 +10,6 @@ import io.repository.ItemRepository;
 import io.repository.UserRepository;
 import io.service.MatchingService;
 import io.service.UserService;
-import io.service.util.CustomUserIdUtil;
 import io.web.rest.errors.BadRequestAlertException;
 import io.security.SecurityUtils;
 
@@ -23,7 +22,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -117,7 +115,7 @@ public class ItemResource {
         matchingService.createMatchesIfBothUsersInterested(itemRep);
         return ResponseEntity.created(new URI("/api/items/" ))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, ""))
-            .body("Success add to liked itemes item.id="+item.getId()+",user.id="+ loggedUser.getLogin() );
+            .body("Success add to liked items item.id="+item.getId()+",user.id="+ loggedUser.getLogin() );
     }
 
     /**
@@ -153,13 +151,12 @@ public class ItemResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
-    @GetMapping("/swipe")
+    @GetMapping("/items/recommended")
     public ResponseEntity<List<Item>> getRecommendedItemsOfLoggedUser() {
         List<Item> items;
         Set<User> users = new HashSet<>();
         List<Item> items2 = new ArrayList<>();
         log.debug("REST request to get items of users that liked current any of current user items");
-        long userId = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId();
         items = itemRepository.findByOwnerIsCurrentUser();
         for(Item item : items) {
             List<User> user2 = itemRepository.getUsersInterestedIn(item.getId());
@@ -172,7 +169,6 @@ public class ItemResource {
         }
         return ResponseEntity.ok().body(items2);
     }
-
 
     /**
      * {@code GET  /items} : get all the items.

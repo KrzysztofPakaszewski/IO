@@ -5,8 +5,9 @@ import {RouteComponentProps} from 'react-router-dom';
 
 import { IRootState } from 'app/shared/reducers';
 import SingleCard from './single-card';
-import { getRecommendedItems} from "app/entities/swipes/swipe.reducer";
+import {createMatching, getRecommendedItems} from "app/entities/swipes/swipe.reducer";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {IMatching} from "app/shared/model/matching.model";
 
 export interface ISwipeProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
 
@@ -31,12 +32,8 @@ export class Swipe extends React.Component<ISwipeProps> {
   };
 
 
-  onConfirm = () => {
-    this.props.getRecommendedItems();
-  };
-
-  onReject = () => {
-    this.props.getRecommendedItems();
+  onConfirm = (userItem, recommendedItem) => {
+    this.props.createMatching(userItem, recommendedItem);
   };
 
   render() {
@@ -54,16 +51,16 @@ export class Swipe extends React.Component<ISwipeProps> {
             return (
               <Card
                 key={item.id}
-                onSwipeLeft={() => { this.onReject(); }}
-                onSwipeRight={() => { this.onConfirm(); }}
+                onSwipeLeft={() => {}}
+                onSwipeRight={() => { this.onConfirm(item, item); }}
                 className="master-root"
               >
-                <SingleCard userItem={item} recommendedItem={item} expand={false} />
+                <SingleCard userItem={item} recommendedItem={item} />
               </Card>
             )})}
         </Cards>
          ) : (
-         <div className="alert alert-warning">No Items found</div>
+         <div className="alert alert-warning">No recommended items found</div>
          )}
       </div>
     );
@@ -75,7 +72,8 @@ const mapStateToProps = ({ item }: IRootState) => ({
 });
 
 const mapDispatchToProps = {
-  getRecommendedItems
+  getRecommendedItems,
+  createMatching
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

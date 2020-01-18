@@ -5,7 +5,6 @@ import {connect} from "react-redux";
 import {Item} from "app/entities/item/item";
 
 export interface ISingleCardState extends StateProps{
-  expand : boolean;
   userItem : Item;
   recommendedItem : Item;
 }
@@ -14,7 +13,6 @@ class SingleCard extends Component<StateProps, ISingleCardState> {
   constructor(props) {
     super(props);
     this.state = {
-      expand: props.expand,
       userItem: props.userItem,
       recommendedItem: props.recommendedItem,
     };
@@ -22,7 +20,6 @@ class SingleCard extends Component<StateProps, ISingleCardState> {
 
   onClick(e) {
     e.preventDefault();
-    this.setState({ expand: !this.state.expand });
   }
 
   render() {
@@ -30,10 +27,6 @@ class SingleCard extends Component<StateProps, ISingleCardState> {
     return (
       <div
         id="singleCard"
-        className={
-          this.state.expand
-            ? 'expanded'
-            : 'collapsed'}
         onClick={this.onClick.bind(this)}
       >
         <div>
@@ -64,7 +57,6 @@ class SingleCard extends Component<StateProps, ISingleCardState> {
 const mapStateToProps = (state) => ({
   userItem: state.userItem,
   recommendedItem: state.recommendedItem,
-  expand: state.expand
 });
 
 type StateProps = ReturnType<typeof mapStateToProps>;

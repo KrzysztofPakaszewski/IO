@@ -3,11 +3,15 @@ import axios from 'axios';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IItem, defaultValue } from 'app/shared/model/item.model';
+import { ICrudPutAction } from 'react-jhipster';
+import { IMatching } from 'app/shared/model/matching.model';
+import { cleanEntity } from 'app/shared/util/entity-utils';
 
 export const ACTION_TYPES = {
   FETCH_ITEM_LIST: 'item/FETCH_ITEM_LIST',
   FETCH_ITEM: 'item/FETCH_ITEM',
   SET_BLOB: 'item/SET_BLOB',
+  CREATE_MATCHING: 'matching/CREATE_MATCHING',
   RESET: 'item/RESET'
 };
 
@@ -62,14 +66,21 @@ export default (state: SwipeState = initialState, action): SwipeState => {
   }
 };
 
-const apiUrl = 'api/swipe';
 // Actions
 
 export const getRecommendedItems = () => {
-  const requestUrl = apiUrl;
+  const requestUrl = 'api/items/recommended';
   return {
     type: ACTION_TYPES.FETCH_ITEM_LIST,
     payload: axios.get<IItem>(requestUrl)
+  };
+};
+
+export const createMatching = (userItem, recommendedItem) => {
+  const requestUrl = 'api/matchings/addFromSwipe';
+  return {
+    type: ACTION_TYPES.CREATE_MATCHING,
+    payload: axios.put(requestUrl, [userItem, recommendedItem])
   };
 };
 
