@@ -50,19 +50,19 @@ export class Exchange extends React.Component<IExchangeProps,IExchangeState> {
         {value === index && <Box p={3}>{children}</Box>}
       </Typography>
     );
-  };
+  }
 
   a11yProps(index) {
     return {
       id: `vertical-tab-${index}`,
       'aria-controls': `vertical-tabpanel-${index}`,
     };
-  };
+  }
   handleChange(event,newIndex){
     this.setState({
       index: newIndex
     })
-  };
+  }
 
   render() {
     const {matchingList,loggedUser} = this.props;

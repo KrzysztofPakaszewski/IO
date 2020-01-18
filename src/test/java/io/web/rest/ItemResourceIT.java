@@ -105,7 +105,7 @@ public class ItemResourceIT {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final ItemResource itemResource = new ItemResource(itemRepository, userRepository, matchingService, userService,itemInterestedRepository);
+        final ItemResource itemResource = new ItemResource(itemRepository, matchingService, userService,itemInterestedRepository);
         this.restItemMockMvc = MockMvcBuilders.standaloneSetup(itemResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

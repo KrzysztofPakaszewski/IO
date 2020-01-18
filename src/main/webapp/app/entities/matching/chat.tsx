@@ -55,11 +55,11 @@ export class Chat extends React.Component<IMatchingDetailProps> {
         this.alreadyConnectedOnce = true;
       }
     });
-  };
+  }
 
   receive() {
     return this.listener;
-  };
+  }
 
   subscribe() {
     this.connection.then(() => {
@@ -96,7 +96,7 @@ export class Chat extends React.Component<IMatchingDetailProps> {
 
   componentWillUnmount() {
     this.disconnect();
-  };
+  }
 
   sendMsg = (event, errors, values) => {
     const message = this.state.message;

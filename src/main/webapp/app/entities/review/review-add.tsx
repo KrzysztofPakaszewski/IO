@@ -43,7 +43,7 @@ export class ReviewAdd extends React.Component<IReviewAddProps, IReviewAddState>
         };
         this.props.createEntity(entity);
         this.handleClose();
-    };
+    }
 
   handleClose = () => {
     this.props.history.push('/review');

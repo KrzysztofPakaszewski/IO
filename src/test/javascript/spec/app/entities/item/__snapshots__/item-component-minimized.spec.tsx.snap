@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ItemComponentMinimized Renders an Item Comp Minimized without image 1`] = `
+<WithStyles(ForwardRef(Card))>
+  <Button
+    color="link"
+    tag={[Function]}
+    to="/search/23"
+  >
+    <WithStyles(ForwardRef(Grid))
+      alignItems="center"
+      container={true}
+      direction="column"
+      justify="space-around"
+    >
+      <WithStyles(ForwardRef(Grid))
+        item={true}
+      />
+      <WithStyles(ForwardRef(Grid))
+        item={true}
+      >
+        title
+      </WithStyles(ForwardRef(Grid))>
+    </WithStyles(ForwardRef(Grid))>
+  </Button>
+</WithStyles(ForwardRef(Card))>
+`;
