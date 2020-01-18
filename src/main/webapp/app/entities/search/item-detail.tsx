@@ -93,7 +93,11 @@ export class ItemDetail extends React.Component<IItemDetailProps, IItemDetailSta
           {this.props.user && itemEntity.owner && this.props.user.login === itemEntity.owner.login &&
               <Button tag={Link} to={`/item/${itemEntity.id}/edit`} replace color="primary">
                   <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
-              </Button> }
+              </Button>
+              <Button tag={Link} to={`/item/${itemEntity.id}/delete`} replace color="danger">
+                  <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Delete</span>
+                </Button>
+              }
           { this.state.showInterestedButton && itemEntity && itemEntity.owner && itemEntity.owner.login !== this.props.user.login &&
             this.interestButtonLogic(itemEntity, this.props.user.login) &&
             (<Button onClick={() => this.handleInterest()}>
