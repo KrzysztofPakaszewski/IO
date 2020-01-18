@@ -39,6 +39,11 @@ before_install:
   - npm -v
 install:
   - npm install
+addons:
+  - sonarcloud:
+      - organization: 'culex'
+      - token:
+          - secure: $SONAR_TOKEN
 script:
   - chmod +x mvnw
   - ./mvnw -ntp checkstyle:check
