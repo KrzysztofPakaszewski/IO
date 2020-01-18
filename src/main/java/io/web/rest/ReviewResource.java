@@ -112,7 +112,7 @@ public class ReviewResource {
 
 
     /**
-     * {@code GET  /reviews} : get all the reviews.
+     * {@code GET  /reviews} : get all the reviews of given user.
      *
 
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of reviews in body.

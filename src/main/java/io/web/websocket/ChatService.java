@@ -5,6 +5,7 @@ import io.domain.chat.Chat;
 import io.repository.UserRepository;
 import io.security.SecurityUtils;
 import io.repository.ChatRepository;
+import io.web.rest.errors.BadRequestAlertException;
 import io.web.websocket.dto.MessageDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,6 +76,9 @@ public class ChatService implements ApplicationListener<SessionDisconnectEvent> 
     @SendTo("/chat/public/{room}")
     public MessageDTO sendChat(@DestinationVariable String room, @Payload MessageDTO messageDTO, StompHeaderAccessor stompHeaderAccessor, Principal principal) {
         Optional<User> user = userRepository.findOneByLogin(principal.getName());
+        if(!user.isPresent()){
+            throw new BadRequestAlertException("there is no logged user","","");
+        }
         messageDTO.setUserName(user.get().getFirstName() + " " + user.get().getLastName());
         MessageDTO result = setupMessageDTO(messageDTO, stompHeaderAccessor, principal);
         chatRepository.addMessage(Long.parseLong(room), principal.getName(), messageDTO.getTime(), messageDTO.getMessage());
