@@ -65,12 +65,12 @@
   box-shadow: none;
 }
 
-.alert1 {
+.alert {
   width: 45%;
   min-height: 10%;
   position: absolute;
   z-index: 9999;
-  opacity: 100;
+  opacity: 0;
   transition: opacity 0.5s;
   color: white;
   vertical-align: middle;
