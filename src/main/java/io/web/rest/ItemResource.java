@@ -124,7 +124,7 @@ public class ItemResource {
         ItemInterested itemInterested = new ItemInterested(loggedUser,itemRep);
         log.debug("user: " + itemInterested.getInterested().getLogin() + " " + itemInterested.getItem().getTitle());
         itemInterestedRepository.save(itemInterested);
-        matchingService.createMatchesIfBothUsersInterested(itemRep);
+        matchingService.createMatchesIfFindCycle(itemRep);
         return ResponseEntity.created(new URI("/api/items/" ))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, ""))
             .body("Success add to liked items item.id="+item.getId()+",user.id="+ loggedUser.getLogin() );
