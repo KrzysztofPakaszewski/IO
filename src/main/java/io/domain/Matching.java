@@ -86,6 +86,11 @@ public class Matching implements Serializable {
         return archived;
     }
 
+    public Matching archived(Boolean archived) {
+        this.archived = archived;
+        return this;
+    }
+
     public void setArchived(Boolean archived) {
         this.archived = archived;
     }
