@@ -86,9 +86,9 @@ export class ItemDetail extends React.Component<IItemDetailProps, IItemDetailSta
             <dd>{itemEntity.hash}</dd>
           </dl>
           &nbsp;
-          <Button onClick={() => this.props.history.goBack()} replace color="info">
+          <div><Button onClick={() => this.props.history.goBack()} replace color="info">
             <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
-          </Button>
+          </Button> </div>
           &nbsp;
           {this.props.user && itemEntity.owner && this.props.user.login === itemEntity.owner.login &&(
           <div>
