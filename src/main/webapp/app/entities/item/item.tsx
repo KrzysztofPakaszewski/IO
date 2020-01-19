@@ -55,7 +55,7 @@ export class Item extends React.Component<IItemProps, IItemState> {
     return (
       <div>
         <h2 id="item-heading">
-          All items
+          Your items
           <Link to={`${match.url}/new`} className="btn btn-primary float-right jh-create-entity" id="jh-create-entity">
             <FontAwesomeIcon icon="plus" />
             &nbsp; Create new item
@@ -64,7 +64,7 @@ export class Item extends React.Component<IItemProps, IItemState> {
           {itemList && itemList.length > 0 ? (
             ItemList(itemList)
           ) : (
-            <div className="alert alert-warning">No Items found</div>
+            <div className="alert alert-warning">No items found</div>
           )}
         <div className={itemList && itemList.length > 0 ? '' : 'd-none'}>
           <Row className="justify-content-center">

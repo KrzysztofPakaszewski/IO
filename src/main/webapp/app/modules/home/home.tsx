@@ -21,22 +21,22 @@ export const Home = (props: IHomeProp) => {
 
         {(account && account.login) ? (
           <div>
-            <Alert color="success">You are logged in as user {account.login}.</Alert>
+            <Alert color="success" >You are logged in as user {account.login}.</Alert>
           </div>
         ) : (
           <div>
             <Alert color="warning">
-              You are not logged in:
+              You are not logged in. Let&apos;s
               <Link to="/login" className="alert-link">
                 {' '}
-                sign in
+                sign in.
               </Link>
             </Alert>
 
             <Alert color="warning">
-              You do not have an account yet?&nbsp;
+              No account yet?&nbsp;
               <Link to="/account/register" className="alert-link">
-                Register a new account
+                Register now.
               </Link>
             </Alert>
           </div>
