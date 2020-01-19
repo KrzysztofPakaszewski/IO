@@ -73,8 +73,8 @@ export class Swipe extends React.Component<ISwipeProps> {
   }
 }
 
-const mapStateToProps = ({ item }: IRootState) => ({
-  itemList: item.entities,
+const mapStateToProps = (storeState: IRootState) => ({
+  itemList: storeState.swipe.entities,
 });
 
 const mapDispatchToProps = {
