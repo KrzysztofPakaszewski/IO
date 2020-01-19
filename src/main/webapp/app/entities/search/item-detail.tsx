@@ -114,9 +114,9 @@ export class ItemDetail extends React.Component<IItemDetailProps, IItemDetailSta
 }
 
 
-const mapStateToProps = ({ item, userManagement }: IRootState) => ({
-  itemEntity: item.entity,
-  user: userManagement.user,
+const mapStateToProps = (storeState: IRootState) => ({
+  itemEntity: storeState.search.entity,
+  user: storeState.userManagement.user
 });
 
 const mapDispatchToProps = {
