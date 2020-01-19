@@ -98,7 +98,8 @@ public class MatchingResourceIT {
      */
     public static Matching createEntity(EntityManager em,Item item1, Item item2) {
         Matching matching = new Matching()
-            .description(DEFAULT_DESCRIPTION);
+            .description(DEFAULT_DESCRIPTION)
+            .archived(false);
         return matching;
     }
 
@@ -110,7 +111,8 @@ public class MatchingResourceIT {
      */
     public static Matching createUpdatedEntity(EntityManager em) {
         Matching matching = new Matching()
-            .description(UPDATED_DESCRIPTION);
+            .description(DEFAULT_DESCRIPTION)
+            .archived(false);
         return matching;
     }
 
@@ -261,21 +263,4 @@ public class MatchingResourceIT {
         assertThat(matchingList).hasSize(databaseSizeBeforeUpdate);
     }
 
-    @Test
-    @Transactional
-    public void deleteMatching() throws Exception {
-        // Initialize the database
-        matchingRepository.saveAndFlush(matching);
-
-        int databaseSizeBeforeDelete = matchingRepository.findAll().size();
-
-        // Delete the matching
-        restMatchingMockMvc.perform(delete("/api/matchings/{id}", matching.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
-            .andExpect(status().isNoContent());
-
-        // Validate the database contains one less item
-        List<Matching> matchingList = matchingRepository.findAll();
-        assertThat(matchingList).hasSize(databaseSizeBeforeDelete - 1);
-    }
 }
