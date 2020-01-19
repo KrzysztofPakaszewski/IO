@@ -1,5 +1,6 @@
 package io.web.rest;
 
+import com.fasterxml.jackson.databind.deser.DataFormatReaders;
 import io.domain.Item;
 import io.domain.Matching;
 import io.domain.MatchingEntity;
@@ -48,13 +49,11 @@ public class MatchingResource {
     private final MatchingRepository matchingRepository;
     private final MatchingService matchingService;
     private final MatchingEntityRepository matchingEntityRepository;
-    private final ItemRepository itemRepository;
 
-    public MatchingResource(MatchingRepository matchingRepository, MatchingService matchingService, MatchingEntityRepository matchingEntityRepository, ItemRepository itemRepository) {
+    public MatchingResource(MatchingRepository matchingRepository, MatchingService matchingService, MatchingEntityRepository matchingEntityRepository) {
         this.matchingRepository = matchingRepository;
         this.matchingService = matchingService;
         this.matchingEntityRepository = matchingEntityRepository;
-        this.itemRepository = itemRepository;
     }
 
     /**
@@ -75,28 +74,6 @@ public class MatchingResource {
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
-
-/*
-    /**
-     * {@code POST  /matchings} : Create new matchings for given item.
-     *
-     * @param item liked item
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with empty body, or with status {@code 400 (Bad Request)} if Item has no ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
-    /*
-    @PostMapping("/matchings/create")
-    public ResponseEntity<String> createMatching(@RequestBody Item item) throws URISyntaxException {
-        log.debug("REST request to create Matches for item : {}", item);
-        if (item.getId() == null) {
-            throw new BadRequestAlertException("Error! Item has no ID", ENTITY_NAME, "noID");
-        }
-        matchingService.createMatchesForThisItem(item);
-        return ResponseEntity.created(new URI("/api/matchings/"))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME,""))
-            .body("");
-    }
-    */
 
     /**
      * {@code POST  /matchings} : set this matching as accepted
@@ -140,20 +117,6 @@ public class MatchingResource {
             .body(result);
     }
 
-//    @PutMapping("/matchings/addFromSwipe")
-//    public ResponseEntity<String> addMatching(@RequestBody Item[] items) throws URISyntaxException {
-//        log.debug("REST request to create Matching : {}", items[0], items[1]);
-//        Matching matching = new Matching();
-//        matching.setItemOffered(items[0]);
-//        matching.setItemAsked(items[1]);
-//        matching.setAskerReceived(false);
-//        matching.setOfferorReceived(false);
-//        matchingRepository.save(matching);
-//        return ResponseEntity.created(new URI("/api/matchings/" ))
-//            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, ""))
-//            .body("Success adding matching for items item.id="+items[0].getId()+" and item.id="+ items[1].getId() );
-//    }
-
     /**
      * {@code GET  /matchings} : get all the matchings.
      *
@@ -189,6 +152,7 @@ public class MatchingResource {
         MatchingVM vm = new MatchingVM();
         vm.setId(matching.getId());
         vm.setDescription(matching.getDescription());
+        vm.setArchived(matching.getArchived());
 
         for (Item item: matching.getItems()) {
             String login = item.getOwner().getLogin();
@@ -206,8 +170,6 @@ public class MatchingResource {
         }
         return vm;
     }
-
-
 
     /**
      * {@code GET  /matchings/:id} : get the "id" matching.
@@ -232,11 +194,9 @@ public class MatchingResource {
     public ResponseEntity<Void> deleteMatching(@PathVariable Long id) {
         log.debug("REST request to delete Matching : {}", id);
         List<MatchingEntity> matchingEntities = matchingEntityRepository.findByMatchingId(id);
-        for (MatchingEntity entity : matchingEntities) {
-            matchingEntityRepository.delete(entity);
-        }
-        matchingEntityRepository.flush();
-        matchingRepository.deleteById(id);
+        Matching matching = matchingRepository.getOne(id);
+        matching.setArchived(true);
+        matchingRepository.save(matching);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
 
     }

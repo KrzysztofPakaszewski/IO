@@ -5,7 +5,8 @@ import {RouteComponentProps} from 'react-router-dom';
 
 import { IRootState } from 'app/shared/reducers';
 import {SingleCard} from './single-card';
-import {createMatching, getRecommendedItems} from "app/entities/swipes/swipe.reducer";
+import {addNewInterest} from "app/entities/search/search.reducer";
+import {getRecommendedItems} from "app/entities/swipes/swipe.reducer";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 export interface ISwipeProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
@@ -39,7 +40,7 @@ export class Swipe extends React.Component<ISwipeProps> {
 
 
   onConfirm = (userItem, recommendedItem) => {
-    this.props.createMatching(userItem, recommendedItem);
+    addNewInterest(recommendedItem);
   };
 
   render() {
@@ -79,7 +80,6 @@ const mapStateToProps = ({ item }: IRootState) => ({
 
 const mapDispatchToProps = {
   getRecommendedItems,
-  createMatching
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
