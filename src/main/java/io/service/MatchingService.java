@@ -1,11 +1,9 @@
 package io.service;
 
-import io.domain.Item;
-import io.domain.ItemInterested;
-import io.domain.Matching;
-import io.domain.User;
+import io.domain.*;
 import io.repository.ItemInterestedRepository;
 import io.repository.ItemRepository;
+import io.repository.MatchingEntityRepository;
 import io.repository.MatchingRepository;
 import io.security.SecurityUtils;
 import org.slf4j.Logger;
@@ -13,11 +11,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Stack;
 
 @Service
-@Transactional
+//@Transactional
 public class MatchingService {
 
     private final Logger log = LoggerFactory.getLogger(MatchingService.class);
@@ -28,10 +28,15 @@ public class MatchingService {
 
     private final ItemInterestedRepository itemInterestedRepository;
 
-    public MatchingService(MatchingRepository matchingRepository, ItemRepository itemRepository, ItemInterestedRepository itemInterestedRepository){
+    private final MatchingEntityRepository matchingEntityRepository;
+
+    private final int maxNumberOfPeopleInMatch = 5;
+
+    public MatchingService(MatchingRepository matchingRepository, ItemRepository itemRepository, ItemInterestedRepository itemInterestedRepository, MatchingEntityRepository matchingEntityRepository){
         this.matchingRepository = matchingRepository;
         this.itemRepository = itemRepository;
         this.itemInterestedRepository = itemInterestedRepository;
+        this.matchingEntityRepository = matchingEntityRepository;
     }
 
     // delete this item from interesteds
@@ -41,19 +46,22 @@ public class MatchingService {
         itemInterestedRepository.deleteAll(itemInterestedsToRemove);
     }
 
-    public boolean deleteInteresteds(Matching matching){
+    public boolean deleteInteresteds(Matching matching) {
         Optional<String> optLogin = SecurityUtils.getCurrentUserLogin();
-        if(optLogin.isPresent()){
+        if (optLogin.isPresent()) {
             String login = optLogin.get();
-            Item discardedItem;
-            if( matching.getItemAsked().getOwner().getLogin().equals(login)){
-                discardedItem = matching.getItemOffered();
-            }else if (matching.getItemOffered().getOwner().getLogin().equals(login)){
-                discardedItem = matching.getItemAsked();
-            }else{
+            Item discardedItem = null;
+            List<MatchingEntity> matchingEntity = matchingEntityRepository.findByMatchingId(matching.getId());
+            for (MatchingEntity entity : matchingEntity) {
+                if (entity.getItem().getOwner().getLogin().equals(login)) {
+                    discardedItem = entity.getItem();
+                    break;
+                }
+            }
+            if (discardedItem == null) {
                 return false;
             }
-            List<ItemInterested>itemsToRemove = itemInterestedRepository.findByUserAndItem(login,discardedItem.getId());
+            List<ItemInterested> itemsToRemove = itemInterestedRepository.findByUserAndItem(login, discardedItem.getId());
             itemInterestedRepository.deleteAll(itemsToRemove);
             return true;
         }
@@ -61,25 +69,24 @@ public class MatchingService {
     }
     // returns true if this item has ongoing accepted matching
     public boolean doesThisItemHasMatch(Item item){
-        return !matchingRepository.findMatchingThatReferenceThisItemAndHasTrueState(item.getId()).isEmpty();
+        return !matchingEntityRepository.findByItemId(item.getId()).isEmpty();
     }
 
-    public boolean finishedMatching(Long id){
-        Optional<Matching> optMatching = matchingRepository.findById(id);
-        if(optMatching.isPresent()) {
+    public boolean finishedMatching(Long matchingId) {
+        Optional<Matching> optMatching = matchingRepository.findById(matchingId);
+        if (optMatching.isPresent()) {
             Matching matching = optMatching.get();
-            if (matching.isOfferorReceived() && matching.isAskerReceived()) {
-                deleteInteresteds(matching);
-                Optional<Item>optAsked =  itemRepository.findById(matching.getItemAsked().getId());
-                Optional<Item>optOffered =  itemRepository.findById(matching.getItemOffered().getId());
-                if(optAsked.isPresent()){
-                    Item item = optAsked.get();
-                    item.setArchived(true);
-                    itemRepository.save(item);
-                    deleteAllInteretedsThatHasThisItem(item);
+            List<MatchingEntity> matchingEntity = matchingEntityRepository.findByMatchingId(matching.getId());
+            boolean allItemsReceived = true;
+            for (MatchingEntity entity : matchingEntity) {
+                if (!entity.isItemReceived()) {
+                    allItemsReceived = false;
                 }
-                if(optOffered.isPresent()){
-                    Item item = optOffered.get();
+            }
+            if (allItemsReceived) {
+                deleteInteresteds(matching);
+                for (MatchingEntity entity : matchingEntity) {
+                    Item item = entity.getItem();
                     item.setArchived(true);
                     itemRepository.save(item);
                     deleteAllInteretedsThatHasThisItem(item);
@@ -90,40 +97,17 @@ public class MatchingService {
         return false;
     }
 
-    public boolean acceptGivenMatching(Matching matching){
+    public boolean acceptDeliveryYourNewItemInGivenMatching(Matching matching){
         Optional<Matching> foundMatch = matchingRepository.findById(matching.getId());
         Optional<String> optLogin = SecurityUtils.getCurrentUserLogin();
         if(foundMatch.isPresent() && optLogin.isPresent()){
             String login = optLogin.get();
             Matching tmp = foundMatch.get();
-            if(tmp.getItemAsked().getOwner().getLogin().equals(login)){
-                tmp.setAskerReceived(true);
-            }else if(tmp.getItemOffered().getOwner().getLogin().equals(login)){
-                tmp.setOfferorReceived(true);
-            }else{
-                return false;
-            }
-            matchingRepository.save(tmp);
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    public boolean createMatchesIfPossible(Item releasedItem){
-        List<ItemInterested> interestedsOfOwner = itemInterestedRepository.findByUser(releasedItem.getOwner().getLogin());
-        List<ItemInterested> interestedsOfItem = itemInterestedRepository.findByItem(releasedItem.getId());
-        for(ItemInterested owner: interestedsOfOwner){
-            for(ItemInterested item : interestedsOfItem){
-                if(owner.getItem().getOwner().getLogin().equals(item.getInterested().getLogin()) &&
-                !doesThisItemHasMatch(owner.getItem())){
-                    Matching matching = new Matching();
-                    matching.setItemOffered(owner.getItem());
-                    matching.setItemAsked(item.getItem());
-                    matching.setOfferorReceived(false);
-                    matching.setAskerReceived(false);
-                    matchingRepository.save(matching);
+            List<MatchingEntity> listOfItemInMatching = matchingEntityRepository.findByMatchingId(tmp.getId());
+            for (MatchingEntity entity : listOfItemInMatching) {
+                if (entity.getForUser().getLogin().equals(login)) {
+                    entity.setItemReceived(true);
+                    matchingEntityRepository.save(entity);
                     return true;
                 }
             }
@@ -131,26 +115,76 @@ public class MatchingService {
         return false;
     }
 
-    public void createMatchesIfBothUsersInterested(Item likedItem){
-        if(!doesThisItemHasMatch(likedItem)) {
-            Optional<String> tmp= SecurityUtils.getCurrentUserLogin();
-            User owner = likedItem.getOwner();
-            if( tmp.isPresent()) {
-                String logggedLogin = tmp.get();
-                List<ItemInterested> listOfInteresteds = itemInterestedRepository.findByUser(owner.getLogin());
-                for( ItemInterested row : listOfInteresteds){
-                    if(row.getItem().getOwner().getLogin().equals(logggedLogin) && !doesThisItemHasMatch(row.getItem())){
-                        Matching matching = new Matching();
-                        matching.setItemAsked(likedItem);
-                        matching.setItemOffered(row.getItem());
-                        matching.setAskerReceived(false);
-                        matching.setOfferorReceived(false);
-                        matchingRepository.save(matching);
-                        break;
-                    }
+//    public boolean createMatchesIfPossible(Item releasedItem){
+//        List<ItemInterested> interestedsOfOwner = itemInterestedRepository.findByUser(releasedItem.getOwner().getLogin());
+//        List<ItemInterested> interestedsOfItem = itemInterestedRepository.findByItem(releasedItem.getId());
+//        for(ItemInterested owner: interestedsOfOwner){
+//            for(ItemInterested item : interestedsOfItem){
+//                if(owner.getItem().getOwner().getLogin().equals(item.getInterested().getLogin()) &&
+//                !doesThisItemHasMatch(owner.getItem())){
+//                    Matching matching = new Matching();
+//                    matching.setItemOffered(owner.getItem());
+//                    matching.setItemAsked(item.getItem());
+//                    matching.setOfferorReceived(false);
+//                    matching.setAskerReceived(false);
+//                    matchingRepository.save(matching);
+//                    return true;
+//                }
+//            }
+//        }
+//        return false;
+//    }
+
+    public void createMatchesIfFindCycle(Item likedItem) {
+        if (!doesThisItemHasMatch(likedItem)) {
+            Optional<String> tmp = SecurityUtils.getCurrentUserLogin();
+            ArrayList<Long> visited = new ArrayList<>();
+            Stack<Long> stackOfItemsId = new Stack<>();
+            int currentNumberOfPeople = 0;
+            if (findCycle(likedItem, likedItem, stackOfItemsId, visited, currentNumberOfPeople, maxNumberOfPeopleInMatch)) {
+                // creating match
+                Matching matching = new Matching();
+                matching.description(java.time.LocalDate.now().toString());
+                matchingRepository.save(matching);
+
+                // adding entity to match
+                Long itemId;
+                User forUser = likedItem.getOwner();
+                while (!stackOfItemsId.empty()) {
+                    itemId = stackOfItemsId.pop();
+                    Item item = itemRepository.findById(itemId).get();
+
+                    MatchingEntity matchingEntity = new MatchingEntity();
+                    matchingEntity.setMatching(matching);
+                    matchingEntity.setForUser(forUser);
+                    matchingEntity.setItem(item);
+                    matchingEntity.setItemReceived(false);
+                    matchingEntityRepository.save(matchingEntity);
+
+                    forUser = item.getOwner();
                 }
             }
         }
     }
+
+    private boolean findCycle(Item startItem, Item currentItem, Stack<Long> stack, ArrayList<Long> visited, int currentNumberOfPeople, int maxNumberOfPeopleInMatch) {
+        visited.add(currentItem.getId());
+        stack.push(currentItem.getId());
+        currentNumberOfPeople++;
+        List<ItemInterested> listOfInteresteds = itemInterestedRepository.findByUser(currentItem.getOwner().getLogin());
+        for (ItemInterested neighbour : listOfInteresteds) {
+            if (neighbour.getItem().equals(startItem)) {
+                return true;
+            }
+            if (currentNumberOfPeople < maxNumberOfPeopleInMatch &&
+                !visited.contains(neighbour.getItem().getId()) &&
+                findCycle(startItem, neighbour.getItem(), stack, visited, currentNumberOfPeople, maxNumberOfPeopleInMatch)) {
+                return true;
+            }
+        }
+        stack.pop();
+        return false;
+    }
+
 
 }

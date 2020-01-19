@@ -1,0 +1,69 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                   http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+
+    <property name="autoIncrement" value="true"/>
+
+    <!--
+        Added the entity Matching.
+    -->
+    <changeSet id="add-table-matching-entity" author="sandra">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="matching_entity"></tableExists>
+            </not>
+        </preConditions>
+        <createTable tableName="matching_entity">
+            <column name="id" type="bigint" autoIncrement="${autoIncrement}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="matching_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="item_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="for_user_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="item_received" type="boolean">
+                <constraints nullable="false" />
+            </column>
+            <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="matching_id"
+                                 baseTableName="matching_entity"
+                                 constraintName="fk_matching_entity_matching_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="matching"/>
+
+        <addForeignKeyConstraint baseColumnNames="item_id"
+                                 baseTableName="matching_entity"
+                                 constraintName="fk_matching_entity_item_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="item"/>
+
+        <addForeignKeyConstraint baseColumnNames="for_user_id"
+                                 baseTableName="matching_entity"
+                                 constraintName="fk_matching_entity_for_user_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="jhi_user"/>
+
+    </changeSet>
+
+    <!--<changeSet author="sandra" id="drop-column-from-matching">-->
+        <!--<dropColumn catalogName="culex"-->
+                    <!--columnName="chat"-->
+                    <!--schemaName="public"-->
+                    <!--tableName="matching">-->
+            <!--<column name="chat" type="varchar(255)"/>-->
+        <!--</dropColumn>-->
+    <!--</changeSet>-->
+
+
+</databaseChangeLog>

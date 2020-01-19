@@ -13,11 +13,11 @@ export interface IMatchingDeleteDialogProps extends StateProps, DispatchProps, R
 
 export class MatchingDeleteDialog extends React.Component<IMatchingDeleteDialogProps> {
   componentDidMount() {
-    this.props.getEntity(this.props.match.params.id);
+    // this.props.getEntity(this.props.match.params.id);
   }
 
   confirmDelete = event => {
-    this.props.deleteEntity(this.props.matchingEntity.id);
+    this.props.deleteEntity(this.props.match.params.id);
     this.handleClose(event);
   };
 
@@ -27,6 +27,7 @@ export class MatchingDeleteDialog extends React.Component<IMatchingDeleteDialogP
   };
 
   render() {
+    // const { matchingEntity } = this.props;
     return (
       <Modal isOpen toggle={this.handleClose} zIndex={1500}>
         <ModalHeader toggle={this.handleClose}>Confirm discard operation</ModalHeader>
@@ -47,7 +48,7 @@ export class MatchingDeleteDialog extends React.Component<IMatchingDeleteDialogP
 }
 
 const mapStateToProps = ({ matching }: IRootState) => ({
-  matchingEntity: matching.entity
+  // matchingEntity: matching.entity
 });
 
 const mapDispatchToProps = { getEntity, deleteEntity };

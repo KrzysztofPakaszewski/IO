@@ -73,7 +73,7 @@ export class Exchange extends React.Component<IExchangeProps,IExchangeState> {
         </h2>
 
         <div>
-          {matchingList && matchingList.length > 0 && matchingList[0].itemOffered ? (
+          {matchingList && matchingList.length > 0 ? (
             <Box
               style={{flexGrow: 1, display: 'flex'}}
             >
@@ -86,8 +86,7 @@ export class Exchange extends React.Component<IExchangeProps,IExchangeState> {
                     style = {{borderRight: `1px solid`}}
                    >
                   {matchingList.map((item,index)=>(
-                    <Tab key = {index} label={loggedUser.login === item.itemOffered.owner.login ?
-                    item.itemOffered.title : item.itemAsked.title} {...this.a11yProps(index)}/>
+                    <Tab key = {index} label={ item.offered.title } {...this.a11yProps(index)}/>
                     ))}
                   </Tabs>
                    {matchingList.map((item,iterator)=>(
@@ -107,6 +106,9 @@ export class Exchange extends React.Component<IExchangeProps,IExchangeState> {
                             alignItems="flex-start"
                             >
                             <Grid item>
+                              {item.received.title}
+                            </Grid>
+                            <Grid item>
                               <Button color="success" size="sm" onClick={(event)=>{
                                 this.props.acceptMatching(item);
                               }}>
@@ -119,8 +121,7 @@ export class Exchange extends React.Component<IExchangeProps,IExchangeState> {
                               </Button>
                             </Grid>
                             <Grid item>
-                            <Button tag={Link} to={`/review/${loggedUser.login === item.itemOffered.owner.login ?
-                              item.itemAsked.owner.login : item.itemOffered.owner.login }/add`} color="primary" size="sm">
+                            <Button tag={Link} to={`/review/${item.received.owner.login}/add`} color="primary" size="sm">
                                 <FontAwesomeIcon icon="plus" /> <span className="d-none d-md-inline">Add Review</span>
                               </Button>
                             </Grid>
