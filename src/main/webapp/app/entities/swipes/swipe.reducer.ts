@@ -8,7 +8,7 @@ export const ACTION_TYPES = {
   FETCH_ITEM_LIST: 'swipe/FETCH_ITEM_LIST',
   SET_BLOB: 'swipe/SET_BLOB',
   CREATE_MATCHING: 'matching/CREATE_MATCHING',
-  RESET: 'item/RESET'
+  RESET: 'swipe/RESET'
 };
 
 const initialState = {
