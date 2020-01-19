@@ -8,17 +8,7 @@
     -->
     <changeSet id="20191129111843-2" author="jhipster">
         
-        <addForeignKeyConstraint baseColumnNames="item_offered_id"
-                                 baseTableName="matching"
-                                 constraintName="fk_matching_item_offered_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="item"/>
 
-        <addForeignKeyConstraint baseColumnNames="item_asked_id"
-                                 baseTableName="matching"
-                                 constraintName="fk_matching_item_asked_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="item"/>
 
     </changeSet>
 </databaseChangeLog>

@@ -54,7 +54,7 @@ public class Item implements Serializable {
     @Column(name = "prefered_delivery")
     private Delivery preferedDelivery;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnoreProperties("items")
     private User owner;
 

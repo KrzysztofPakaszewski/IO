@@ -2,6 +2,11 @@ package io.web.rest;
 
 import io.domain.Item;
 import io.domain.Matching;
+import io.domain.MatchingEntity;
+import io.domain.User;
+import io.repository.ItemInterestedRepository;
+import io.repository.ItemRepository;
+import io.repository.MatchingEntityRepository;
 import io.repository.MatchingRepository;
 import io.service.MatchingService;
 import io.web.rest.errors.BadRequestAlertException;
@@ -9,6 +14,8 @@ import io.security.SecurityUtils;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import io.web.rest.vm.MatchingVM;
+import net.bytebuddy.asm.MemberSubstitution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +28,7 @@ import java.net.URISyntaxException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * REST controller for managing {@link io.domain.Matching}.
@@ -39,10 +47,14 @@ public class MatchingResource {
 
     private final MatchingRepository matchingRepository;
     private final MatchingService matchingService;
+    private final MatchingEntityRepository matchingEntityRepository;
+    private final ItemRepository itemRepository;
 
-    public MatchingResource(MatchingRepository matchingRepository,MatchingService matchingService) {
+    public MatchingResource(MatchingRepository matchingRepository, MatchingService matchingService, MatchingEntityRepository matchingEntityRepository, ItemRepository itemRepository) {
         this.matchingRepository = matchingRepository;
         this.matchingService = matchingService;
+        this.matchingEntityRepository = matchingEntityRepository;
+        this.itemRepository = itemRepository;
     }
 
     /**
@@ -58,13 +70,33 @@ public class MatchingResource {
         if (matching.getId() != null) {
             throw new BadRequestAlertException("A new matching cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        matching.setOfferorReceived(false);
-        matching.setAskerReceived(false);
         Matching result = matchingRepository.save(matching);
         return ResponseEntity.created(new URI("/api/matchings/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
+
+/*
+    /**
+     * {@code POST  /matchings} : Create new matchings for given item.
+     *
+     * @param item liked item
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with empty body, or with status {@code 400 (Bad Request)} if Item has no ID.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    /*
+    @PostMapping("/matchings/create")
+    public ResponseEntity<String> createMatching(@RequestBody Item item) throws URISyntaxException {
+        log.debug("REST request to create Matches for item : {}", item);
+        if (item.getId() == null) {
+            throw new BadRequestAlertException("Error! Item has no ID", ENTITY_NAME, "noID");
+        }
+        matchingService.createMatchesForThisItem(item);
+        return ResponseEntity.created(new URI("/api/matchings/"))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME,""))
+            .body("");
+    }
+    */
 
     /**
      * {@code POST  /matchings} : set this matching as accepted
@@ -80,7 +112,7 @@ public class MatchingResource {
         if (matching.getId() == null) {
             throw new BadRequestAlertException("Error! Matching has no ID", ENTITY_NAME, "noID");
         }
-        matchingService.acceptGivenMatching(matching);
+        matchingService.acceptDeliveryYourNewItemInGivenMatching(matching);
         matchingService.finishedMatching(matching.getId());
         return ResponseEntity.created(new URI("/api/matchings/"))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, ""))
@@ -108,19 +140,19 @@ public class MatchingResource {
             .body(result);
     }
 
-    @PutMapping("/matchings/addFromSwipe")
-    public ResponseEntity<String> addMatching(@RequestBody Item[] items) throws URISyntaxException {
-        log.debug("REST request to create Matching : {}", items[0], items[1]);
-        Matching matching = new Matching();
-        matching.setItemOffered(items[0]);
-        matching.setItemAsked(items[1]);
-        matching.setAskerReceived(false);
-        matching.setOfferorReceived(false);
-        matchingRepository.save(matching);
-        return ResponseEntity.created(new URI("/api/matchings/" ))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, ""))
-            .body("Success adding matching for items item.id="+items[0].getId()+" and item.id="+ items[1].getId() );
-    }
+//    @PutMapping("/matchings/addFromSwipe")
+//    public ResponseEntity<String> addMatching(@RequestBody Item[] items) throws URISyntaxException {
+//        log.debug("REST request to create Matching : {}", items[0], items[1]);
+//        Matching matching = new Matching();
+//        matching.setItemOffered(items[0]);
+//        matching.setItemAsked(items[1]);
+//        matching.setAskerReceived(false);
+//        matching.setOfferorReceived(false);
+//        matchingRepository.save(matching);
+//        return ResponseEntity.created(new URI("/api/matchings/" ))
+//            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, ""))
+//            .body("Success adding matching for items item.id="+items[0].getId()+" and item.id="+ items[1].getId() );
+//    }
 
     /**
      * {@code GET  /matchings} : get all the matchings.
@@ -139,14 +171,43 @@ public class MatchingResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of matchings in body.
      */
     @GetMapping("/matchings/loggedUser")
-    public List<Matching> getLoggedUserMatchings() {
+    public List<MatchingVM> getLoggedUserMatchings() {
         log.debug("REST request to get currently logged user matchings");
         Optional<String> userLogin = SecurityUtils.getCurrentUserLogin();
         if (!userLogin.isPresent()) {
             throw new BadRequestAlertException("Could not get currently logged user ", "", "");
         }
-        return matchingRepository.findAllMatchingsOfUser(userLogin.get());
+        List<Matching> matchings = matchingRepository.findAllMatchingsOfUser(userLogin.get());
+        List<MatchingVM> result = matchings.stream()
+            .map(item -> GetMatchingVM(item, userLogin.get()))
+            .collect(Collectors.toList());
+
+        return result;
     }
+
+    private MatchingVM GetMatchingVM(Matching matching, String userLogin) {
+        MatchingVM vm = new MatchingVM();
+        vm.setId(matching.getId());
+        vm.setDescription(matching.getDescription());
+
+        for (Item item: matching.getItems()) {
+            String login = item.getOwner().getLogin();
+            if (login.equals(userLogin)) {
+                vm.setOffered(item);
+                break;
+            }
+        }
+        for (MatchingEntity me: matching.getMatchingEntities()) {
+            String login = me.getForUser().getLogin();
+            if (login.equals(userLogin)) {
+                vm.setReceived(me.getItem());
+                break;
+            }
+        }
+        return vm;
+    }
+
+
 
     /**
      * {@code GET  /matchings/:id} : get the "id" matching.
@@ -170,14 +231,12 @@ public class MatchingResource {
     @DeleteMapping("/matchings/{id}")
     public ResponseEntity<Void> deleteMatching(@PathVariable Long id) {
         log.debug("REST request to delete Matching : {}", id);
-        Optional< Matching> optionalMatching= matchingRepository.findById(id);
-        if(optionalMatching.isPresent()) {
-            Matching matching = optionalMatching.get();
-            matchingService.deleteInteresteds(matching);
-            matchingRepository.deleteById(id);
-            matchingService.createMatchesIfPossible(matching.getItemAsked());
-            matchingService.createMatchesIfPossible(matching.getItemOffered());
+        List<MatchingEntity> matchingEntities = matchingEntityRepository.findByMatchingId(id);
+        for (MatchingEntity entity : matchingEntities) {
+            matchingEntityRepository.delete(entity);
         }
+        matchingEntityRepository.flush();
+        matchingRepository.deleteById(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
 
     }

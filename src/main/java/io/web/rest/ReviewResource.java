@@ -1,8 +1,10 @@
 package io.web.rest;
 
 import io.config.Constants;
+import io.domain.MatchingEntity;
 import io.domain.Review;
 import io.domain.User;
+import io.repository.MatchingEntityRepository;
 import io.repository.MatchingRepository;
 import io.repository.ReviewRepository;
 import io.service.UserService;
@@ -43,10 +45,13 @@ public class ReviewResource {
 
     private final MatchingRepository matchingRepository;
 
-    public ReviewResource(ReviewRepository reviewRepository, UserService userService, MatchingRepository matchingRepository) {
+    private final MatchingEntityRepository matchingEntityRepository;
+
+    public ReviewResource(ReviewRepository reviewRepository, UserService userService, MatchingRepository matchingRepository, MatchingEntityRepository matchingEntityRepository) {
         this.reviewRepository = reviewRepository;
         this.userService = userService;
         this.matchingRepository = matchingRepository;
+        this.matchingEntityRepository = matchingEntityRepository;
     }
 
     /**
@@ -68,7 +73,14 @@ public class ReviewResource {
         }
         User logged = optLogged.get();
         review.setReviewer(logged);
-        if(matchingRepository.findMatchingOfUsers(logged.getLogin(),review.getUser().getLogin()).isEmpty()){
+        List<MatchingEntity> matchingEntities = matchingEntityRepository.findByForUserIdIsCurrentUser();
+        boolean isMatchingBetweenUsers = false;
+        for (MatchingEntity me : matchingEntities) {
+            if (me.getForUser().getLogin().equals(logged.getLogin()) && me.getItem().getOwner().getLogin().equals(review.getUser().getLogin())) {
+                isMatchingBetweenUsers = true;
+            }
+        }
+        if(!isMatchingBetweenUsers) {
             throw new BadRequestAlertException("You have no exchanges with this user", ENTITY_NAME, "");
         }
         Review result = reviewRepository.save(review);

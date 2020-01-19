@@ -1,6 +1,7 @@
 package io.repository;
 import io.domain.Item;
 
+import io.domain.MatchingEntity;
 import io.domain.User;
 import io.domain.enumeration.Category;
 import org.springframework.data.domain.Page;
@@ -60,5 +61,12 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query("select user from Item item join item.interesteds ii join User user on ii.id = user.id where item.id = :item_id")
     List<User> getUsersInterestedIn(@Param("item_id") long item_id);
 
+    @Query("select item from Item item join fetch MatchingEntity matchingEntity on item.id = matchingEntity.item.id " +
+        "join fetch User user on item.owner = user.id where matchingEntity.matching.id =?1 and user.login =?2")
+    List<Item> findOfferedItem(Long matchingId, String userLogin);
+
+    @Query("select item from Item item join fetch MatchingEntity matchingEntity on item.id = matchingEntity.item.id " +
+        "join fetch User user on matchingEntity.forUser.id = user.id where matchingEntity.matching.id =?1 and user.login = ?2")
+    List<Item> findReceivedItem(Long matchingId, String userLogin);
 
 }
