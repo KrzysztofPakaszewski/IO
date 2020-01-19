@@ -85,11 +85,15 @@ export class Exchange extends React.Component<IExchangeProps,IExchangeState> {
                     aria-label="Vertical tabs"
                     style = {{borderRight: `1px solid`}}
                    >
-                  {matchingList.map((item,index)=>(
+                  {matchingList
+                    .filter((e) => !e.archived)
+                    .map((item,index)=>(
                     <Tab key = {index} label={ item.offered.title } {...this.a11yProps(index)}/>
                     ))}
                   </Tabs>
-                   {matchingList.map((item,iterator)=>(
+                   {matchingList
+                     .filter((e) => !e.archived)
+                     .map((item,iterator)=>(
                       <this.TabPanel key = {iterator} value={this.state.index} index={iterator}>
                         <Grid container
                           direction = "column"

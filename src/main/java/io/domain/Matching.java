@@ -22,17 +22,13 @@ public class Matching implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @Column(name = "offeror_received")
-//    private Boolean offerorReceived;
-//
-//    @Column(name = "asker_received")
-//    private Boolean askerReceived;
-
     @Column(name = "description")
     private String description;
 
+    @Column(name = "archived")
+    private Boolean archived;
 
-//    @JsonIgnore
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "matching_entity",
@@ -44,7 +40,6 @@ public class Matching implements Serializable {
 
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
-//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "matching_id")
     private Set<MatchingEntity> matchingEntities = new HashSet<>();
 
@@ -74,33 +69,6 @@ public class Matching implements Serializable {
         this.id = id;
     }
 
-//    public Boolean isOfferorReceived() {
-//        return offerorReceived;
-//    }
-//
-//    public Matching offerorReceived(Boolean offerorReceived) {
-//        this.offerorReceived = offerorReceived;
-//        return this;
-//    }
-//
-//    public void setOfferorReceived(Boolean offerorReceived) {
-//        this.offerorReceived = offerorReceived;
-//    }
-//
-//    public Boolean isAskerReceived() {
-//        return askerReceived;
-//    }
-//
-//    public Matching askerReceived(Boolean askerReceived) {
-//        this.askerReceived = askerReceived;
-//        return this;
-//    }
-//
-//    public void setAskerReceived(Boolean askerReceived) {
-//        this.askerReceived = askerReceived;
-//    }
-//
-
     public String getDescription() {
         return description;
     }
@@ -114,31 +82,14 @@ public class Matching implements Serializable {
         this.description = description;
     }
 
-//    public Item getItemOffered() {
-//        return itemOffered;
-//    }
-//
-//    public Matching itemOffered(Item item) {
-//        this.itemOffered = item;
-//        return this;
-//    }
-//
-//    public void setItemOffered(Item item) {
-//        this.itemOffered = item;
-//    }
-//
-//    public Item getItemAsked() {
-//        return itemAsked;
-//    }
-//
-//    public Matching itemAsked(Item item) {
-//        this.itemAsked = item;
-//        return this;
-//    }
-//
-//    public void setItemAsked(Item item) {
-//        this.itemAsked = item;
-//    }
+    public Boolean getArchived() {
+        return archived;
+    }
+
+    public void setArchived(Boolean archived) {
+        this.archived = archived;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override

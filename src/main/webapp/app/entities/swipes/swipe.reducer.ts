@@ -60,7 +60,7 @@ export const getRecommendedItems = () => {
 };
 
 export const createMatching = (userItem, recommendedItem) => {
-  const requestUrl = 'api/matchings/addFromSwipe';
+  const requestUrl = 'api/search';
   return {
     type: ACTION_TYPES.CREATE_MATCHING,
     payload: axios.put(requestUrl, [userItem, recommendedItem])

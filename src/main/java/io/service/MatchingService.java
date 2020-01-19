@@ -9,7 +9,6 @@ import io.security.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +16,6 @@ import java.util.Optional;
 import java.util.Stack;
 
 @Service
-//@Transactional
 public class MatchingService {
 
     private final Logger log = LoggerFactory.getLogger(MatchingService.class);
@@ -108,6 +106,18 @@ public class MatchingService {
                 if (entity.getForUser().getLogin().equals(login)) {
                     entity.setItemReceived(true);
                     matchingEntityRepository.save(entity);
+
+                    boolean allReceived = true;
+                    for (MatchingEntity me : matchingEntityRepository.findByMatchingId(entity.getMatching().getId())) {
+                        if (!me.isItemReceived()) {
+                            allReceived = false;
+                            break;
+                        }
+                    }
+                    if (allReceived) {
+                        matching.setArchived(true);
+                    }
+
                     return true;
                 }
             }
@@ -115,28 +125,7 @@ public class MatchingService {
         return false;
     }
 
-//    public boolean createMatchesIfPossible(Item releasedItem){
-//        List<ItemInterested> interestedsOfOwner = itemInterestedRepository.findByUser(releasedItem.getOwner().getLogin());
-//        List<ItemInterested> interestedsOfItem = itemInterestedRepository.findByItem(releasedItem.getId());
-//        for(ItemInterested owner: interestedsOfOwner){
-//            for(ItemInterested item : interestedsOfItem){
-//                if(owner.getItem().getOwner().getLogin().equals(item.getInterested().getLogin()) &&
-//                !doesThisItemHasMatch(owner.getItem())){
-//                    Matching matching = new Matching();
-//                    matching.setItemOffered(owner.getItem());
-//                    matching.setItemAsked(item.getItem());
-//                    matching.setOfferorReceived(false);
-//                    matching.setAskerReceived(false);
-//                    matchingRepository.save(matching);
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
-//    }
-
     public void createMatchesIfFindCycle(Item likedItem) {
-        if (!doesThisItemHasMatch(likedItem)) {
             Optional<String> tmp = SecurityUtils.getCurrentUserLogin();
             ArrayList<Long> visited = new ArrayList<>();
             Stack<Long> stackOfItemsId = new Stack<>();
@@ -145,6 +134,7 @@ public class MatchingService {
                 // creating match
                 Matching matching = new Matching();
                 matching.description(java.time.LocalDate.now().toString());
+                matching.setArchived(false);
                 matchingRepository.save(matching);
 
                 // adding entity to match
@@ -164,7 +154,6 @@ public class MatchingService {
                     forUser = item.getOwner();
                 }
             }
-        }
     }
 
     private boolean findCycle(Item startItem, Item currentItem, Stack<Long> stack, ArrayList<Long> visited, int currentNumberOfPeople, int maxNumberOfPeopleInMatch) {
@@ -174,7 +163,7 @@ public class MatchingService {
         List<ItemInterested> listOfInteresteds = itemInterestedRepository.findByUser(currentItem.getOwner().getLogin());
         for (ItemInterested neighbour : listOfInteresteds) {
             if (neighbour.getItem().equals(startItem)) {
-                return true;
+                    return true;
             }
             if (currentNumberOfPeople < maxNumberOfPeopleInMatch &&
                 !visited.contains(neighbour.getItem().getId()) &&
