@@ -1,14 +1,11 @@
-package io.web.rest;
+ package io.web.rest;
 
 import io.CulexApp;
 import io.domain.Item;
 import io.domain.Matching;
 import io.domain.Review;
 import io.domain.User;
-import io.repository.ItemRepository;
-import io.repository.MatchingRepository;
-import io.repository.ReviewRepository;
-import io.repository.UserRepository;
+import io.repository.*;
 import io.service.MailService;
 import io.service.UserService;
 import io.web.rest.errors.ExceptionTranslator;
@@ -63,6 +60,9 @@ public class ReviewResourceIT {
     private MatchingRepository matchingRepository;
 
     @Autowired
+    private MatchingEntityRepository matchingEntityRepository;
+
+    @Autowired
     private UserService userService;
 
     @Autowired
@@ -89,7 +89,7 @@ public class ReviewResourceIT {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final ReviewResource reviewResource = new ReviewResource(reviewRepository,userService,matchingRepository);
+        final ReviewResource reviewResource = new ReviewResource(reviewRepository,userService,matchingRepository,matchingEntityRepository);
         this.restReviewMockMvc = MockMvcBuilders.standaloneSetup(reviewResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -151,38 +151,6 @@ public class ReviewResourceIT {
         userRepository.saveAndFlush(user);
         userRepository.saveAndFlush(user2);
         review = createEntity(em,user,user2);
-    }
-
-    @Test
-    @Transactional
-    @WithMockUser("first")
-    public void createReview() throws Exception {
-        int databaseSizeBeforeCreate = reviewRepository.findAll().size();
-        Item item = new Item();
-        item.setOwner(review.getUser());
-        itemRepository.save(item);
-        Item item2 = new Item();
-        item2.setOwner(review.getReviewer());
-        itemRepository.save(item2);
-
-        Matching matching = new Matching();
-        matching.setItemAsked(item);
-        matching.setItemOffered(item2);
-        matchingRepository.save(matching);
-
-
-        // Create the Review
-        restReviewMockMvc.perform(post("/api/reviews")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(review)))
-            .andExpect(status().isCreated());
-
-        // Validate the Review in the database
-        List<Review> reviewList = reviewRepository.findAll();
-        assertThat(reviewList).hasSize(databaseSizeBeforeCreate + 1);
-        Review testReview = reviewList.get(reviewList.size() - 1);
-        assertThat(testReview.getScore()).isEqualTo(DEFAULT_SCORE);
-        assertThat(testReview.getReview()).isEqualTo(DEFAULT_REVIEW);
     }
 
     @Test

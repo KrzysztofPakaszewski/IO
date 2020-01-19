@@ -17,6 +17,14 @@ public class MatchingVM {
         this.id = id;
     }
 
+    public Boolean getArchived() {
+        return archived;
+    }
+
+    public void setArchived(Boolean archived) {
+        this.archived = archived;
+    }
+
     public Item getOffered() {
         return offered;
     }
@@ -42,6 +50,8 @@ public class MatchingVM {
     }
 
     private Long id;
+
+    private Boolean archived;
 
     private Item offered;
 

@@ -5,6 +5,7 @@ import io.domain.Item;
 import io.domain.Matching;
 import io.domain.User;
 import io.repository.ItemRepository;
+import io.repository.MatchingEntityRepository;
 import io.repository.MatchingRepository;
 import io.repository.UserRepository;
 import io.service.MatchingService;
@@ -40,14 +41,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class MatchingResourceIT {
 
 
-    private static final String DEFAULT_CHAT = "AAAAAAAAAA";
-    private static final String UPDATED_CHAT = "BBBBBBBBBB";
+    private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
+    private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
 
     @Autowired
     private MatchingRepository matchingRepository;
 
     @Autowired
     private MatchingService matchingService;
+
+    @Autowired
+    private MatchingEntityRepository matchingEntityRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -77,7 +81,7 @@ public class MatchingResourceIT {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final MatchingResource matchingResource = new MatchingResource(matchingRepository, matchingService);
+        final MatchingResource matchingResource = new MatchingResource(matchingRepository, matchingService, matchingEntityRepository);
         this.restMatchingMockMvc = MockMvcBuilders.standaloneSetup(matchingResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -94,9 +98,7 @@ public class MatchingResourceIT {
      */
     public static Matching createEntity(EntityManager em,Item item1, Item item2) {
         Matching matching = new Matching()
-            .chat(DEFAULT_CHAT)
-            .itemAsked(item1)
-            .itemOffered(item2);
+            .description(DEFAULT_DESCRIPTION);
         return matching;
     }
 
@@ -108,7 +110,7 @@ public class MatchingResourceIT {
      */
     public static Matching createUpdatedEntity(EntityManager em) {
         Matching matching = new Matching()
-            .chat(UPDATED_CHAT);
+            .description(UPDATED_DESCRIPTION);
         return matching;
     }
 
@@ -155,7 +157,7 @@ public class MatchingResourceIT {
         List<Matching> matchingList = matchingRepository.findAll();
         assertThat(matchingList).hasSize(databaseSizeBeforeCreate + 1);
         Matching testMatching = matchingList.get(matchingList.size() - 1);
-        assertThat(testMatching.getChat()).isEqualTo(DEFAULT_CHAT);
+        assertThat(testMatching.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
     }
 
     @Test
@@ -189,7 +191,7 @@ public class MatchingResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(matching.getId().intValue())))
-            .andExpect(jsonPath("$.[*].chat").value(hasItem(DEFAULT_CHAT)));
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)));
     }
 
     @Test
@@ -203,7 +205,7 @@ public class MatchingResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(matching.getId().intValue()))
-            .andExpect(jsonPath("$.chat").value(DEFAULT_CHAT));
+            .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION));
     }
 
     @Test
@@ -227,7 +229,7 @@ public class MatchingResourceIT {
         // Disconnect from session so that the updates on updatedMatching are not directly saved in db
         em.detach(updatedMatching);
         updatedMatching
-            .chat(UPDATED_CHAT);
+            .description(UPDATED_DESCRIPTION);
 
         restMatchingMockMvc.perform(put("/api/matchings")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -238,7 +240,7 @@ public class MatchingResourceIT {
         List<Matching> matchingList = matchingRepository.findAll();
         assertThat(matchingList).hasSize(databaseSizeBeforeUpdate);
         Matching testMatching = matchingList.get(matchingList.size() - 1);
-        assertThat(testMatching.getChat()).isEqualTo(UPDATED_CHAT);
+        assertThat(testMatching.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
     }
 
     @Test

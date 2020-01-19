@@ -83,14 +83,6 @@ public class MatchingEntity implements Serializable {
     }
 
 
-
-//    public MatchingEntity title(String title) {
-//        this.title = title;
-//        return this;
-//    }
-
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {

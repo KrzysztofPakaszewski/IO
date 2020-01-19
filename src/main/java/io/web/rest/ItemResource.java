@@ -187,9 +187,7 @@ public class ItemResource {
     /**
      * {@code GET  /items} : get all the items.
      *
-
      * @param pageable the pagination information.
-
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of items in body.
      */
 

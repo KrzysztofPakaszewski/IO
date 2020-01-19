@@ -48,74 +48,18 @@ public class MatchingTest {
         assertNotEquals((long)1, (long)matching.getId());
     }
 
+
     @Test
-    public void itemOffered(){
-        Item item = new Item();
-        item.setCategory(Category.Books);
-        User user = new User();
-        user.setLogin("user");
-        item.setOwner(user);
-        matching = matching.itemOffered(item);
-        assertNotNull(matching);
-        assertEquals(Category.Books, matching.getItemOffered().getCategory());
-        assertEquals(item, matching.getItemOffered());
-        assertEquals("user", matching.getItemOffered().getOwner().getLogin());
+    public void testDescriptiont(){
+        matching = matching.description("description");
+        assertNotNull(matching.getDescription());
+        assertEquals("description", matching.getDescription());
     }
 
     @Test
-    public void testSetItemOffered(){
-        Item item = new Item();
-        item.setCategory(Category.Books);
-        User user = new User();
-        user.setLogin("user");
-        item.setOwner(user);
-        matching.setItemOffered(item);
-        assertNotNull(matching);
-        assertEquals(Category.Books, matching.getItemOffered().getCategory());
-        assertEquals(item, matching.getItemOffered());
-        assertEquals("user", matching.getItemOffered().getOwner().getLogin());
-    }
-
-    @Test
-    public void itemAsked(){
-        Item item = new Item();
-        item.setCategory(Category.Books);
-        User user = new User();
-        user.setLogin("user");
-        item.setOwner(user);
-        matching = matching.itemAsked(item);
-        assertNotNull(matching);
-        assertEquals(Category.Books, matching.getItemAsked().getCategory());
-        assertEquals(item, matching.getItemAsked());
-        assertEquals("user", matching.getItemAsked().getOwner().getLogin());
-    }
-
-    @Test
-    public void testSetItemAsked(){
-        Item item = new Item();
-        item.setCategory(Category.Books);
-        User user = new User();
-        user.setLogin("user");
-        item.setOwner(user);
-        matching.setItemAsked(item);
-        assertNotNull(matching);
-        assertEquals(Category.Books, matching.getItemAsked().getCategory());
-        assertEquals(item, matching.getItemAsked());
-        assertEquals("user", matching.getItemAsked().getOwner().getLogin());
-    }
-
-
-    @Test
-    public void testChat(){
-        matching = matching.chat("chat");
-        assertNotNull(matching.getChat());
-        assertEquals("chat", matching.getChat());
-    }
-
-    @Test
-    public void testSetChat(){
-        matching.setChat("chat");
-        assertNotNull(matching.getChat());
-        assertEquals("chat", matching.getChat());
+    public void testSetDescription(){
+        matching.setDescription("description");
+        assertNotNull(matching.getDescription());
+        assertEquals("description", matching.getDescription());
     }
 }
