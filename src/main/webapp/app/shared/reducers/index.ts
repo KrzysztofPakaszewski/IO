@@ -11,6 +11,8 @@ import activate, { ActivateState } from 'app/modules/account/activate/activate.r
 import password, { PasswordState } from 'app/modules/account/password/password.reducer';
 import settings, { SettingsState } from 'app/modules/account/settings/settings.reducer';
 import passwordReset, { PasswordResetState } from 'app/modules/account/password-reset/password-reset.reducer';
+import swipe, { SwipeState } from 'app/entities/swipes/swipe.reducer';
+import search, { SearchState } from 'app/entities/search/search.reducer';
 // prettier-ignore
 import review, {
   ReviewState
@@ -45,6 +47,8 @@ export interface IRootState {
   readonly matching: MatchingState;
   /* jhipster-needle-add-reducer-type - JHipster will add reducer type here */
   readonly loadingBar: any;
+  readonly swipe: SwipeState;
+  readonly search: SearchState;
 }
 
 const rootReducer = combineReducers<IRootState>({
@@ -61,6 +65,8 @@ const rootReducer = combineReducers<IRootState>({
   item,
   matching,
   user,
+  swipe,
+  search,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
   loadingBar
 });

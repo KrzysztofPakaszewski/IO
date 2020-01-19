@@ -184,9 +184,9 @@ ${this.state.checkedGames ? "games," : ""}${this.state.checkedMovies ? "movies,"
   }
 }
 
-const mapStateToProps = ({ item }: IRootState) => ({
-  itemList: item.entities,
-  totalItems: item.totalItems
+const mapStateToProps = (storeState: IRootState) => ({
+  itemList: storeState.search.entities,
+  totalItems: storeState.search.totalItems
 });
 
 const mapDispatchToProps = {

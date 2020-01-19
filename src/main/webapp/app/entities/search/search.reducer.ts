@@ -7,10 +7,10 @@ import { IItem, defaultValue } from 'app/shared/model/item.model';
 import { cleanEntity } from 'app/shared/util/entity-utils';
 
 export const ACTION_TYPES = {
-  FETCH_ITEM_LIST: 'item/FETCH_ITEM_LIST',
-  FETCH_ITEM: 'item/FETCH_ITEM',
-  SET_BLOB: 'item/SET_BLOB',
-  RESET: 'item/RESET'
+  FETCH_ITEM_LIST: 'search/FETCH_ITEM_LIST',
+  FETCH_ITEM: 'search/FETCH_ITEM',
+  SET_BLOB: 'search/SET_BLOB',
+  RESET: 'search/RESET'
 };
 
 const initialState = {
